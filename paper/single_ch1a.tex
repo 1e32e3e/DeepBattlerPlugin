@@ -1,0 +1,12 @@
+% 单章试编译（只用于写作期间自查，不是正式入口）：latexmk -xelatex single_ch1a.tex
+\documentclass[a4paper,zihao=-4,openany]{ctexrep}
+\input{preamble}
+\addbibresource{refs/ch1a.bib}
+\begin{document}
+\setcounter{chapter}{0}
+\chapter{研究一：评分与匹配机制的文献、厂商披露与专利}\label{ch:lit}\input{chapters/ch1a}
+\printbibliography[heading=bibintoc,title=参考文献]
+\appendix
+\chapter{推导与模拟细节}
+\input{chapters/appendix_ch1a}
+\end{document}

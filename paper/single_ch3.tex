@@ -1,0 +1,12 @@
+% 单章试编译（只用于写作期间自查，不是正式入口）：latexmk -xelatex single_ch3.tex
+\documentclass[a4paper,zihao=-4,openany]{ctexrep}
+\input{preamble}
+\addbibresource{refs/ch3.bib}
+\begin{document}
+\setcounter{chapter}{2}
+\input{chapters/ch3}
+\printbibliography[heading=bibintoc,title=参考文献]
+\appendix
+\chapter{推导与模拟细节}
+\input{chapters/appendix_ch3}
+\end{document}

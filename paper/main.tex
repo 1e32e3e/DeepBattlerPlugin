@@ -1,0 +1,23 @@
+% !TEX program = xelatex
+% 编译：在 paper/ 目录下运行 latexmk -xelatex main.tex（会自动调用 biber）
+\documentclass[a4paper,zihao=-4,openany]{ctexrep}
+\input{preamble}
+% 起草期每章各自维护 bib；整合时合并为 refs/refs.bib
+\IfFileExists{refs/refs.bib}{\addbibresource{refs/refs.bib}}{%
+  \addbibresource{refs/ch1a.bib}\addbibresource{refs/ch1b.bib}%
+  \addbibresource{refs/ch2.bib}\addbibresource{refs/ch3.bib}\addbibresource{refs/ch4.bib}}
+
+\begin{document}
+\input{frontmatter/titlepage}
+\input{frontmatter/abstract}
+\tableofcontents
+\input{chapters/intro}
+\input{chapters/ch1}
+\input{chapters/ch2}
+\input{chapters/ch3}
+\input{chapters/ch4}
+\input{chapters/conclusion}
+\printbibliography[heading=bibintoc,title=参考文献]
+\appendix
+\input{chapters/appendix}
+\end{document}

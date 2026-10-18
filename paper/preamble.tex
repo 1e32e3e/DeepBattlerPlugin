@@ -1,0 +1,80 @@
+% 公共导言区：所有章节共用。新增宏请写在这里，不要写进章节文件。
+\usepackage[a4paper,top=2.6cm,bottom=2.6cm,left=2.6cm,right=2.6cm]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,longtable,multirow,array}
+\usepackage[table]{xcolor}
+\usepackage{caption,subcaption}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage[most]{tcolorbox}
+\usepackage[backend=biber,style=gb7714-2015,gbpub=false,gbnamefmt=lowercase]{biblatex}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalise,noabbrev]{cleveref}
+
+\graphicspath{{../figures/}}
+\setlist{nosep,leftmargin=2em}
+\sisetup{group-separator={,},group-minimum-digits=4}
+\captionsetup{font=small,labelfont=bf}
+
+% ---- cleveref 中文名称 ----
+\crefname{chapter}{第}{第}
+\creflabelformat{chapter}{#2\chinese{chapter}#3章}
+\crefname{section}{第}{第}
+\creflabelformat{section}{#2#1#3节}
+\crefname{subsection}{第}{第}
+\creflabelformat{subsection}{#2#1#3节}
+\crefname{figure}{图}{图}
+\crefname{table}{表}{表}
+\crefname{equation}{式}{式}
+\creflabelformat{equation}{（#2#1#3）}
+\crefname{appendix}{附录}{附录}
+
+% ---- 配色（与 code/figstyle.py 一致）----
+\definecolor{cBlue}{HTML}{2A78D6}
+\definecolor{cOrange}{HTML}{EB6834}
+\definecolor{cAqua}{HTML}{1BAF7A}
+\definecolor{cYellow}{HTML}{EDA100}
+\definecolor{cRed}{HTML}{E34948}
+\definecolor{cViolet}{HTML}{6250D6}
+\definecolor{inkMuted}{HTML}{52514E}
+\definecolor{boxBack}{HTML}{F4F7FC}
+
+% ---- 证据标签：每条事实性陈述后标注来源性质 ----
+\newcommand{\evtag}[2]{\textcolor{#1}{\small【#2】}}
+\newcommand{\tagLit}{\evtag{cBlue}{文献}}     % 同行评审论文或公司技术报告
+\newcommand{\tagOff}{\evtag{cAqua}{官方}}     % 开发商官方博客、白皮书、员工公开发言
+\newcommand{\tagPat}{\evtag{cViolet}{专利}}   % 专利文献：只说明申请过，不说明已部署
+\newcommand{\tagCom}{\evtag{cOrange}{社区}}   % 玩家、自媒体、第三方工具、百科：未经证实
+\newcommand{\tagOwn}{\evtag{cRed}{本项目}}    % 本项目自己的推导或模拟，需给出参数
+% 未能读到全文、需在校园网下核对的来源：正文加脚注，并登记到 docs/TO_VERIFY.md
+\newcommand{\needcheck}[1][]{\footnote{待核对：本次未读到原文全文#1。}}
+
+% ---- 框 ----
+\newtcolorbox{answerbox}[1][直接回答]{enhanced,breakable,colback=boxBack,colframe=cBlue,
+  boxrule=0.6pt,arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,
+  fonttitle=\bfseries,coltitle=white,colbacktitle=cBlue,title={#1}}
+\newtcolorbox{keybox}[1][要点]{enhanced,breakable,colback=white,colframe=inkMuted,
+  boxrule=0.4pt,arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,
+  fonttitle=\bfseries,coltitle=black,colbacktitle=black!6,title={#1}}
+\newtcolorbox{derivbox}[1][推导]{enhanced,breakable,colback=black!2,colframe=black!25,
+  boxrule=0.4pt,arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt,
+  fonttitle=\bfseries\small,coltitle=black,colbacktitle=black!8,title={#1}}
+
+% ---- 记号（全文统一，见 docs/STYLE.md）----
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Corr}{\operatorname{Corr}}
+\newcommand{\Normal}{\mathcal{N}}
+\newcommand{\Elogit}{F}                         % Elo 胜率曲线 F(x)=1/(1+10^{-x/400})
+\newcommand{\cElo}{c}                          % c = ln10/400
+\newcommand{\Kf}{K}                            % K 因子
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\sk}{s}                            % 真实实力（潜变量）
+\newcommand{\rt}{R}                            % 评分（系统估计）
+\newcommand{\iid}{i.i.d.}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}

@@ -1,0 +1,26 @@
+# LaTeX 中间文件（保留 main.pdf / slides.pdf 便于直接阅读）
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+*.nav
+*.snm
+*.vrb
+*.lof
+*.lot
+# Python
+__pycache__/
+*.pyc
+.venv/
+# 个人对局原始数据默认不入库（见 data/README.md）
+data/private/
+# 单章试编译产物
+paper/single_*.pdf
