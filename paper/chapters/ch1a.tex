@@ -333,7 +333,7 @@ Cheng 等（浙江大学、科罗拉多大学与腾讯合著）用《王者荣�
 
 \subsection{星际争霸 II}\label{sec:1a-games-sc2}
 
-星际争霸 II 的学术研究很少讨论天梯算法本身，而是把评级当作技能的测量值：Thompson 等用 3360 名玩家、7 个联赛等级的录像遥测数据研究复杂技能习得，发现不同水平下决定表现的变量并不相同\cite{thompson2013video}\tagLit\needcheck[；只读到题录与摘要]；DeepMind 的 AlphaStar 在 Battle.net 官方天梯上与人类匹配对战，按天梯 MMR 评估，三个种族均达到宗师级、高于 99.8\% 的排名玩家\cite{vinyals2019grandmaster}\tagLit\needcheck[；未重读《自然》原文]。暴雪对天梯机制的官方说明见本章厂商部分。
+星际争霸 II 的学术研究很少讨论天梯算法本身，而是把评级当作技能的测量值：Thompson 等用 3360 名玩家、7 个联赛等级（青铜到职业）的录像遥测数据研究复杂技能习得，发现不同水平下决定表现的变量并不相同\cite{thompson2013video}\tagLit；DeepMind 的 AlphaStar 在 Battle.net 官方天梯上与人类匹配对战，按天梯 MMR 评估，三个种族均达到宗师级、高于 99.8\% 的排名玩家\cite{vinyals2019grandmaster}\tagLit\needcheck[；只读到摘要，“按天梯 MMR 评估”的细节未核对]。暴雪对天梯机制的官方说明见本章厂商部分。
 
 \subsection{炉石传说与酒馆战棋：几乎没有学术研究}\label{sec:1a-games-hs}
 
@@ -351,7 +351,7 @@ Cheng 等（浙江大学、科罗拉多大学与腾讯合著）用《王者荣�
 
 本次从本环境直接检索中国知网、万方和百度学术均未成功（知网证书与主机不符被拒，百度学术返回 403，万方检索页需脚本渲染）。下面的中文文献经通用搜索引擎和第三方题录站间接找到，只读到题录或摘要，均标注待核对；结论只代表本次检索的覆盖范围。
 
-\paragraph{学位论文。}间接找到三篇与游戏匹配直接相关的学位论文。安徽大学王瑞 2019 年的硕士论文《竞技游戏中的 ELO 算法与匹配算法研究》（导师吴建国）只找到题录\cite{wang2019jingji}\needcheck[；仅见第三方题录]。台湾交通大学陈韦成 2012 年的论文（指导教授孙春在）指出，现行配对系统多以 ELO 积分配对，但 ELO 需要足够场次才会收敛，配对系统又无法分辨积分是否已收敛，因此常产生不平衡的对局；作者估计玩家与团队的“影响力”来补足未收敛的积分\cite{chen2012pinggu}\tagLit\needcheck[；仅读到检索摘要]。这是本次找到的唯一一篇直接讨论“评分未收敛导致团队对局失衡”的论文，与玩家所说的“Elo 地狱”最接近。同一实验室黄志宏 2010 年的论文用团体动力学，在玩家能力之外加入团体结构和沟通因素来改善团队配对\cite{huang2010tuanti}\tagLit\needcheck[；仅读到检索摘要]。
+\paragraph{学位论文。}间接找到三篇与游戏匹配直接相关的学位论文。安徽大学王瑞 2019 年的硕士论文《竞技游戏中的 ELO 算法与匹配算法研究》（导师吴建国）只找到题录\cite{wang2019jingji}\tagLit\needcheck[；仅见第三方题录]。台湾交通大学陈韦成 2012 年的论文（指导教授孙春在）指出，现行配对系统多以 ELO 积分配对，但 ELO 需要足够场次才会收敛，配对系统又无法分辨积分是否已收敛，因此常产生不平衡的对局；作者估计玩家与团队的“影响力”来补足未收敛的积分\cite{chen2012pinggu}\tagLit\needcheck[；仅读到检索摘要]。这是本次找到的唯一一篇直接讨论“评分未收敛导致团队对局失衡”的论文，与玩家所说的“Elo 地狱”最接近。同一实验室黄志宏 2010 年的论文用团体动力学，在玩家能力之外加入团体结构和沟通因素来改善团队配对\cite{huang2010tuanti}\tagLit\needcheck[；仅读到检索摘要]。
 
 \paragraph{中国机构的英文论文。}中国游戏公司最有分量的成果都以英文发表在国际会议上：网易伏羲的 OptMatch（KDD 2020）、GloMatch（KDD 2021）、EnMatch（AAAI 2024），腾讯的 QuickSkill（CIKM 2022）、CUPID（CSCW 2024），以及腾讯合著的王者荣耀团队构成研究（WWW 2019）\cite{gong2020optmatch,deng2021globally,wang2024enmatch,zhang2022quickskill,fan2024cupid,cheng2019makes}\tagLit。作者即运营方，数据不公开，实验对象常不点名。
 
