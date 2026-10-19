@@ -1,5 +1,5 @@
-% 第一章（1a）附录：本部分正文引用的推导
-\section{第一章学术部分的推导}\label{app:ch1a}
+% 第一章（1a）附录：本部分正文引用的推导与完整公式
+\section{第一章学术部分的推导与公式}\label{app:ch1a}
 
 \subsection{正态曲线与 Elo 逻辑斯蒂曲线的刻度换算}\label{app:ch1a-scale}
 
@@ -7,23 +7,48 @@ Elo 曲线\cref{eq:1a-elo-curve} 在分差 0 处的斜率为 $\Elogit'(0)=\cElo/
 \[
   \sigma=\frac{1600}{\ln 10\cdot\sqrt{2}\cdot\sqrt{2\pi}}\approx 196 ,
 \]
-即“400 分刻度的逻辑斯蒂曲线”在中心附近等价于“每人单局表现标准差约 196 分”的正态曲线，与 Elo 原书取的 200 几乎相同\tagOwn。用 FIDE 现行条例 8.1.1 表（$p=0.51,\dots,0.99$ 共 49 格）做最小二乘拟合，得到的单人标准差为 202.6；表中分差与 $\sigma=200$ 的正态曲线最大相差 19 分（$p=0.99$ 处），与 Elo 逻辑斯蒂曲线最大相差 121 分（同一处）\tagOwn。两种曲线在中段几乎重合，差别只在 $p>0.9$ 的尾部：逻辑斯蒂曲线给弱者留的胜率更大。
+即“400 分刻度的逻辑斯蒂曲线”在中心附近等价于“每人单局表现标准差约 196 分”的正态曲线，与 Elo 原书取的 200 几乎相同\tagOwn。用 FIDE 现行条例 8.1.1 表（$p=0.51,\dots,0.99$ 共 49 格）做最小二乘拟合，得到的单人标准差为 202.6；表中分差与 $\sigma=200$ 的正态曲线最大相差 19 分（$p=0.99$ 处），与 Elo 逻辑斯蒂曲线最大相差 121 分（同一处）\tagOwn。两种曲线在中段几乎重合，差别只在 $p>0.9$ 的尾部：逻辑斯蒂曲线给弱者留的胜率更大。脚本见 \texttt{code/ch1/fig\_1a\_curves.py}。
+
+\subsection{Glicko 与 Glicko-2 的完整公式}\label{app:ch1a-glicko}
+
+\paragraph{Glicko。}按 Glickman 公开的计算步骤\cite{glickman2016glicko}：每个评分周期开始时，未定级玩家取 $r=1500$、RD$=350$，其他玩家 $\mathrm{RD}\leftarrow\min\big(\sqrt{\mathrm{RD}^2+c^2},\,350\big)$。若希望一个 RD$=50$ 的常客在 30 个周期不下棋后回到 350，则 $c=\sqrt{(350^2-50^2)/30}\approx 63.2$。周期结束时，设对手 $j=1,\dots,m$ 的评分与偏差为 $r_j,\mathrm{RD}_j$，得分 $s_j\in\{0,\tfrac12,1\}$，
+\begin{gather*}
+  q=\frac{\ln 10}{400},\qquad g(\mathrm{RD})=\frac{1}{\sqrt{1+3q^2\mathrm{RD}^2/\pi^2}},\qquad
+  E_j=\frac{1}{1+10^{-g(\mathrm{RD}_j)(r-r_j)/400}},\\
+  d^2=\Big[q^2\sum_j g(\mathrm{RD}_j)^2E_j(1-E_j)\Big]^{-1},\\
+  r' = r + \frac{q}{1/\mathrm{RD}^2+1/d^2}\sum_j g(\mathrm{RD}_j)(s_j-E_j),\qquad
+  \mathrm{RD}'=\Big(\frac{1}{\mathrm{RD}^2}+\frac{1}{d^2}\Big)^{-1/2}.
+\end{gather*}
+预测两名玩家 $i$、$j$ 的对局时，用 $E=\big[1+10^{-g(\sqrt{\mathrm{RD}_i^2+\mathrm{RD}_j^2})(r_i-r_j)/400}\big]^{-1}$，\cref{fig:1a-curves}(a) 的点划线即双方 RD$=350$ 时的这一曲线。
+
+\paragraph{Glicko-2。}按 Glickman 的算例文档\cite{glickman2022example}：先换到内部刻度 $\mu=(r-1500)/173.7178$、$\phi=\mathrm{RD}/173.7178$；令 $g(\phi)=(1+3\phi^2/\pi^2)^{-1/2}$，$E_j=\big[1+e^{-g(\phi_j)(\mu-\mu_j)}\big]^{-1}$，
+\[
+  v=\Big[\sum_j g(\phi_j)^2E_j(1-E_j)\Big]^{-1},\qquad
+  \Delta=v\sum_j g(\phi_j)(s_j-E_j).
+\]
+新的波动率 $\sigma'$ 由方程 $f(x)=\dfrac{e^x(\Delta^2-\phi^2-v-e^x)}{2(\phi^2+v+e^x)^2}-\dfrac{x-\ln\sigma^2}{\tau^2}=0$ 的根 $x=\ln\sigma'^2$ 给出，用 Illinois 试位法求解（2012 年修订版）。然后
+\[
+  \phi^{*}=\sqrt{\phi^2+\sigma'^2},\qquad
+  \phi'=\Big(\frac{1}{\phi^{*2}}+\frac{1}{v}\Big)^{-1/2},\qquad
+  \mu'=\mu+\phi'^2\sum_j g(\phi_j)(s_j-E_j),
+\]
+再换回 $r'=173.7178\mu'+1500$、$\mathrm{RD}'=173.7178\phi'$。一个周期不比赛时只做 $\phi'=\phi^*$ 这一步。
 
 \subsection{TrueSkill 两人更新式}\label{app:ch1a-ts}
 
 设胜方、负方实力的先验为 $s_{\mathrm w}\sim\Normal(\mu_{\mathrm w},\sigma_{\mathrm w}^2)$、$s_{\mathrm l}\sim\Normal(\mu_{\mathrm l},\sigma_{\mathrm l}^2)$，表现 $p=s+\Normal(0,\beta^2)$。表现差 $d=p_{\mathrm w}-p_{\mathrm l}\sim\Normal(m,c^2)$，其中 $m=\mu_{\mathrm w}-\mu_{\mathrm l}$，$c^2=\sigma_{\mathrm w}^2+\sigma_{\mathrm l}^2+2\beta^2$。观测到“胜方获胜且不是平局”即 $d>\varepsilon$。
 
-\paragraph{截断正态的矩。}记 $d=m+cZ$，$Z$ 为标准正态，$t=m/c$，$a=\varepsilon/c$，则 $d>\varepsilon\Leftrightarrow Z>-(t-a)$。对 $u=t-a$，
-\[
-  \E[Z\mid Z>-u]=\frac{\varphi(u)}{\Phi(u)}=:v(t,a),\qquad
-  \Var[Z\mid Z>-u]=1-v(t,a)\big(v(t,a)+u\big)=:1-w(t,a).
-\]
-\paragraph{传回实力。}$(s_{\mathrm w},d)$ 联合正态，$\Cov(s_{\mathrm w},d)=\sigma_{\mathrm w}^2$，故 $\E[s_{\mathrm w}\mid d]=\mu_{\mathrm w}+(\sigma_{\mathrm w}^2/c^2)(d-m)$，$\Var[s_{\mathrm w}\mid d]=\sigma_{\mathrm w}^2(1-\sigma_{\mathrm w}^2/c^2)$。对条件 $d>\varepsilon$ 取期望（全期望与全方差公式）：
-\[
-  \E[s_{\mathrm w}\mid d>\varepsilon]=\mu_{\mathrm w}+\frac{\sigma_{\mathrm w}^2}{c}\,v(t,a),\qquad
-  \Var[s_{\mathrm w}\mid d>\varepsilon]=\sigma_{\mathrm w}^2\Big(1-\frac{\sigma_{\mathrm w}^2}{c^2}\Big)+\frac{\sigma_{\mathrm w}^4}{c^4}\,c^2\big(1-w\big)
+\paragraph{截断正态的矩。}记 $d=m+cZ$，$Z$ 为标准正态，$t=m/c$，$a=\varepsilon/c$，$u=t-a$，则 $d>\varepsilon\Leftrightarrow Z>-u$，且
+\begin{align*}
+  \E[Z\mid Z>-u]&=\frac{\varphi(u)}{\Phi(u)}=:v(t,a),\\
+  \Var[Z\mid Z>-u]&=1-v(t,a)\big(v(t,a)+u\big)=:1-w(t,a).
+\end{align*}
+\paragraph{传回实力。}$(s_{\mathrm w},d)$ 联合正态，$\Cov(s_{\mathrm w},d)=\sigma_{\mathrm w}^2$，故 $\E[s_{\mathrm w}\mid d]=\mu_{\mathrm w}+(\sigma_{\mathrm w}^2/c^2)(d-m)$，$\Var[s_{\mathrm w}\mid d]=\sigma_{\mathrm w}^2(1-\sigma_{\mathrm w}^2/c^2)$。对条件 $d>\varepsilon$ 用全期望与全方差公式：
+\begin{align*}
+  \E[s_{\mathrm w}\mid d>\varepsilon]&=\mu_{\mathrm w}+\frac{\sigma_{\mathrm w}^2}{c}\,v(t,a),\\
+  \Var[s_{\mathrm w}\mid d>\varepsilon]&=\sigma_{\mathrm w}^2\Big(1-\frac{\sigma_{\mathrm w}^2}{c^2}\Big)+\frac{\sigma_{\mathrm w}^4}{c^4}\,c^2\big(1-w(t,a)\big)
   =\sigma_{\mathrm w}^2\Big(1-\frac{\sigma_{\mathrm w}^2}{c^2}\,w(t,a)\Big).
-\]
+\end{align*}
 负方的 $\Cov(s_{\mathrm l},d)=-\sigma_{\mathrm l}^2$，均值更新取负号，方差更新形式相同。TrueSkill 把后验近似为具有这两个矩的高斯（期望传播中的矩匹配），即得\cref{eq:1a-ts-update}。若有动态方差 $\gamma^2$（TrueSkill 论文的记号），赛前先令 $\sigma^2\leftarrow\sigma^2+\gamma^2$。爆冷时 $t\ll0$，$v\approx a-t$ 很大，均值更新幅度近似与“爆冷程度”成正比；$t\gg0$（强者赢弱者）时 $v\to0$，几乎不更新\tagOwn。
 
 \subsection{TrueSkill 匹配质量即相对平局概率}\label{app:ch1a-quality}
@@ -34,17 +59,33 @@ Elo 曲线\cref{eq:1a-elo-curve} 在分差 0 处的斜率为 $\Elogit'(0)=\cElo/
 \]
 即\cref{eq:1a-ts-quality}。它同时惩罚均值差（指数项）和不确定性（根号项）：两个新号即使均值相同，质量也低于两个均值相同的老玩家\tagOwn。
 
+\subsection{Weng–Lin 的 Bradley–Terry 全配对更新}\label{app:ch1a-wenglin}
+
+按 Weng 与 Lin 的算法 1\cite{weng2011bayesian}：队伍 $i$ 的实力均值与方差取成员之和 $\mu_i=\sum_j\mu_{ij}$、$\sigma_i^2=\sum_j\sigma_{ij}^2$；对每支对手队 $q\ne i$，
+\[
+  c_{iq}=\sqrt{\sigma_i^2+\sigma_q^2+2\beta^2},\qquad
+  \hat p_{iq}=\frac{e^{\mu_i/c_{iq}}}{e^{\mu_i/c_{iq}}+e^{\mu_q/c_{iq}}},\qquad
+  \delta_q=\frac{\sigma_i^2}{c_{iq}}\big(s_{iq}-\hat p_{iq}\big),\qquad
+  \eta_q=\gamma_q\frac{\sigma_i^2}{c_{iq}^2}\hat p_{iq}\hat p_{qi},
+\]
+其中 $s_{iq}$ 为 1（$i$ 名次在前）、1/2（并列）或 0，$\gamma_q$ 为可选的缩放因子。令 $\Omega_i=\sum_{q\ne i}\delta_q$、$\Delta_i=\sum_{q\ne i}\eta_q$，成员更新为
+\[
+  \mu_{ij}\leftarrow\mu_{ij}+\frac{\sigma_{ij}^2}{\sigma_i^2}\,\Omega_i,\qquad
+  \sigma_{ij}^2\leftarrow\sigma_{ij}^2\max\!\Big(1-\frac{\sigma_{ij}^2}{\sigma_i^2}\Delta_i,\ \kappa\Big),
+\]
+$\kappa>0$ 防止方差变为非正。与 Elo 的\cref{eq:1a-elo-update} 相比，“实际减预测”的结构相同，步长则正比于各自的方差。
+
 \subsection{EOMM 的三种特例}\label{app:ch1a-eomm}
 
 设玩家流失只取决于本局结果，记 $c(\mathrm W)$、$c(\mathrm L)$、$c(\mathrm D)$ 为胜、负、平后的流失概率，$P_{ij}(\cdot)$ 为 $i$ 对 $j$ 的结果分布。一对玩家的流失之和为
-\[
-  P_{ij}(\mathrm W)\big[c(\mathrm W)+c(\mathrm L)\big]+P_{ij}(\mathrm L)\big[c(\mathrm L)+c(\mathrm W)\big]+P_{ij}(\mathrm D)\cdot 2c(\mathrm D)
-  =\big[c(\mathrm W)+c(\mathrm L)\big]-P_{ij}(\mathrm D)\big[c(\mathrm W)+c(\mathrm L)-2c(\mathrm D)\big].
-\]
-对所有配对求和后，最小化总流失等价于：若 $c(\mathrm W)+c(\mathrm L)>2c(\mathrm D)$，最大化总平局概率；若不等号反向，最小化总平局概率。平局在实力相近时最可能发生，所以前一种情形下按分匹配最优，后一种情形下按分匹配最差。若流失与本局结果无关（只取决于赛前状态），上式与配对无关，任何匹配（包括随机匹配）都一样。这就是 Chen 等\cite{chen2017eomm} 第 4 节的结论。
+\begin{align*}
+  &P_{ij}(\mathrm W)\big[c(\mathrm W)+c(\mathrm L)\big]+P_{ij}(\mathrm L)\big[c(\mathrm L)+c(\mathrm W)\big]+P_{ij}(\mathrm D)\cdot 2c(\mathrm D)\\
+  &\qquad=\big[c(\mathrm W)+c(\mathrm L)\big]-P_{ij}(\mathrm D)\big[c(\mathrm W)+c(\mathrm L)-2c(\mathrm D)\big].
+\end{align*}
+对所有配对求和后，最小化总流失等价于：若 $c(\mathrm W)+c(\mathrm L)>2c(\mathrm D)$，最大化总平局概率；若不等号反向，最小化总平局概率。平局在实力相近时最可能发生，所以前一种情形下按分匹配最优，后一种情形下按分匹配最差。若流失与本局结果无关（只取决于赛前状态），总流失与配对无关，任何匹配（包括随机匹配）都一样。这就是 Chen 等\cite{chen2017eomm} 第 4 节的结论。
 
-由此还可以看出一点（\tagOwn 的推论）：在\emph{没有平局}的输赢游戏中，若流失只取决于本局结果，则每对玩家的流失之和恒为 $c(\mathrm W)+c(\mathrm L)$，匹配对总流失毫无影响。参与度优化匹配要有效果，流失必须依赖于玩家的状态（例如最近几局的胜负、技能、在线时长），而且这种依赖要因人而异。EOMM 的输入正是“最近 10 局的胜负平”等状态变量，这也是它与“按连胜连败安排对手”在机制上相通的原因。
+由此还可以推出一点\tagOwn：在\emph{没有平局}的输赢游戏中，若流失只取决于本局结果，则每对玩家的流失之和恒为 $c(\mathrm W)+c(\mathrm L)$，匹配对总流失毫无影响。参与度优化匹配要有效果，流失必须依赖于玩家的状态（例如最近几局的胜负、技能、在线时长），而且这种依赖要因人而异。EOMM 的输入正是“最近 10 局的胜负平”等状态变量，这也是它与“按连胜连败安排对手”在机制上相通的原因。
 
 \subsection{Yuksel 目标胜率公式}\label{app:ch1a-yuksel}
 
-设玩家最近 $n$ 局赢了 $w$ 局，希望包含接下来 $n+1$ 局在内、长 $2n+1$ 的窗口的期望胜率为 $\lambda$。若接下来每局对手都使其胜率为 $p$，窗口期望胜局数为 $w+(n+1)p$，令其等于 $\lambda(2n+1)$ 即得\cref{eq:1a-yuksel}。两人游戏取 $\lambda=1/2$、论文实验取 $n=5$ 时，$w=0,1,\dots,5$ 对应的目标胜率依次为 $11/12,\,9/12,\,7/12,\,5/12,\,3/12,\,1/12$（约 92\%、75\%、58\%、42\%、25\%、8\%）\tagOwn。论文另取概率窗口 $\Delta p=1/(2n+2)=1/12$，在评分 $f^{-1}(p\pm\Delta p)$ 范围内找对手；这保证 $p-\Delta p>0$ 且 $p+\Delta p<1$\cite{yuksel2024skill}。换言之，这一匹配器对近期战绩的反应相当强：连赢 5 局后，下一局几乎一定会遇到明显更强的对手。
+设玩家最近 $n$ 局赢了 $w$ 局，希望包含接下来 $n+1$ 局在内、长 $2n+1$ 的窗口的期望胜率为 $\lambda$。若接下来每局对手都使其胜率为 $p$，窗口期望胜局数为 $w+(n+1)p$，令其等于 $\lambda(2n+1)$ 即得\cref{eq:1a-yuksel}。两人游戏取 $\lambda=1/2$、论文实验取 $n=5$ 时，$w=0,1,\dots,5$ 对应的目标胜率依次为 $11/12,\,9/12,\,7/12,\,5/12,\,3/12,\,1/12$（约 92\%、75\%、58\%、42\%、25\%、8\%）\tagOwn。论文在评分 $f^{-1}(p\pm\Delta p)$ 范围内找对手，实验取 $\Delta p=1/(2n+2)=1/12$；作者指出取严格小于该值才能保证 $p\pm\Delta p$ 落在 $(0,1)$ 内\cite{yuksel2024skill}。换言之，这一匹配器对近期战绩的反应相当强：连赢 5 局后，下一局几乎一定会遇到明显更强的对手。
