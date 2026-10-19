@@ -14,7 +14,7 @@ ROWS = [("ar1", "(b) AR(1) 状态：ρ=0.9，SD=60"),
 def main():
     use()
     d = run_examples()
-    fig, axes = plt.subplots(len(ROWS), 1, figsize=(WIDTH_FULL, 6.4), sharex=True)
+    fig, axes = plt.subplots(len(ROWS), 1, figsize=(WIDTH_FULL, 5.3), sharex=True)
     for ax, (nm, title) in zip(axes, ROWS):
         u = d[f"{nm}_u"]
         R = d[f"{nm}_R"]

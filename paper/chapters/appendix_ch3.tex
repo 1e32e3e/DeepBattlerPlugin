@@ -79,7 +79,7 @@ $M=T_W+T_L$。则（行向量 $\pi$ 为 $M$ 的平稳分布，$\bm p$ 为 $p_z$ 
 \centering\small
 \caption{第三章的模拟设定。所有随机种子固定，脚本可独立重现；重模拟结果缓存在 \texttt{code/ch3/cache/}。}
 \label{tab:ch3-sim-params}
-\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X}
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}X}
 \toprule
 项目 & 设定 \\
 \midrule
@@ -91,6 +91,6 @@ $M=T_W+T_L$。则（行向量 $\pi$ 为 $M$ 的平稳分布，$\bm p$ 为 $p_z$ 
 \end{tabularx}
 \end{table}
 
-图与脚本的对应：\cref{fig:ch3-longest}–\cref{fig:ch3-bg} 分别由 \texttt{fig\_longest\_run.py}、\texttt{fig\_pattern\_window.py}、\texttt{fig\_ms\_bias.py}、\texttt{fig\_elo\_event.py}、\texttt{fig\_elo\_reversion.py}、\texttt{fig\_models\_traj.py}、\texttt{fig\_ar\_absorb.py}、\texttt{fig\_tilt\_chain.py}、\texttt{fig\_fatigue\_session.py}、\texttt{fig\_models\_conditional.py}、\texttt{fig\_models\_longest.py}、\texttt{fig\_power.py}、\texttt{fig\_manip.py}、\texttt{fig\_bg\_drought.py} 生成。
+图与脚本的对应（\cref{fig:ch3-longest} 至\cref{fig:ch3-bg}，按出现顺序）：\texttt{fig\_longest\_run}、\texttt{fig\_pattern\_window}、\texttt{fig\_ms\_bias}、\texttt{fig\_elo\_event}、\texttt{fig\_elo\_reversion}、\texttt{fig\_models\_traj}、\texttt{fig\_ar\_absorb}、\texttt{fig\_tilt\_chain}、\texttt{fig\_fatigue\_session}、\texttt{fig\_models\_conditional}、\texttt{fig\_models\_longest}、\texttt{fig\_power}、\texttt{fig\_manip}、\texttt{fig\_bg\_drought}，均为 \texttt{code/ch3/} 下的 \texttt{.py} 脚本。
 
 模型的局限需要如实说明：人群模拟假设正态实力、模型设定正确、固定 $K$、封闭人群、人人每轮都打、无组排和流失；窄窗口与按评分蛇形分队时评分刻度在统计期内仍在拉伸，相应数字只是快照。真实游戏多用 Glicko、TrueSkill 一类变步长系统，本章的固定 $K$ 结果只给出效应量的量级和区间。所有实力波动参数都是示意值。
