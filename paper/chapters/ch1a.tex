@@ -57,7 +57,7 @@ $G$ 是噪声差 $\varepsilon_j-\varepsilon_i$ 的分布函数。噪声为正态
 
 \subsection{成对比较：Thurstone、Zermelo、Bradley–Terry 与 Luce}\label{sec:1a-paired}
 
-Thurstone 1927 年提出“比较判断律”：被试对刺激的感受是正态随机量，比较时取较大者；各刺激方差相同、彼此不相关时即\cref{eq:1a-thurstone}\cite{thurstone1927law}\tagLit。Mosteller 1951 年给出该情形下刻度值的最小二乘解\cite{mosteller1951remarks}\tagLit，后人合称 Thurstone–Mosteller 模型。逻辑斯蒂一支更早出现在棋类中：Zermelo 1929 年的论文题目就是“把锦标赛成绩的计算写成概率论中的极大值问题”，他用今天称为 Bradley–Terry 的模型从循环赛结果推算棋手实力\cite{zermelo1929berechnung}\tagLit\needcheck[；只核对了题录，未重读德文原文]。Bradley 与 Terry 1952 年独立提出\cite{bradley1952rank}\tagLit
+Thurstone 1927 年提出“比较判断律”：被试对刺激的感受是正态随机量，比较时取较大者；各刺激方差相同、彼此不相关时即\cref{eq:1a-thurstone}\cite{thurstone1927law}\tagLit。Mosteller 1951 年给出该情形下刻度值的最小二乘解\cite{mosteller1951remarks}\tagLit，后人合称 Thurstone–Mosteller 模型。逻辑斯蒂一支更早出现在棋类中：Zermelo 1929 年的论文题目就是“把锦标赛成绩的计算写成概率论中的极大值问题”，他用今天称为 Bradley–Terry 的模型从循环赛结果推算棋手实力\cite{zermelo1929berechnung}\tagLit\needcheck[；本节经典文献（Thurstone、Mosteller、Zermelo、Bradley–Terry、Luce、Plackett）只核对了题录，模型形式依据 Glickman 1995、TrueSkill 论文与 Aldous 2017 的转述]。Bradley 与 Terry 1952 年独立提出\cite{bradley1952rank}\tagLit
 \begin{equation}\label{eq:1a-bt}
   \Prob(i\ \text{胜}\ j) = \frac{\pi_i}{\pi_i+\pi_j} = \frac{1}{1+e^{-(\theta_i-\theta_j)}},\qquad \theta_i=\ln\pi_i .
 \end{equation}
