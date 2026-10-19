@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from _common import CH, INK, SERIES, WIDTH_FULL, save, use
+from _common import FONT_SCALE, CH, INK, SERIES, WIDTH_FULL, save, use
 from experiments import STANDARD, run_examples
 
 ROWS = [("ar1", "(b) AR(1) 状态：ρ=0.9，SD=60"),
@@ -14,7 +14,7 @@ ROWS = [("ar1", "(b) AR(1) 状态：ρ=0.9，SD=60"),
 def main():
     use()
     d = run_examples()
-    fig, axes = plt.subplots(len(ROWS), 1, figsize=(WIDTH_FULL, 5.3), sharex=True)
+    fig, axes = plt.subplots(len(ROWS), 1, figsize=(5.2, 4.9), sharex=True)
     for ax, (nm, title) in zip(axes, ROWS):
         u = d[f"{nm}_u"]
         R = d[f"{nm}_R"]
@@ -33,7 +33,7 @@ def main():
         ax.axhline(0, color=INK["muted"], lw=0.6)
         ax.set_ylim(-190, 205)
         ax.set_yticks([-150, -75, 0, 75, 150])
-        ax.set_title(title, loc="left", fontsize=9)
+        ax.set_title(title, loc="left", fontsize=9 * FONT_SCALE)
         ax.set_ylabel("Elo")
     axes[-1].set_xlabel("局序号 $t$（竖线：一次游玩结束）")
     h, l = axes[0].get_legend_handles_labels()
@@ -41,7 +41,7 @@ def main():
     h.append(Line2D([], [], color=INK["secondary"], lw=0, marker="|", ms=8, mew=1.0))
     l.append("顶部短线：胜（向上）/ 负（向下）")
     fig.tight_layout(h_pad=0.6)
-    fig.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=3, frameon=False, fontsize=8)
+    fig.legend(h, l, loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=3, frameon=False, fontsize=8 * FONT_SCALE)
     save(fig, CH, "models_traj")
 
 

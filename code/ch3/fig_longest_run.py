@@ -26,6 +26,8 @@ def main():
         ax.set_xscale("log")
         ax.set_xlim(10, N_MAX)
         log_count_axis(ax)
+        ax.set_xticks([10, 30, 100, 300, 1000])
+        ax.set_xticklabels(["10", "30", "100", "300", "1000"])
         ax.set_ylim(0, 1.02)
         ax.set_xlabel("局数 $n$（对数刻度）")
         ax.set_title(title, loc="left")

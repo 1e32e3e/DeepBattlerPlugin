@@ -24,7 +24,7 @@ EXP_TS2 = [46, 51, 50, 57, 53, 54, 59, 61, 66, 87]
 def main():
     use()
     x = np.arange(len(SIZES))
-    fig, ax = plt.subplots(figsize=(WIDTH_FULL, 2.7))
+    fig, ax = plt.subplots(figsize=(WIDTH_FULL, 2.35))
     ax.plot(x, ACTUAL, color=SERIES[0], marker="o", ms=4.5, label="实际胜率")
     ax.plot(x, EXP_TS, color=SERIES[1], ls="--", marker="s", ms=3.8, label="经典 TrueSkill 预期（求和假设）")
     ax.plot(x, EXP_TS2, color=SERIES[2], ls="-.", marker="^", ms=4.2, label="TrueSkill 2 预期（加车队偏移）")

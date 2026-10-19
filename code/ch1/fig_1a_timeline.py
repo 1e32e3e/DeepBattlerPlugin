@@ -54,8 +54,8 @@ def xmap(year):
 def main():
     use()
     n_rows = 5
-    lane_h = n_rows + 1.3
-    fig, ax = plt.subplots(figsize=(WIDTH_FULL, 5.4))
+    lane_h = n_rows + 0.9
+    fig, ax = plt.subplots(figsize=(WIDTH_FULL, 4.5))
     ax.set_xlim(-0.01, 1.0)
     total_h = lane_h * len(LANES)
     ax.set_ylim(-0.4, total_h)

@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from _common import CH, INK, SERIES, WIDTH_FULL, bottom_legend, save, use
+from _common import FONT_SCALE, CH, INK, SERIES, WIDTH_FULL, bottom_legend, save, use
 from experiments import K_ELO, STANDARD, run_standard
 
 MODELS = ["none", "ar1", "hmm", "tilt", "fatigue"]
@@ -14,7 +14,7 @@ MARKERS = ["o", "s", "^", "D", "v"]
 def main():
     use()
     ks = np.arange(1, 7)
-    fig, axes = plt.subplots(2, 2, figsize=(WIDTH_FULL, 4.6), sharex=True, sharey="row")
+    fig, axes = plt.subplots(2, 2, figsize=(5.0, 4.1), sharex=True, sharey="row")
     for r, K in enumerate((0, K_ELO)):
         for c, key in enumerate(("L", "W")):
             ax = axes[r, c]
@@ -24,8 +24,8 @@ def main():
                         label=LABELS[nm])
             ax.axhline(0, color=INK["muted"], lw=0.8)
             what = "连败" if key == "L" else "连胜"
-            sys_ = "评分不动（K=0）" if K == 0 else f"Elo（K={K}）"
-            ax.set_title(f"({'abcd'[2 * r + c]}) {sys_}：{what} k 局后", loc="left", fontsize=9)
+            sys_ = "K=0" if K == 0 else f"K={K}"
+            ax.set_title(f"({'abcd'[2 * r + c]}) {sys_}：{what} k 局后", loc="left", fontsize=9 * FONT_SCALE)
             if c == 0:
                 ax.set_ylabel("胜率超额（百分点）")
             if r == 1:

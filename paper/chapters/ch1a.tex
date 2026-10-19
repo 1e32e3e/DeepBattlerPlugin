@@ -7,7 +7,7 @@
 
 中文玩家口中的“ELO 机制”通常同时指两件事：系统怎样给人打分，以及系统怎样安排对手和队友。学术文献把它们分开研究。\textbf{评分}（rating，又称技能评级 skill rating）回答“这个人有多强”：从一局局胜负里估计一个看不见的实力，属于统计推断。\textbf{匹配}（matchmaking）回答“让谁和谁打”：拿着评分、排队时间、网络延迟等信息决定一局的人选和分队，属于优化与机制设计。Elo、Glicko、TrueSkill 都是评分系统；“按分匹配”（skill-based matchmaking, SBMM）、“参与度优化匹配”（engagement-optimized matchmaking, EOMM）是匹配策略。玩家怀疑的“控胜率”如果存在，只能发生在匹配这一层，评分公式本身只做记账。
 
-两者又互相缠绕：匹配器用的是评分 $R_i$ 而不是真实实力 $s_i$，评分系统看到的对局又是匹配器挑出来的。TrueSkill 的作者把匹配称为一种“序贯实验设计”，并记录了排行榜对玩家的反作用：有人为保分停玩、挑对手甚至作弊\cite{herbrich2006trueskill}\tagLit。本章依次介绍评分模型（\cref{sec:1a-models}）、匹配机制本身的研究（\cref{sec:1a-mm}）、各游戏的专门研究（\cref{sec:1a-games}）和中文文献（\cref{sec:1a-cn}），最后小结（\cref{sec:1a-summary}）。厂商披露、专利与诉讼见本章另一部分。
+两者又互相缠绕：匹配器用的是评分 $R_i$ 而不是真实实力 $s_i$，评分系统看到的对局又是匹配器挑出来的。TrueSkill 的作者把匹配称为一种“序贯实验设计”，并记录了排行榜的反作用：有人为保分停玩、挑对手甚至作弊\cite{herbrich2006trueskill}\tagLit。本章依次介绍评分模型（\cref{sec:1a-models}）、匹配机制本身的研究（\cref{sec:1a-mm}）、各游戏的专门研究（\cref{sec:1a-games}）和中文文献（\cref{sec:1a-cn}），最后小结（\cref{sec:1a-summary}）。厂商披露、专利与诉讼见本章另一部分。
 
 \subsection{所有模型共用一个潜变量框架}\label{sec:1a-latent}
 
@@ -26,7 +26,7 @@ $G$ 是噪声差 $\varepsilon_j-\varepsilon_i$ 的分布函数。噪声为正态
 \end{equation}
 所以 400 分只是刻度：分差 400 意味着胜负赔率 $10:1$，期望得分 $\Elogit(400)\approx 0.909$；逻辑斯蒂的一个“标准单位”对应 $400/\ln 10\approx 173.7$ 分，Glicko-2 的内部刻度用的正是 173.7178\cite{glickman2022example}\tagLit。
 
-正态与逻辑斯蒂在实践中几乎分不出来：Glickman 转述 Stern 的结论，分析成对比较数据时两种假设“几乎没有差别”，选逻辑斯蒂主要因为数学上好处理\cite{glickman1995comprehensive,stern1992linear}\tagLit。本项目逐格抄录了 FIDE 现行条例的“分数 $\leftrightarrow$ 分差”换算表\cite{fide2024rating}，发现它与“每人单局表现标准差 200”的正态曲线最多相差 19 分，而与 Elo 逻辑斯蒂曲线在尾部相差可达 121 分（期望得分 0.99 处，表中分差 677，正态 658，逻辑斯蒂 798；\cref{fig:1a-curves}，换算见\cref{app:ch1a-scale}）\tagOwn。可见 FIDE 至今保留着 Elo 原书的正态假设，Glickman 1995 年把 FIDE 也归入 Bradley–Terry 一类，至少对其现行换算表并不准确。三条曲线之差都不足 1.5 个百分点，对游戏匹配无关紧要；真正影响预测的是图中第四条曲线：评分本身不确定时，预测应向 50\% 收缩（\cref{sec:1a-glicko}）。
+正态与逻辑斯蒂在实践中几乎分不出来：Glickman 转述 Stern 的结论，分析成对比较数据时两种假设“几乎没有差别”，选逻辑斯蒂主要因为数学上好处理\cite{glickman1995comprehensive,stern1992linear}\tagLit。本项目逐格抄录了 FIDE 现行条例的“分数 $\leftrightarrow$ 分差”换算表\cite{fide2024rating}，发现它与“每人单局表现标准差 200”的正态曲线最多相差 19 分，而与 Elo 逻辑斯蒂曲线在尾部相差可达 121 分（期望得分 0.99 处，表中分差 677，正态 658，逻辑斯蒂 798；\cref{fig:1a-curves}，换算见\cref{app:ch1a-scale}）\tagOwn。可见 FIDE 至今保留着 Elo 原书的正态假设（Glickman 1995 年把 FIDE 归入 Bradley–Terry 一类，对其现行换算表并不准确）。三条曲线之差不足 1.5 个百分点，对游戏无关紧要；真正影响预测的是图中第四条曲线：评分本身不确定时，预测应向 50\% 收缩（\cref{sec:1a-glicko}）。
 
 \begin{figure}[htbp]
   \centering
@@ -40,8 +40,7 @@ $G$ 是噪声差 $\varepsilon_j-\varepsilon_i$ 的分布函数。噪声为正态
 \begin{keybox}
 \begin{itemize}
   \item 评分是推断（估计 $s_i$），匹配是决策（选对手、分队）；“控胜率”若存在，只能在匹配层。
-  \item 主流评分模型都基于“实力 + 随机表现”框架；正态与逻辑斯蒂两种曲线相差不足 1.5 个百分点，分差 400 对应约 90.9\% 的期望得分。
-  \item FIDE 现行换算表仍是正态曲线（本项目逐格核对，最大偏差 19 分）。
+  \item 主流模型都基于“实力 + 随机表现”框架；正态与逻辑斯蒂曲线相差不足 1.5 个百分点，分差 400 对应约 90.9\% 的期望得分。
 \end{itemize}
 \end{keybox}
 
@@ -58,15 +57,15 @@ $G$ 是噪声差 $\varepsilon_j-\varepsilon_i$ 的分布函数。噪声为正态
 
 \subsection{成对比较：Thurstone、Zermelo、Bradley–Terry 与 Luce}\label{sec:1a-paired}
 
-Thurstone 1927 年提出“比较判断律”：被试对刺激的感受是正态随机量，比较时取较大者；各刺激方差相同、彼此不相关时即\cref{eq:1a-thurstone}\cite{thurstone1927law}\tagLit。Mosteller 1951 年给出该情形下刻度值的最小二乘解\cite{mosteller1951remarks}\tagLit，后人合称 Thurstone–Mosteller 模型。逻辑斯蒂一支更早出现在棋类中：Zermelo 1929 年的论文题目就是“把锦标赛成绩的计算写成概率论中的极大值问题”，他用今天称为 Bradley–Terry 的模型从循环赛结果推算棋手实力\cite{zermelo1929berechnung}\tagLit\needcheck[；只核对了题录，未重读德文原文]。Bradley 与 Terry 1952 年独立提出
+Thurstone 1927 年提出“比较判断律”：被试对刺激的感受是正态随机量，比较时取较大者；各刺激方差相同、彼此不相关时即\cref{eq:1a-thurstone}\cite{thurstone1927law}\tagLit。Mosteller 1951 年给出该情形下刻度值的最小二乘解\cite{mosteller1951remarks}\tagLit，后人合称 Thurstone–Mosteller 模型。逻辑斯蒂一支更早出现在棋类中：Zermelo 1929 年的论文题目就是“把锦标赛成绩的计算写成概率论中的极大值问题”，他用今天称为 Bradley–Terry 的模型从循环赛结果推算棋手实力\cite{zermelo1929berechnung}\tagLit\needcheck[；只核对了题录，未重读德文原文]。Bradley 与 Terry 1952 年独立提出\cite{bradley1952rank}\tagLit
 \begin{equation}\label{eq:1a-bt}
-  \Prob(i\ \text{胜}\ j) = \frac{\pi_i}{\pi_i+\pi_j} = \frac{1}{1+e^{-(\theta_i-\theta_j)}},\qquad \theta_i=\ln\pi_i
+  \Prob(i\ \text{胜}\ j) = \frac{\pi_i}{\pi_i+\pi_j} = \frac{1}{1+e^{-(\theta_i-\theta_j)}},\qquad \theta_i=\ln\pi_i .
 \end{equation}
-\cite{bradley1952rank}\tagLit。Luce 1959 年的选择公理把它推广到从集合 $S$ 中选一项，$\Prob(i\mid S)=w_i/\sum_{j\in S}w_j$，即“选 $i$ 不选 $j$ 的相对几率与集合里还有谁无关”\cite{luce1959individual}\tagLit。Plackett 1975 年把逐个挑出第一名、第二名……的过程连乘，得到整个名次排列 $\pi$ 的概率
+Luce 1959 年的选择公理把它推广到从集合 $S$ 中选一项，$\Prob(i\mid S)=w_i/\sum_{j\in S}w_j$，即“选 $i$ 不选 $j$ 的相对几率与集合里还有谁无关”\cite{luce1959individual}\tagLit。Plackett 1975 年把逐个挑出第一名、第二名……的过程连乘，得到整个名次排列 $\pi$ 的概率
 \begin{equation}\label{eq:1a-pl}
   \Prob(\pi) = \prod_{k=1}^{N} \frac{w_{\pi(k)}}{\sum_{m=k}^{N} w_{\pi(m)}} ,
 \end{equation}
-即 Plackett–Luce 模型\cite{plackett1975analysis}\tagLit。它是 8 人名次类游戏（自由混战、大逃杀、自走棋）最自然的统计模型：一局 8 人的名次相当于连续 7 次“从剩下的人里选出最强者”。这些模型都是静态的，估计时把全部数据一起做极大似然；游戏需要每局都更新、并允许实力变化的在线版本，Elo 就是第一个。
+即 Plackett–Luce 模型\cite{plackett1975analysis}\tagLit。它是 8 人名次类游戏（自由混战、大逃杀、自走棋）最自然的模型：一局 8 人的名次相当于连续 7 次“从剩下的人里选出最强者”。这些模型都是静态的；游戏需要每局更新、允许实力变化的在线版本，Elo 是第一个。
 
 \subsection{Elo：把成对比较变成在线记分}\label{sec:1a-elo}
 
@@ -82,15 +81,15 @@ $\Kf$ 有两种直观读法。Glickman 的读法：\cref{eq:1a-elo-update} 近�
 设 $y\in\{0,1\}$ 表示 $i$ 是否胜 $j$，$E=\Elogit(R_i-R_j)$，单局对数似然 $\ell = y\ln E + (1-y)\ln(1-E)$。由 $\Elogit'(x)=\cElo\,\Elogit(x)\big(1-\Elogit(x)\big)$ 得 $\partial \ell/\partial R_i = \cElo\,(y-E)$。以步长 $\eta$ 做一步梯度上升，$R_i \leftarrow R_i + \eta\,\cElo\,(y-E)$；令 $\Kf=\eta\,\cElo$ 即得\cref{eq:1a-elo-update}。对 $R_j$ 的梯度恰为相反数，所以更新零和。$\Kf$ 越大，跟踪实力变化越快，评分围绕实力的抖动也越大。\tagOwn
 \end{derivbox}
 
-FIDE 现行条例（2024 年 3 月 1 日起施行）规定：新进入等级分表的棋手在完成至少 30 局之前 $\Kf=40$，18 岁生日所在年年底之前且低于 2300 分的棋手 $\Kf=40$，低于 2400 分 $\Kf=20$，公布等级分一旦达到 2400 则永久 $\Kf=10$；一个评分周期内 $\Kf$ 乘局数不得超过 700；自 2025 年 10 月 1 日起，“分差超过 400 按 400 计”的规则只适用于 2650 分以下的棋手\cite{fide2024rating}\tagOff。TrueSkill 论文的对照实验用高斯版 Elo，取 $\alpha=0.07$，注明相当于 $\Kf=24$，“被认为是良好而稳定的动态”\cite{herbrich2006trueskill}\tagLit。
+FIDE 现行条例（2024 年 3 月 1 日起施行）的 $\Kf$：新棋手前 30 局及 18 岁以下且低于 2300 分者为 40，低于 2400 分为 20，一旦达到 2400 则永久为 10；一个周期内 $\Kf$ 乘局数不超过 700\cite{fide2024rating}\tagOff。TrueSkill 论文的对照实验所用高斯版 Elo 相当于 $\Kf=24$，作者称之为“良好而稳定的动态”\cite{herbrich2006trueskill}\tagLit。
 
-Elo 有三个被充分记录的问题。\textbf{其一，用估计值预测会过度自信。}\cref{eq:1a-elo-curve} 描述的是真实实力之间的关系，系统手里只有带误差的评分。Glickman 分析 1991—1993 年 8300 多局 USCF 比赛，发现按公布评分算出的期望得分系统性地高估了高分一方：对“对手真实实力”平均后的期望得分小于直接代入评分的结果，例如真实 1900 分的棋手遇到公布 1700、真实实力一半时间 1600 一半时间 1800 的对手，代入公式得 0.76，实际平均只有 $(0.64+0.85)/2=0.745$\cite{glickman1995comprehensive}\tagLit。Szczecinski 2026 年把它写成定理：由于估计噪声，用于排名的模型和用于预测的模型必须解耦，预测时的有效曲线要更平；他用六年的 FIFA 男足排名检验，发现绝大多数国家队的评分尚未收敛\cite{szczecinski2026new}\tagLit。这直接关系到第二章“系统预测胜率 $E$ 与真实胜率 $p$ 不是一回事”（\cref{ch:winrate}）。\textbf{其二，封闭分池会通缩。}Glickman 指出，只要玩家平均实力随时间上升、系统又不凭空加分，实力不变的老玩家就会不断输分给进步中、评分偏低的新玩家；USCF 在 1970 年代中期观察到平均评分下滑，先后试过“奖励分”和“反馈分”，后因过度补偿取消，1980 年代后期改设“评分地板”\cite{glickman1995comprehensive}\tagLit。FIDE 2023 年公开承认过去十年的若干改动造成通缩，提出给 2000 分以下（约 85\% 的注册棋手）一次性加 $0.4\times(2000-R)$ 分、把最低等级分从 1000 提到 1400\cite{fide2023seeks}\tagOff，2024 年条例只公布 1400 分及以上的等级分\cite{fide2024rating}\tagOff。游戏中的“赛季重置”“段位保护”“保底分”可以看作同一问题的工程补丁。\textbf{其三，高端是否通胀。}Regan 与 Haworth 用高深度引擎评估每步棋的质量，拟合出“内在评分”，发现不同年代同一等级分对应的走子质量基本不变，“几乎没有评分通胀”\cite{regan2011intrinsic}\tagLit。
+Elo 有三个被充分记录的问题。\textbf{其一，用估计值预测会过度自信。}\cref{eq:1a-elo-curve} 描述的是真实实力之间的关系，系统手里只有带误差的评分。Glickman 分析 1991—1993 年 8300 多局 USCF 比赛，发现按公布评分算出的期望得分系统性地高估了高分一方：例如真实 1900 分的棋手遇到公布 1700、真实实力一半时间 1600 一半时间 1800 的对手，代入公式得 0.76，实际平均只有 $(0.64+0.85)/2=0.745$\cite{glickman1995comprehensive}\tagLit。Szczecinski 2026 年把它写成定理：由于估计噪声，用于排名和用于预测的模型必须解耦，预测曲线要更平；他发现六年的 FIFA 男足排名中绝大多数国家队尚未收敛\cite{szczecinski2026new}\tagLit。这正是第二章“系统预测胜率 $E$ 与真实胜率 $p$ 不同”的来源（\cref{ch:winrate}）。\textbf{其二，封闭分池会通缩。}只要玩家平均实力随时间上升、系统又不凭空加分，实力不变的老玩家就会不断输分给进步中、评分偏低的新玩家；USCF 在 1970 年代中期就观察到平均评分下滑，后来改设“评分地板”\cite{glickman1995comprehensive}\tagLit。FIDE 2023 年承认近十年的改动造成通缩，提出给 2000 分以下（约 85\% 的注册棋手）一次性加 $0.4\times(2000-R)$ 分、把最低等级分从 1000 提到 1400\cite{fide2023seeks}\tagOff。游戏中的“赛季重置”“保底分”可以看作同一问题的工程补丁。\textbf{其三，高端是否通胀。}Regan 与 Haworth 用高深度引擎评估每步棋的质量拟合“内在评分”，发现同一等级分对应的走子质量不随年代变化，“几乎没有评分通胀”\cite{regan2011intrinsic}\tagLit。
 
 \subsection{Glicko 与 Glicko-2：给评分加上误差棒}\label{sec:1a-glicko}
 
-Glickman 的例子：两名 1700 分棋手对局，一人刚结束多年休赛，另一人每周都下；USCF 的 Elo 下胜者涨 16 分、负者跌 16 分，但回归者的 1700 本来就不可信，他赢了应该涨得更多，常客输给一个评分不可信的人则不该跌太多\cite{glickman2016glicko}\tagLit。Glicko 因此给每人两个数：评分 $r$ 和评分偏差（rating deviation, RD），即 $r$ 的标准差；其推导是一个动态成对比较的状态空间模型\cite{glickman1999parameter}\tagLit。公开的计算步骤（完整公式见\cref{app:ch1a-glicko}）有三个要点\cite{glickman2016glicko}\tagLit：未定级玩家取 $r=1500$、RD$=350$，不下棋时 RD 按 $\sqrt{\mathrm{RD}^2+c^2}$ 逐期增大（上限 350）；期望得分用 $g(\mathrm{RD})=\big(1+3q^2\mathrm{RD}^2/\pi^2\big)^{-1/2}$（$q=\ln10/400$）折减分差，对手越不确定，期望越接近 0.5，这正是 Glickman 1995 年发现的过度自信的修正（\cref{fig:1a-curves}(a) 的点划线是双方 RD$=350$ 时的预测）；更新步长随自己的 RD 增大，相当于自动调节的 $\Kf$，新号和回归者涨跌快、老玩家涨跌慢，且更新不再零和。Glickman 建议每个评分周期平均 5—10 局，FICS 服务器用的是逐局更新版本。
+Glickman 的例子：两名 1700 分棋手对局，一人刚结束多年休赛，另一人每周都下；USCF 的 Elo 下胜者涨 16 分、负者跌 16 分，但回归者的 1700 本来就不可信，他赢了应该涨得更多，常客则不该跌太多\cite{glickman2016glicko}\tagLit。Glicko 因此给每人两个数：评分 $r$ 和评分偏差（rating deviation, RD），即 $r$ 的标准差，推导基于动态成对比较的状态空间模型\cite{glickman1999parameter}\tagLit。计算上有三个要点（完整公式见\cref{app:ch1a-glicko}）：未定级玩家取 $r=1500$、RD$=350$，不下棋时 RD 逐期增大（上限 350）；期望得分用 $g(\mathrm{RD})=\big(1+3q^2\mathrm{RD}^2/\pi^2\big)^{-1/2}$（$q=\ln10/400$）折减分差，对手越不确定、期望越接近 0.5，这正是对上述过度自信的修正（\cref{fig:1a-curves}(a) 的点划线）；更新步长随自己的 RD 增大，相当于自动调节的 $\Kf$，且更新不再零和\cite{glickman2016glicko}\tagLit。
 
-Glicko-2 再加一个“波动率”$\sigma$，描述实力本身变化的剧烈程度：长期稳定后突然打出远超预期的成绩，$\sigma$ 变大，RD 随之放大，评分就能更快追上\cite{glickman2001dynamic}\tagLit。系统常数 $\tau$ 约束波动率的变化，Glickman 建议取 0.3—1.2，每期平均至少 10—15 局；他的算例里，一名 1500 分、RD$=200$ 的玩家一胜两负后变为 1464.06 分、RD$=151.52$\cite{glickman2022example}\tagLit。波动率可以看作对实力波动的一个粗糙建模，第三章讨论的“上头”与状态起伏正属此类（\cref{ch:streaks}）。Lichess 使用 Glicko-2\cite{chowdhary2023quantifying}\tagLit；CS:GO 被认为使用一个未公开的 Glicko-2 变体，但这一说法来自社区资料\cite{bober2024skill}\tagCom。
+Glicko-2 再加一个“波动率”$\sigma$ 描述实力本身变化的剧烈程度：长期稳定后突然打出远超预期的成绩，$\sigma$ 变大、RD 随之放大，评分就能更快追上\cite{glickman2001dynamic}\tagLit。Glickman 建议系统常数 $\tau$ 取 0.3—1.2，每个评分周期平均至少 10—15 局\cite{glickman2022example}\tagLit。波动率可以看作对实力波动的粗糙建模，第三章的“上头”与状态起伏正属此类（\cref{ch:streaks}）。Lichess 使用 Glicko-2\cite{chowdhary2023quantifying}\tagLit；CS:GO 被认为使用一个未公开的 Glicko-2 变体，但这一说法来自社区资料\cite{bober2024skill}\tagCom。
 
 \subsection{TrueSkill：因子图上的团队、多人与平局}\label{sec:1a-trueskill}
 
@@ -98,12 +97,12 @@ TrueSkill 为团队与多人在线游戏设计，部署在 Xbox Live 上，作�
 
 模型为：实力先验 $s_i\sim\Normal(\mu_i,\sigma_i^2)$，表现 $p_i\sim\Normal(s_i,\beta^2)$，队伍表现是成员表现之和 $t_j=\sum_{i\in A_j}p_i$，名次由 $t_j$ 的大小决定；相邻名次之差在平局边际 $\varepsilon$ 以内算平局，$\varepsilon$ 由观测平局率按 $\Prob(\text{平局})=2\Phi\big(\varepsilon/(\sqrt{n_1+n_2}\,\beta)\big)-1$ 反推（$n_1,n_2$ 为两队人数）。推断在因子图上用期望传播（矩匹配）完成，每局后把后验近似为高斯作为下一局的先验，运行时间不超过简单 Elo 更新的两倍。两人（两队）一胜一负时后验有闭式（推导见\cref{app:ch1a-ts}）：记 $c^2=2\beta^2+\sigma_{\mathrm w}^2+\sigma_{\mathrm l}^2$，$t=(\mu_{\mathrm w}-\mu_{\mathrm l})/c$，$a=\varepsilon/c$，
 \begin{equation}\label{eq:1a-ts-update}
-\begin{aligned}
-  \mu_{\mathrm w}&\leftarrow \mu_{\mathrm w}+\frac{\sigma_{\mathrm w}^2}{c}\,v(t,a),\qquad
-  \mu_{\mathrm l}\leftarrow \mu_{\mathrm l}-\frac{\sigma_{\mathrm l}^2}{c}\,v(t,a),\qquad
-  \sigma_k^2\leftarrow\sigma_k^2\Big[1-\frac{\sigma_k^2}{c^2}\,w(t,a)\Big],\\
-  v(t,a)&=\frac{\varphi(t-a)}{\Phi(t-a)},\qquad w(t,a)=v(t,a)\big(v(t,a)+t-a\big),
-\end{aligned}
+\begin{gathered}
+  \mu_{\mathrm w}\leftarrow \mu_{\mathrm w}+\frac{\sigma_{\mathrm w}^2}{c}\,v(t,a),\qquad
+  \mu_{\mathrm l}\leftarrow \mu_{\mathrm l}-\frac{\sigma_{\mathrm l}^2}{c}\,v(t,a),\\
+  \sigma_k^2\leftarrow\sigma_k^2\Big[1-\frac{\sigma_k^2}{c^2}\,w(t,a)\Big],\qquad
+  v(t,a)=\frac{\varphi(t-a)}{\Phi(t-a)},\qquad w(t,a)=v(t,a)\big(v(t,a)+t-a\big),
+\end{gathered}
 \end{equation}
 w、l 表示胜方与负方，$k\in\{\mathrm w,\mathrm l\}$，$\varphi$ 为标准正态密度。爆冷时 $t$ 为负、$v$ 很大，更新幅度大；与 Glicko 一样，步长正比于自己的方差。
 
@@ -114,7 +113,7 @@ TrueSkill 用“平局概率”衡量一局是否势均力敌：两人的匹配�
 \end{equation}
 作者指出，一局的质量由结果的不可预测性决定，所以“匹配的目标与寻找信息量最大的对局是一致的”。Xbox 360 Live 取 $\mu_0=25$、$\sigma_0=25/3$、$\beta=\sigma_0/2$，每局附加动态方差 $(\sigma_0/100)^2$；排行榜显示保守估计 $\mu-3\sigma$；系统每天处理数十万局\cite{herbrich2006trueskill}\tagLit。
 
-作者用 Bungie 提供的《光环 2》公测数据比较 TrueSkill 与高斯版 Elo（\cref{tab:1a-halo2}）。他们提醒，有匹配器参与时预测错误率很难解读，能达到的最小错误率可能高达 50\%，因此设计了“挑战集”：各系统挑出自认为最势均力敌的 20\% 对局交给对方预测。挑战集上 TrueSkill 全面占优；全集上，4 对 4 的 Small Teams 模式中 Elo 略好，而且按匹配质量排序时 TrueSkill 在该模式不如 Elo，作者认为“可能是因为这一模式多为夺旗玩法，违反了团队表现可加的假设”\cite{herbrich2006trueskill}\tagLit。这是 TrueSkill 作者自己承认“团队 = 成员之和”可能失效，比 TrueSkill 2 的车队数据（\cref{sec:1a-ts2}）早了 12 年。在 8 人自由混战中，作者展示的两名高分玩家约 10 局收敛（信息论下限约 5 局），Elo 收敛缓慢；这只是两个示例，不是平均值。论文还记录了 Xbox Live 上新玩家起初连续输球、把整体评分分布压到先验之下的现象，一次评分重置并收紧匹配后消失，这与 Glickman 描述的通缩机制是同一回事。
+作者用 Bungie 提供的《光环 2》公测数据比较 TrueSkill 与高斯版 Elo（\cref{tab:1a-halo2}），并提醒有匹配器参与时最小可达错误率可能高达 50\%，因此设计了“挑战集”：各系统挑出自认为最势均力敌的 20\% 对局交给对方预测。挑战集上 TrueSkill 全面占优；但在 4 对 4 的 Small Teams 模式中，全集上 Elo 略好，按匹配质量排序时 TrueSkill 也不如 Elo，作者认为“可能是因为这一模式多为夺旗玩法，违反了团队表现可加的假设”\cite{herbrich2006trueskill}\tagLit。这是 TrueSkill 作者自己承认“团队 = 成员之和”可能失效，比 TrueSkill 2 的车队数据（\cref{sec:1a-ts2}）早 12 年。作者展示的两名高分玩家约 10 局收敛（信息论下限约 5 局），Elo 收敛缓慢，但这只是两个示例。论文还记录了新玩家起初连续输球、把整体评分分布压到先验之下的现象，与 Glickman 描述的通缩是同一回事。
 
 \begin{table}[htbp]
   \centering\small
@@ -122,9 +121,9 @@ TrueSkill 用“平局概率”衡量一局是否势均力敌：两人的匹配�
   \label{tab:1a-halo2}
   \begin{tabular}{lcccccc}
     \toprule
-    模式 & 每队人数 & Elo & TrueSkill & Weng–Lin & Elo（挑战集） & TrueSkill（挑战集）\\
+    模式 & 人数 & Elo & TrueSkill & Weng–Lin & 挑战集 Elo & 挑战集 TrueSkill\\
     \midrule
-    Free for All & 8 人各自为战 & 32.14 & 30.82 & 30.59 & 38.30 & 35.64\\
+    Free for All & 8 人混战 & 32.14 & 30.82 & 30.59 & 38.30 & 35.64\\
     Small Teams & 4 对 4 & 34.92 & 35.23 & 33.97 & 42.55 & 37.17\\
     Head to Head & 1 对 1 & 33.24 & 32.44 & 32.53 & 40.57 & 30.83\\
     Large Teams & 8 对 8 & 39.49 & 38.15 & 37.30 & 44.12 & 29.94\\
@@ -134,23 +133,23 @@ TrueSkill 用“平局概率”衡量一局是否势均力敌：两人的匹配�
 
 \subsection{全历史方法与解析近似：TTT、WHR 与 Weng–Lin}\label{sec:1a-smoothing}
 
-Elo、Glicko、TrueSkill 都只向前传递信息。TrueSkill 2 的作者举例：6 名初始相同的玩家依次进行 A 胜 B、C 胜 D、E 胜 F、B 胜 C、D 胜 E，逐局更新会让 B 与 D、C 与 E 的评分完全相同，而五局合看，顺序显然是 A$>$B$>$C$>$D$>$E$>$F\cite{minka2018trueskill}\tagLit。TrueSkill Through Time（TTT）把每人每年的实力当作一个变量，前后年份用随机游走相连，在整个时间序列上做平滑而非滤波，并为每名棋手估计“逼和能力”；作者用 ChessBase 约 350 万局、跨 150 年的数据发现整体棋力在上升，且个人平局边际明显提高预测力\cite{dangauthier2007trueskill}\tagLit。这与 Regan 和 Haworth 的“无通胀”并不矛盾：前者估计绝对水平，后者检验评分刻度是否漂移。TTT 十多年没有主流语言的实现，2025 年 Landfried 与 Mocskos 发布了 Julia、Python 和 R 版本\cite{landfried2025trueskill}\tagLit。
+Elo、Glicko、TrueSkill 都只向前传递信息。TrueSkill 2 的作者举例：6 名初始相同的玩家依次进行 A 胜 B、C 胜 D、E 胜 F、B 胜 C、D 胜 E，逐局更新会让 B 与 D、C 与 E 的评分完全相同，而五局合看，顺序显然是 A$>$B$>$C$>$D$>$E$>$F\cite{minka2018trueskill}\tagLit。TrueSkill Through Time（TTT）把每人每年的实力用随机游走串起来，在整个时间序列上做平滑而非滤波；作者用 ChessBase 约 350 万局、跨 150 年的数据发现整体棋力在上升（这与 Regan 和 Haworth 的“无通胀”不矛盾：前者估计绝对水平，后者检验刻度是否漂移），并发现为每名棋手估计“逼和能力”能明显提高预测力\cite{dangauthier2007trueskill}\tagLit。2025 年 Landfried 与 Mocskos 发布了 TTT 的 Julia、Python 和 R 实现\cite{landfried2025trueskill}\tagLit。
 
-Coulom 的全历史评分（WHR）同样基于动态 Bradley–Terry 模型，用维纳过程描述实力漂移，但直接对整段评分历史求精确的最大后验估计\cite{coulom2008whole}\tagLit。在 KGS 围棋服务器 21.3 万名玩家、1080 万局的数据上，用 2005 年 5 月之前的对局调参、之后的 233 万局测试，预测正确率依次为 Elo 55.12\%、Glicko 55.52\%、TrueSkill 55.54\%、Bayeselo 55.67\%、衰减历史 55.70\%、WHR 55.79\%：WHR 最好，但各方法相差不到 0.7 个百分点，而 WHR 在训练集上耗时 252 秒，Elo 只要 0.4 秒。
+Coulom 的全历史评分（WHR）基于动态 Bradley–Terry 模型和维纳过程，直接对整段评分历史求精确的最大后验估计\cite{coulom2008whole}\tagLit。在 KGS 围棋服务器 1080 万局的数据上（测试集 233 万局），预测正确率依次为 Elo 55.12\%、Glicko 55.52\%、TrueSkill 55.54\%、Bayeselo 55.67\%、衰减历史 55.70\%、WHR 55.79\%：WHR 最好，但各方法相差不到 0.7 个百分点，而 WHR 在训练集上耗时 252 秒，Elo 只要 0.4 秒。
 
-Weng 与 Lin 用 Stein 恒等式推出团队、多队排名的解析更新式，免去 TrueSkill 的迭代消息传递，涵盖 Bradley–Terry、Thurstone–Mosteller 和 Plackett–Luce 三类模型（Bradley–Terry 版本的公式见\cref{app:ch1a-wenglin}）\cite{weng2011bayesian}\tagLit。在同一份《光环 2》数据上，其错误率与 TrueSkill 相当（\cref{tab:1a-halo2}），F\# 实现跑完自由混战数据只要 1.2 秒（TrueSkill 13 秒），代码不到 100 行（TrueSkill 超过 500 行）。开源库 OpenSkill 实现了这些算法；在作者自己报告的一个 Overwatch 小数据集上，TrueSkill 的准确率反而更高（92.44\% 对 87.56\%），OpenSkill 的优势在速度\cite{joshy2024openskill}\tagLit。
+Weng 与 Lin 用 Stein 恒等式推出团队、多队排名的解析更新式（\cref{app:ch1a-wenglin}），免去 TrueSkill 的迭代消息传递\cite{weng2011bayesian}\tagLit：在同一份《光环 2》数据上错误率与 TrueSkill 相当（\cref{tab:1a-halo2}），运行时间 1.2 秒对 13 秒，代码不到 100 行对 500 多行。实现这些算法的开源库 OpenSkill 在作者自报的一个 Overwatch 小数据集上准确率反而低于 TrueSkill（87.56\% 对 92.44\%），优势在速度\cite{joshy2024openskill}\tagLit。
 
 \subsection{TrueSkill 2：先找出假设错在哪，再改模型}\label{sec:1a-ts2}
 
-TrueSkill 2 是微软研究院与《战争机器》开发商 The Coalition 合作的技术报告（未经同行评审），也是公开文献中对一款商业射击游戏评分系统描述最完整的一份\cite{minka2018trueskill}\tagLit。作者先列出游戏工作室的要求，其中两条后文反复用到：评分必须是单个数字，以兼容现有匹配器；激励必须相容，不能让玩家为刷分而损害队友（例如若按自我治疗次数加分，玩家就会故意受伤）。方法上，每项模型修改都由一个“指标”驱动：把玩家按某个特征分组，比较实际胜率与模型预期胜率，出现系统性偏差才改模型。数据是 343 Industries 提供的《光环 5》自 2015 年发售以来的全部对局，用发售后 2300 万局训练、其后 300 万局测试。主要修改有：
+TrueSkill 2 是微软研究院与《战争机器》开发商 The Coalition 合作的技术报告（未经同行评审），也是公开文献中对一款商业射击游戏评分系统描述最完整的一份\cite{minka2018trueskill}\tagLit。工作室的要求包括：评分必须是单个数字以兼容现有匹配器；激励必须相容，不能让玩家为刷分而损害队友。方法上，每项修改都由一个“指标”驱动：把玩家按某个特征分组，比较实际胜率与模型预期胜率，出现系统性偏差才改模型。数据是 343 Industries 提供的《光环 5》自 2015 年发售以来的全部对局，用发售后 2300 万局训练、其后 300 万局测试。主要修改有：
 
 \begin{enumerate}
   \item \textbf{车队偏移。}按玩家所在车队（预先组队的朋友）人数分组，经典 TrueSkill 的预期胜率远低于实际：4 人车队实际 57\%、预期 52\%，8 人实际 68\%、预期 49\%，10 人以上实际 89\%、预期 67\%（\cref{fig:1a-squad}）。作者的结论是“关于车队的假设是错的：车队的实力应大于成员之和，且效应随车队规模增大”，并提到《光环 5》和《战争机器 4》的部分模式因此禁止大车队，另一些游戏强制车队只匹配车队，代价是缩小匹配池。修正是让表现服从 $\Normal\big(s_i+\mathrm{squadOffset}(\text{车队人数}),\beta^2\big)$。
-  \item \textbf{经验效应。}新玩家实际胜率 45\%，预期 49\%：玩家最初几局进步最快。修正是让实力的随机游走带一个随局数变化的正漂移，相当于“每局后无论胜负都给一点小的加分”；这还自动解释了久未上线后胜率下降的现象。
-  \item \textbf{个人统计。}上一局每分钟击杀数最低组实际胜率 43\%、预期 48\%，最高组实际 59\%、预期 50\%。TrueSkill 2 让击杀、死亡数依赖于表现变量，并强制单调，以免玩家为凑数字而改变打法。此外，中途退出按投降处理；各模式评分相关（相关系数约 0.6），通过共同的“基础实力”加模式偏移实现。
+  \item \textbf{经验效应。}新玩家实际胜率 45\%、预期 49\%：最初几局进步最快。修正是让实力的随机游走带随局数变化的正漂移，相当于“每局无论胜负都加一点分”。
+  \item \textbf{个人统计与其他。}上一局每分钟击杀数最低组实际胜率 43\%、预期 48\%，最高组实际 59\%、预期 50\%；TrueSkill 2 让击杀、死亡数依赖于表现变量并强制单调，以免玩家为凑数字改变打法。中途退出按投降处理；各模式评分（相关系数约 0.6）共享一个“基础实力”。
 \end{enumerate}
 
-这些修改把测试集准确率从 52\% 提到 68\%；这里的准确率指预测获胜队伍（或首名平局）是否正确，可选项为队伍数加一，不是二选一的抛硬币。模型还故意不使用“几点上线”“和谁组队”等与实力相关的信息，因为“激励应当是把游戏打好，而不是挑特定时间、和特定队友排队”。《战争机器 4》自 2016 年发售起使用 TrueSkill 2：实时在线更新，每个排位赛季前用 TTT 对全部历史批量重算；社交与合作模式中的电脑机器人按难度各当作一名实力固定的“玩家”，为人类评分提供固定参照\cite{minka2018trueskill}\tagLit。
+这些修改把测试集准确率从 52\% 提到 68\%（指预测获胜队伍或首名平局，可选项为队伍数加一，不是二选一）。模型还故意不用“几点上线”“和谁组队”等与实力相关的信息，因为“激励应当是把游戏打好，而不是挑特定时间、和特定队友排队”。《战争机器 4》自 2016 年发售起使用 TrueSkill 2：实时在线更新，每个排位赛季前用 TTT 对全部历史批量重算；社交与合作模式中的电脑机器人按难度各当作一名实力固定的“玩家”，为人类评分提供固定参照\cite{minka2018trueskill}\tagLit。
 
 \begin{figure}[htbp]
   \centering
@@ -163,16 +162,16 @@ TrueSkill 2 是微软研究院与《战争机器》开发商 The Coalition 合�
 
 8 人一局、只看名次的游戏有三种建模办法：Plackett–Luce（\cref{eq:1a-pl}），Weng–Lin 给出了它的在线更新；TrueSkill 把 $N$ 名玩家按表现排序、只连接相邻名次，《光环 2》的 8 人自由混战即如此处理\cite{herbrich2006trueskill}\tagLit；以及 Ebtekar 与 Liu 的 Elo-MMR\cite{ebtekar2021elo}\tagLit。Elo-MMR 每轮先根据名次和他人评分估计每人本轮的“表现”，再把表现当作观测更新信念；名字中的 MMR 指 Massive（计算量线性）、Monotonic（激励相容，想提高评分的人永远不会想故意表现差）、Robust（单轮变化有界）。作者证明了这些性质（并指出 TrueSkill 被认为满足前两条但未经证明，且不满足稳健性），处理 Codeforces 30 多万名有评分用户、1000 场比赛不到一分钟，比现行系统快一个数量级，预测精度相当或更好。这三种模型都可直接用于《炉石传说》酒馆战棋一类游戏，但公开文献中没有任何一篇用酒馆战棋数据检验过它们（\cref{sec:1a-games-hs}）；这类游戏的“胜率”定义也要另说（\cref{ch:winrate}）。
 
-\Cref{eq:1a-latent} 还隐含了传递性。Balduzzi 等指出，Elo 在“石头剪刀布”式循环博弈中没有预测力，而且可以被操纵：往数据里加入大量它能打赢的对手副本，就能抬高某个体的评分\cite{balduzzi2018reevaluating}\tagLit。他们用组合 Hodge 分解把胜负矩阵分成传递分量与循环分量，提出多维 Elo（mElo）：$\hat p_{ij}=\sigma\big(r_i-r_j+\mathbf c_i^{\top}\Omega\,\mathbf c_j\big)$，其中 $\mathbf c_i$ 是“克制向量”，$\Omega$ 反对称。在 7 个 AlphaGo 变体加 Zen 的对战数据上，二维版本把预测误差（与经验胜率矩阵之差的 Frobenius 范数）从 0.85 降到 0.35。Czarnecki 等论证真实游戏的策略空间像一个“陀螺”：顶端接近传递，中段循环最多\cite{czarnecki2020real}\tagLit；Bertrand 等证明 Elo 即使在简单的传递博弈中也可能提取不出正确的传递分量，提出给每人“实力 + 稳定性”两个数的圆盘排名\cite{bertrand2023limitations}\tagLit。反方向的证据同样重要：Tang、Wang 与 Jin 发现多数真实对局数据集都显著偏离 Bradley–Terry 假设、也不平稳，但 Elo 的胜率预测仍常胜过 mElo 等复杂模型；他们的解释是 Elo 作为在线梯度下降在模型设定错误时仍有“无悔”保证，而真实数据太稀疏，复杂模型估不准\cite{tang2025elo}\tagLit。对游戏而言，英雄、卡组、阵容造成的克制确实存在，单一 MMR 只是它们的投影；但在每对玩家只交手几次的天梯数据上，一维评分仍是合理的折中。
+\Cref{eq:1a-latent} 还隐含了传递性。Balduzzi 等指出，Elo 在“石头剪刀布”式循环博弈中没有预测力，还可以被操纵：往数据里加入大量它能打赢的对手副本即可抬高其评分\cite{balduzzi2018reevaluating}\tagLit。他们用组合 Hodge 分解把胜负矩阵分成传递与循环两部分，提出多维 Elo（mElo）$\hat p_{ij}=\sigma\big(r_i-r_j+\mathbf c_i^{\top}\Omega\,\mathbf c_j\big)$（$\mathbf c_i$ 为“克制向量”，$\Omega$ 反对称）；在 7 个 AlphaGo 变体加 Zen 的对战数据上，二维版本把与经验胜率矩阵之差的 Frobenius 范数从 0.85 降到 0.35。Czarnecki 等论证真实游戏的策略空间像“陀螺”，顶端接近传递、中段循环最多\cite{czarnecki2020real}\tagLit；Bertrand 等证明 Elo 即使在简单的传递博弈中也可能提取不出正确的传递分量\cite{bertrand2023limitations}\tagLit。反方向的证据同样重要：Tang、Wang 与 Jin 发现多数真实对局数据集都显著偏离 Bradley–Terry 假设，但 Elo 的胜率预测仍常胜过 mElo 等复杂模型，原因是 Elo 作为在线梯度下降在设定错误时仍有“无悔”保证，而真实数据太稀疏\cite{tang2025elo}\tagLit。对游戏而言，英雄、卡组造成的克制确实存在，单一 MMR 只是投影；但在每对玩家只交手几次的天梯数据上，一维评分仍是合理的折中。
 
 \subsection{Elo 的统计行为：近十年的理论结果}\label{sec:1a-theory}
 
-Aldous 2017 年称 Elo 是“应用概率中被忽视的课题”\cite{aldous2017elo}\tagLit。他把 Elo 抽象为胜方加 $\Upsilon(y_i-y_j)$、负方减同样的量；若真实胜率函数为 $W$，满足“平衡关系”$\Upsilon(u)/\Upsilon(-u)=W(-u)/W(u)$ 时，评分差等于实力差的那一刻评分差的期望变化为零，常用的 $\Upsilon(u)=\delta W(-u)$（即 $\Kf(1-E)$）是一个解。他证明在随机配对下评分过程有唯一平稳分布，但定理不说明它离真实实力多近，于是转向模拟：评分误差来自“曲线选错”“滞后”“噪声”三部分，滞后随 $\Kf$ 减小而增大，噪声随 $\Kf$ 增大而增大。结论是：在合理的实力变化模型下，无论打多少局，预测胜率的典型误差都不会显著低于 10\%（永远预测 50\% 的误差为 15.9\% 或 26.1\%，视实力分散程度而定）；要把误差减半，实力需要约 150—200 局才发生显著变化。他追查网上广为复制的“约 30 场后评分就会收敛到真实实力”，没有找到任何来源或依据。
+Aldous 2017 年称 Elo 是“应用概率中被忽视的课题”\cite{aldous2017elo}\tagLit。他证明随机配对下 Elo 评分过程有唯一平稳分布，再用模拟把误差分成“曲线选错”“滞后”“噪声”三部分（滞后随 $\Kf$ 减小而增大，噪声随 $\Kf$ 增大而增大），结论是：在合理的实力变化模型下，无论打多少局，预测胜率的典型误差都不会显著低于 10\%（永远预测 50\% 的误差为 15.9\% 或 26.1\%，视实力分散程度而定）；要把误差减半，实力需要约 150—200 局才发生显著变化。他追查网上广为复制的“约 30 场后评分就会收敛到真实实力”，没有找到任何来源或依据。
 
-“动力学”模型把大量玩家的评分看作随时间演化的密度：Jabin 与 Junca 提出 Elo 的连续模型，据后续论文转述，他们在一定假设下证明评分密度收敛到实力密度\cite{jabin2015continuous}\tagLit\needcheck[；对其结论的描述来自 Aldous 与 Düring 等的转述]；Düring 等加入学习效应和可变表现，推导出 Boltzmann 型与 Fokker–Planck 型方程\cite{during2019boltzmann,during2022elo}\tagLit。近三年的结果更为定量。Cortez 与 Tossounian 证明随机配对下 Elo 以指数速率（在 2-Wasserstein 距离下且几乎必然）收敛到唯一平稳分布，平稳分布在 $\Kf\to0$ 时以 $\sqrt{\Kf}$ 的速率收敛到真实实力\cite{cortez2026convergence}\tagLit。Olesker-Taylor 与 Zanetti 证明时间平均、设上下限的 Elo 学习 Bradley–Terry–Luce 参数的速率可与最好的离线算法相比，并把“如何安排对局让 Elo 收敛最快”转化为图上的“最快混合马尔可夫链”问题\cite{oleskertaylor2024analysis}\tagLit。Szczecinski 给出 $\Kf$ 同时决定收敛时间（约与 $\Kf$ 成反比）和收敛后估计方差（约与 $\Kf$ 成正比）的闭式结果\cite{szczecinski2026new}\tagLit；他与 Djebbi 此前指出，Elo 把平局记作半胜半负，隐含了一个特定的平局模型，并提出可调平局频率的 $\kappa$-Elo\cite{szczecinski2019understanding}\tagLit。2026 年还有工作尝试把每步棋的质量纳入 Elo 以更快跟踪实力，同时证明它与传统 Elo 的偏差有界\cite{zhou2026accelerating}\tagLit。这些结果说的是同一件事：固定 $\Kf$ 的 Elo 永远在“追得快”与“抖得小”之间取舍，第二章和第四章分别从胜率与训练角度给出具体数字（\cref{ch:winrate,ch:ml}）。
+“动力学”模型把评分看作随时间演化的密度：据后续论文转述，Jabin 与 Junca 在一定假设下证明评分密度收敛到实力密度\cite{jabin2015continuous}\tagLit\needcheck[；对其结论的描述来自 Aldous 与 Düring 等的转述]，Düring 等再加入学习效应和可变表现\cite{during2019boltzmann,during2022elo}\tagLit。近三年的结果更为定量。Cortez 与 Tossounian 证明随机配对下 Elo 以指数速率（在 2-Wasserstein 距离下且几乎必然）收敛到唯一平稳分布，平稳分布在 $\Kf\to0$ 时以 $\sqrt{\Kf}$ 的速率收敛到真实实力\cite{cortez2026convergence}\tagLit。Olesker-Taylor 与 Zanetti 证明时间平均、设上下限的 Elo 学习 Bradley–Terry–Luce 参数的速率可与最好的离线算法相比，并把“如何安排对局让 Elo 收敛最快”转化为图上的“最快混合马尔可夫链”问题\cite{oleskertaylor2024analysis}\tagLit。Szczecinski 给出 $\Kf$ 同时决定收敛时间（约与 $\Kf$ 成反比）和收敛后估计方差（约与 $\Kf$ 成正比）的闭式结果\cite{szczecinski2026new}\tagLit；他与 Djebbi 此前指出，Elo 把平局记作半胜半负，隐含了一个特定的平局模型，并提出可调平局频率的 $\kappa$-Elo\cite{szczecinski2019understanding}\tagLit。2026 年还有工作把每步棋的质量纳入 Elo 以更快跟踪实力\cite{zhou2026accelerating}\tagLit。这些结果说的是同一件事：固定 $\Kf$ 的 Elo 永远在“追得快”与“抖得小”之间取舍，第二章和第四章分别从胜率与训练角度给出具体数字（\cref{ch:winrate}与\cref{ch:ml}）。
 
-\begin{table}[htbp]
-  \centering\small
+\begin{table}[tbp]
+  \centering\footnotesize
   \caption{主要评分模型一览（摘要表，公式与证据见正文）。}
   \label{tab:1a-models}
   \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
@@ -194,19 +193,19 @@ Aldous 2017 年称 Elo 是“应用概率中被忽视的课题”\cite{aldous201
 
 \begin{keybox}
 \begin{itemize}
-  \item 评分模型的演化是逐条放松“两人、固定实力、一维”三个假设：Glicko 引入不确定性，TrueSkill 引入团队与多人，TTT/WHR 引入全历史平滑，mElo 处理非传递性，TrueSkill 2 把行为数据放进模型。
-  \item 增益最大的往往不是换公式，而是修正错误假设：TrueSkill 2 在《光环 5》上把准确率从 52\% 提到 68\%，主要靠车队、经验和个人统计；KGS 围棋上 Elo、Glicko、TrueSkill、WHR 的差距不到 0.7 个百分点。
-  \item 固定 $\Kf$ 的 Elo 收敛到一个围绕真实实力抖动的平稳分布，抖动随 $\sqrt{\Kf}$ 缩小；Aldous 的模拟表明预测误差很难低于 10\%，“30 场就收敛”查无出处。
+  \item 评分模型的演化是逐条放松“两人、固定实力、一维”三个假设：Glicko 加不确定性，TrueSkill 加团队与多人，TTT/WHR 加全历史平滑，mElo 处理非传递性。
+  \item 增益最大的往往是修正错误假设而非换公式：TrueSkill 2 靠车队、经验和个人统计把《光环 5》准确率从 52\% 提到 68\%；KGS 围棋上各主流系统相差不到 0.7 个百分点。
+  \item 固定 $\Kf$ 的 Elo 收敛到围绕实力抖动的平稳分布；预测误差很难低于 10\%，“30 场就收敛”查无出处。
 \end{itemize}
 \end{keybox}
 
 \section{匹配机制本身的研究}\label{sec:1a-mm}
 
-匹配研究问“给定一池排队的人，怎样配对、分队最好”。“最好”至少有四种含义：结果最难预测（公平）、对估计实力最有信息量、等待时间短、玩家留得住。前两者在 TrueSkill 框架下是同一个目标，后两者则与公平存在真实冲突。本节按这四个目标组织文献，最后讨论玩家对连胜连败的实际反应，因为参与度优化正建立在这些反应之上。
+匹配研究问“给定一池排队的人，怎样配对、分队最好”。“最好”至少有四种含义：结果最难预测（公平）、对估计实力最有信息量、等待时间短、玩家留得住。前两者在 TrueSkill 框架下是同一个目标，后两者则与公平存在真实冲突。
 
 \subsection{公平与信息量：同一个目标}\label{sec:1a-mm-info}
 
-一局结果若能提前猜到，它对估计双方实力几乎没有帮助；胜率接近 50\% 时结果的不确定性最大，单局 Fisher 信息 $\cElo^2p(1-p)$ 也在 $p=1/2$ 时最大（\cref{ch:ml}）。TrueSkill 的匹配质量\cref{eq:1a-ts-quality} 把这一点做成了准则。Bober-Irizar 等把“选哪两队对局”当作主动学习中的“采集函数”，在 HLTV 收录的 9929 场职业与半职业 CS:GO 比赛上发现：挑选“最可能平局”或“交叉熵最大”的对局，比随机挑选的预测准确率高 1—1.5 个百分点，而直接用 TrueSkill 自带的匹配质量来挑反而不如随机\cite{bober2024skill}\tagLit。Yuksel 的模拟则提醒，按分匹配并不总对估计有利：在他的设定中，Elo、Glicko、TrueSkill 估计群体评分的误差在随机配对下都更小，因为按分匹配让比较集中在相邻的人之间\cite{yuksel2024skill}\tagLit。匹配还会反过来影响评估：有匹配器参与时最好的系统预测错误率也可能接近 50\%\cite{herbrich2006trueskill}\tagLit，TrueSkill 2 因此改用“分组实际胜率 vs 预期胜率”作为主要诊断\cite{minka2018trueskill}\tagLit。这是第二章“观察到的胜率接近五成不代表实力相同”的文献来源（\cref{ch:winrate}）。
+一局结果若能提前猜到，它对估计双方实力几乎没有帮助；胜率接近 50\% 时结果的不确定性最大，单局 Fisher 信息 $\cElo^2p(1-p)$ 也在 $p=1/2$ 时最大（\cref{ch:ml}）。TrueSkill 的匹配质量\cref{eq:1a-ts-quality} 把这一点做成了准则。Bober-Irizar 等把“选哪两队对局”当作主动学习中的“采集函数”，在 HLTV 收录的 9929 场职业与半职业 CS:GO 比赛上发现：挑选“最可能平局”或“交叉熵最大”的对局，比随机挑选的预测准确率高 1—1.5 个百分点，而直接用 TrueSkill 自带的匹配质量来挑反而不如随机\cite{bober2024skill}\tagLit。Yuksel 的模拟则提醒，按分匹配并不总对估计有利：在他的设定中，Elo、Glicko、TrueSkill 估计群体评分的误差在随机配对下都更小，因为按分匹配让比较集中在相邻的人之间\cite{yuksel2024skill}\tagLit。匹配还会反过来影响评估：有匹配器参与时最好的系统预测错误率也可能接近 50\%，TrueSkill 2 因此改用“分组实际胜率 vs 预期胜率”作为主要诊断（第二章的出发点之一，\cref{ch:winrate}）。
 
 \subsection{等多久：等待时间与匹配质量的在线权衡}\label{sec:1a-mm-wait}
 
@@ -214,18 +213,18 @@ Emek、Kutten 与 Wattenhofer 以国际象棋、拼字游戏等在线对战平�
 \begin{equation}\label{eq:1a-mpmd}
   \mathrm{cost}(M)=\sum_{(u,v)\in M} \mathrm{dist}(u,v) + \sum_{u} \big(t_{\text{match}}(u)-t_{\text{arrive}}(u)\big),
 \end{equation}
-即“配对双方的距离之和”加“等待时间之和”，且决策在线、不可撤销；他们给出竞争比 $O(\log^2 n+\log\Delta)$ 的随机算法\cite{emek2016online}\tagLit。Liu、Pan、Wang 与 Wattenhofer 认为线性等待代价不符合“越等越不耐烦”的玩家，改用凸代价并给出最优的确定性算法\cite{liu2022online}\tagLit。2026 年 Liu、Zhang 与 Zhang 提出“成本平衡”规则：自上次匹配以来累计的等待成本达到当前匹配成本的某个比例时就匹配；最坏情况下代价不超过“预知全部未来到达”的最优策略的两倍，且没有确定性在线规则能做得更好\cite{liu2026when}\tagLit。他们的游戏实验是一个校准过的 1 对 1 模拟，对比的行业做法是“搜索半径随等待时间线性扩大、两人半径重叠即配对”的气泡算法，成本平衡使总成本（等待时间加分差）降低 3.7\%—8.2\%。这些工作为厂商普遍采用的“等得越久、允许的分差越大”提供了理论框架，但都没有用真实游戏的排队数据。
+即“配对双方的距离之和”加“等待时间之和”，且决策在线、不可撤销；他们给出竞争比 $O(\log^2 n+\log\Delta)$ 的随机算法\cite{emek2016online}\tagLit。Liu、Pan、Wang 与 Wattenhofer 针对“越等越不耐烦”的玩家改用凸等待代价\cite{liu2022online}\tagLit。2026 年 Liu、Zhang 与 Zhang 提出“成本平衡”规则：累计等待成本达到当前匹配成本的某个比例就匹配，最坏情况下代价不超过预知未来的最优策略的两倍\cite{liu2026when}\tagLit；在一个校准过的 1 对 1 模拟中，它比“搜索半径随等待时间线性扩大”的行业做法（气泡算法）总成本低 3.7\%—8.2\%。这些工作为“等得越久、允许的分差越大”提供了理论框架，但都没有用真实排队数据。
 
 \subsection{组队：把一维评分分成两队}\label{sec:1a-mm-team}
 
-团队游戏选出 $2k$ 人后还要分成两队；若队伍实力取成员之和，这就是 NP 难的“均衡数分割”问题\cite{wang2024enmatch}\tagLit。Alman 与 McKay 给出一个一般的不平衡度量：队伍的“$p$-实力”取成员实力的 $p$-范数，两队之差为 $p$-公平度，再加上整局实力的离散程度，
+团队游戏选出 $2k$ 人后还要分成两队；若队伍实力取成员之和，这就是 NP 难的“均衡数分割”问题\cite{wang2024enmatch}\tagLit。Alman 与 McKay 用成员实力的 $p$-范数定义队伍实力，以两队之差（$p$-公平度）加整局实力的离散程度衡量不平衡\cite{alman2017theoretical}\tagLit：
 \begin{equation}\label{eq:1a-alman}
   d_p(X,Y)=\Big|\Big(\sum_{x\in X}s_x^p\Big)^{1/p}-\Big(\sum_{y\in Y}s_y^p\Big)^{1/p}\Big|,\qquad
-  f=\alpha\,d_p+\Big(\frac{1}{|Z|}\sum_{z\in Z}|s_z-\mu_Z|^q\Big)^{1/q}
+  f=\alpha\,d_p+\Big(\frac{1}{|Z|}\sum_{z\in Z}|s_z-\mu_Z|^q\Big)^{1/q}.
 \end{equation}
-\cite{alman2017theoretical}\tagLit。$p=1$ 时队伍实力就是成员之和，$p\to\infty$ 时只看队内最强者，正好对应 Dehpanah 等发现预测最准的 MAX 聚合（\cref{sec:1a-games-br}）。他们证明基本问题可以用 $O(\log n)$ 时间的数据结构在线求解；但允许玩家只选部分位置（“选位排队”）后，问题在 3SUM 猜想下计算上不可行，只能常数倍近似。作者用这一结论解释英雄联盟 2015 年底改用选位排队后排队变长、平衡变差，以及《风暴英雄》限制阵容后排队时间显著增加。
+$p=1$ 时队伍实力就是成员之和，$p\to\infty$ 时只看队内最强者，正对应 Dehpanah 等发现预测最准的 MAX 聚合（\cref{sec:1a-games-br}）。他们证明基本问题可用 $O(\log n)$ 时间的数据结构在线求解；允许玩家只选部分位置（“选位排队”）后，问题在 3SUM 猜想下计算上不可行，只能近似，作者以此解释英雄联盟 2015 年底改用选位排队后排队变长、平衡变差。
 
-网易伏羲与腾讯的研究者在这条线上做了大量工程化工作，均以英文发表。OptMatch 离线学习玩家表示和“组队效应”、在线规划以最大化满意度，在《潮人篮球》上做了线上实验\cite{gong2020optmatch}\tagLit\needcheck[；只读到摘要，线上效果未核对]；GloMatch 用自注意力和强化学习同时为多局做全局优化\cite{deng2021globally}\tagLit\needcheck[；只读到其他论文的描述]。腾讯的 QuickSkill 针对新手冷启动：TrueSkill 类算法需要很多局才能定准新玩家，期间容易产生一边倒的对局；它用前几局的序列特征预测未来评分，在一款知名手机 MOBA 的两个模式上做了离线与线上测试，作者称可消除新手阶段 20\% 以上的一边倒对局\cite{zhang2022quickskill}\tagLit。同一团队的 CUPID 在常规匹配后加一道“重匹配”，重新分配队伍和位置\cite{fan2024cupid}\tagLit。论文顺带透露了对照组的做法：一款拥有数千万玩家的手机 MOBA 在排位模式中使用“基于 TrueSkill 的一步式 MMR 匹配”，MMR 预测胜负的准确率只有 52.83\%。在 30 天、10\% 对局进入实验组的 A/B 测试中，CUPID 使第 5 分钟的“碾压率”相对下降 10.54\%，玩家没分到首选位置的比例相对下降 4.13\%；绝对数值因保密未公布。
+网易伏羲与腾讯在这条线上做了大量工程化工作。OptMatch 离线学习玩家表示和“组队效应”、在线规划以最大化满意度，在《潮人篮球》上做了线上实验\cite{gong2020optmatch}\tagLit\needcheck[；只读到摘要，线上效果未核对]；GloMatch 用自注意力和强化学习同时为多局做全局优化\cite{deng2021globally}\tagLit\needcheck[；只读到其他论文的描述]。腾讯的 QuickSkill 针对新手冷启动，用前几局的序列特征预测未来评分，在一款知名手机 MOBA 上称可消除新手阶段 20\% 以上的一边倒对局\cite{zhang2022quickskill}\tagLit。同一团队的 CUPID 在常规匹配后加一道“重匹配”，重新分配队伍和位置\cite{fan2024cupid}\tagLit；论文顺带透露对照组是一款数千万玩家的手机 MOBA 排位模式中“基于 TrueSkill 的一步式 MMR 匹配”，其 MMR 预测胜负的准确率只有 52.83\%。在 30 天、10\% 对局进入实验组的 A/B 测试中，CUPID 使第 5 分钟的“碾压率”相对下降 10.54\%（绝对数值因保密未公布）。
 
 \subsection{以参与度为目标的匹配}\label{sec:1a-mm-engage}
 
@@ -233,13 +232,9 @@ Emek、Kutten 与 Wattenhofer 以国际象棋、拼字游戏等在线对战平�
 
 \paragraph{Ubisoft，2012。}Delalleau、Bengio 等为《幽灵行动 Online》设计的匹配系统不只用技能值，而是用玩家历史统计训练神经网络，同时预测队伍平衡和玩家是否享受这局\cite{delalleau2012beyond}\tagLit。“享受”标签的来源说法不一：EOMM 论文描述为赛后询问玩家，检索到的摘要片段则称问卷数据当时不可得、改用针对该游戏的启发式\needcheck[；IEEE 全文无法访问，标签来源存在矛盾]。
 
-\paragraph{EA 的 EOMM，2017。}Chen 等把一对玩家对局后的流失风险之和
-\begin{equation}\label{eq:1a-eomm}
-  c(s_i,s_j)+c(s_j,s_i)\approx\sum_{o\in\{\text{胜},\text{负},\text{平}\}}\Prob(o\mid\mu_i,\mu_j)\,\big[c(s_i,o)+c(s_j,\bar o)\big]
-\end{equation}
-作为完全图的边权，再求最小权完美匹配\cite{chen2017eomm}\tagLit；$s_i$ 是玩家状态（含最近 10 局胜负平、间隔时间等），$\mu_i$ 是技能评分，$\bar o$ 为对手视角的结果。他们证明：若流失只取决于本局结果且 $c(\text{胜})+c(\text{负})>2c(\text{平})$，按分匹配最优；不等号反向时按分匹配最差；流失与结果无关时任何匹配都一样（\cref{app:ch1a-eomm}；该附录还说明，在没有平局的输赢游戏里，只依赖结果的流失使匹配毫无作用，参与度优化必须依赖玩家状态\tagOwn）。数据来自 EA 一款 1 对 1 游戏 2016 年上半年的 3690 万局、168 万名玩家：最近三局“负负负”的玩家 7 天内流失率 5.1\%，“胜胜胜”3.7\%，“平负胜”等组合 2.6\%—2.7\%。实验是\emph{模拟}：从真实玩家状态中抽样组成 100—500 人的等待池，用 Glicko 预测胜负（平局概率固定 20\%）、逻辑回归预测“8 小时内不再玩”，每种设置重复 1 万轮。相对按分匹配，EOMM 每轮多留住的玩家比例在等待池 200、300、400、500 人时为 0.3\%、0.9\%、1.1\%、0.6\%，平均 0.7\%；常被引用的“留存提高 15\%”是作者按“8 小时匹配 20 轮”做的复利外推（$1.007^{20}\approx1.15$），不是测量值；等待池 100 人时 EOMM 不显著优于随机匹配，留住的人甚至少于按分匹配。
+作为完全图的边权，再求最小权完美匹配\cite{chen2017eomm}\tagLit；$s_i$ 是玩家状态（含最近 10 局胜负平等），$\mu_i$ 是技能评分，$\bar o$ 为对手视角的结果。他们证明：若流失只取决于本局结果且 $c(\text{胜})+c(\text{负})>2c(\text{平})$，按分匹配最优；不等号反向时按分匹配最差；流失与结果无关时任何匹配都一样（\cref{app:ch1a-eomm}；附录还说明，在没有平局的游戏里，只依赖结果的流失使匹配毫无作用，参与度优化必须依赖玩家状态\tagOwn）。数据来自 EA 一款 1 对 1 游戏 2016 年上半年的 3690 万局：最近三局“负负负”的玩家 7 天内流失率 5.1\%，“胜胜胜”3.7\%，“平负胜”等组合 2.6\%—2.7\%。实验是\emph{模拟}：从真实玩家状态中抽样组成 100—500 人的等待池，用 Glicko 预测胜负、逻辑回归预测“8 小时内不再玩”，重复 1 万轮。相对按分匹配，EOMM 每轮多留住的玩家在等待池 200—500 人时为 0.3\%—1.1\%，平均 0.7\%；常被引用的“留存提高 15\%”是作者按“8 小时匹配 20 轮”做的复利外推（$1.007^{20}\approx1.15$），不是测量值；等待池 100 人时 EOMM 不显著优于随机匹配。
 
-\paragraph{Chen、Elmachtoub 与 Lei，2026。}这篇 \emph{Management Science} 论文建立了包含技能差异和“厌恶输球”的动态模型，在两种技能水平、玩家只在连败后流失的特例下求出最优策略\cite{chen2026matchmaking}\tagLit：它兼顾短期（本局结果）和长期（调整技能分布）收益；会议版的描述是尽可能把不会流失的低水平玩家配给“再输一局就会流失”的高水平玩家。论文还发现，多数玩家水平较低时“付费变强”反而可能提高整体参与度，优化匹配能显著减少所需的机器人。用 Lichess 数据校准的案例中，最优策略比按分匹配提高参与度 4\%—6\%，或把机器人比例降低 3\%；新闻稿称数据为 540 万局，理论情形下增益最高 50\%\cite{informs2026smarter}\tagOff。4\%—6\% 是模型中的反事实计算，不是部署结果\needcheck[；只读到摘要与新闻稿]。
+\paragraph{Chen、Elmachtoub 与 Lei，2026。}这篇 \emph{Management Science} 论文建立了包含技能差异和“厌恶输球”的动态模型，在两种技能水平、玩家只在连败后流失的特例下求出最优策略\cite{chen2026matchmaking}\tagLit；会议版的描述是尽可能把不会流失的低水平玩家配给“再输一局就会流失”的高水平玩家。论文还发现，多数玩家水平较低时“付费变强”反而可能提高整体参与度，优化匹配能减少所需的机器人。用 Lichess 数据（新闻稿称 540 万局）校准的案例中，最优策略比按分匹配提高参与度 4\%—6\%，或把机器人比例降低 3\%\cite{informs2026smarter}\tagOff；这是模型中的反事实计算，不是部署结果\needcheck[；只读到摘要与新闻稿]。
 
 \paragraph{网易伏羲的 EnMatch，2024。}EnMatch 把参与度优化推广到 $k$ 对 $k$，用神经组合优化（强化学习）求解非线性目标下的分队\cite{wang2024enmatch}\tagLit。探索性分析用一款“没有成熟匹配系统”的 3 对 3 游戏：同段位组成的“公平队伍”与“一高两低”的“混合队伍”各 1 万场相比，混合队伍获胜时聊天多 19.2\%、点赞多 15.8\%、被队友点踩少 12.3\%；“负负负”的主力玩家流失率 8.4\%，高于辅助位置的 6.2\%。在一款 3 对 3 篮球游戏和一款 15 对 15 对战游戏为期两周的线上 A/B 测试中，以同样流量下的总对局数衡量，EnMatch 比最好的基线分别多 1.64\% 和 7.19\%。
 
@@ -249,8 +244,8 @@ Emek、Kutten 与 Wattenhofer 以国际象棋、拼字游戏等在线对战平�
 \end{equation}
 以论文实验的 $n=5$ 为例，连赢 5 局后下一局按“自己只有 $1/12\approx8\%$ 胜率”挑对手，连输 5 局后按 $11/12\approx92\%$ 挑（\cref{app:ch1a-yuksel}）\tagOwn。论文只用合成数据评估。它的意义在于：根据近期胜负调整对手强弱的匹配器不但可行，而且已被公开提出；在机制上它与玩家所说的“输家队列”（loser queue）难以区分，区别只在设计目标。
 
-\begin{table}[htbp]
-  \centering\small
+\begin{table}[tbp]
+  \centering\footnotesize
   \caption{参与度导向匹配与相关研究的效应量。所有数字都由作者用自有数据或自建模拟报告，本次检索没有找到独立复现。}
   \label{tab:1a-engage}
   \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.0cm}}
@@ -269,7 +264,7 @@ Emek、Kutten 与 Wattenhofer 以国际象棋、拼字游戏等在线对战平�
 
 \subsection{动态难度调整：单人游戏里的先例}\label{sec:1a-dda}
 
-“按玩家状态暗中调整难度”在单人游戏中早有研究，统称动态难度调整（DDA）。Hunicke 与 Chapman 在《半条命》引擎上实现了 Hamlet 系统，借用库存理论监测玩家血量、弹药等“供需”，预测玩家即将陷入困境时调整补给数量和敌人的射击频率与准确度，让玩家留在“心流通道”里\cite{hunicke2004ai}\tagLit；Hunicke 2005 年的会议论文报告了相应用户研究\cite{hunicke2005case}\tagLit\needcheck[；未读到全文，实验结果未核对]。EA 的 Xue 等把 DDA 写成优化问题：把关卡进度建模为概率图，选择每关难度以最大化玩家的总局数\cite{xue2017dynamic}\tagLit。在一款三消游戏中，同一关不同随机初始盘面的通关率从 0.15 到 0.75 不等，他们就用“发哪个盘面”作为难度杠杆；三期 A/B 测试中实验组日均局数高 4.4\%—7.9\%、日均时长高 4.4\%—9.0\%，对付费影响中性。这些研究与 EOMM 出自同一批 EA 研究者，说明“按玩家状态调整胜负概率以提高参与度”至少在单人游戏中公开部署过；但不能说明任何对战游戏的排位匹配这样做了。
+“按玩家状态暗中调整难度”在单人游戏中早有研究，统称动态难度调整（DDA）。Hunicke 与 Chapman 在《半条命》引擎上实现的 Hamlet 系统借用库存理论，在玩家即将陷入困境时调整补给和敌人的射击频率与准确度\cite{hunicke2004ai}\tagLit，Hunicke 2005 年的论文报告了相应用户研究\cite{hunicke2005case}\tagLit\needcheck[；未读到全文，实验结果未核对]。EA 的 Xue 等把关卡进度建模为概率图，选择每关难度以最大化玩家总局数\cite{xue2017dynamic}\tagLit：一款三消游戏中同一关不同随机初始盘面的通关率从 0.15 到 0.75 不等，他们就用“发哪个盘面”作为难度杠杆；三期 A/B 测试中实验组日均局数高 4.4\%—7.9\%、日均时长高 4.4\%—9.0\%，对付费影响中性。这说明“按玩家状态调整胜负概率以提高参与度”至少在单人游戏中公开部署过，但不能说明任何对战游戏的排位匹配这样做了。
 
 \subsection{连胜、连败与流失：实证证据}\label{sec:1a-churn}
 
@@ -281,51 +276,18 @@ Emek、Kutten 与 Wattenhofer 以国际象棋、拼字游戏等在线对战平�
 
 \begin{keybox}
 \begin{itemize}
-  \item 公平与信息量是同一个目标；等待与质量的权衡有成熟的在线算法理论，但都没有用真实排队数据检验。
-  \item 以留存为目标的匹配技术上可行（EOMM、EnMatch、Chen 等），公开报告的效应都不大（每轮 0.7\%、两周 1.6\%—7.2\% 的对局数），全部来自作者自有数据，没有独立复现。
+  \item 以留存为目标的匹配技术上可行，公开报告的效应都不大（EOMM 每轮 0.7\%，EnMatch 两周 1.6\%—7.2\% 的对局数），全部来自作者自有数据，没有独立复现。
   \item “连败导致流失”的证据不一致：条件均值显示连败后流失率较高，控制个体差异后连败不显著，连胜则显著降低流失。
-  \item 按近期战绩调整对手强弱的匹配器已被公开提出（Yuksel 2024，目的为抑制连串），说明它在机制上可行；这不等于任何游戏这样做了。
+  \item 按近期战绩调整对手强弱的匹配器已被公开提出（Yuksel 2024，目的为抑制连串）；这说明机制可行，不等于任何游戏这样做了。
 \end{itemize}
 \end{keybox}
 
 \section{各游戏的专门研究}\label{sec:1a-games}
 
-针对具体游戏的研究按数据来源分两类。第一类由游戏公司或其合作者完成，作者能看到真实日志，有时就是系统设计者：TrueSkill 与 TrueSkill 2（微软与 Bungie、343 Industries、The Coalition）、EOMM（EA）、EnMatch 与 OptMatch（网易）、QuickSkill 与 CUPID（腾讯）、王者荣耀团队构成研究（腾讯合著）、Everybody's Marble 流失研究（网石数据）。第二类由外部研究者用公开 API、战绩网站或公开数据集完成，只能把通用模型重新跑一遍来比较优劣，或研究玩家行为，看不到游戏实际使用的匹配器。下面逐一说明每项研究能告诉我们什么、不能告诉我们什么（汇总于\cref{tab:1a-games}）。
+针对具体游戏的研究按数据来源分两类。第一类由游戏公司或其合作者完成，作者能看到真实日志，有时就是系统设计者：TrueSkill 与 TrueSkill 2（微软与 Bungie、343 Industries、The Coalition）、EOMM（EA）、EnMatch 与 OptMatch（网易）、QuickSkill 与 CUPID（腾讯）、王者荣耀团队构成研究（腾讯合著）、Everybody's Marble 流失研究（网石数据）。第二类由外部研究者用公开 API、战绩网站或公开数据集完成，只能重跑通用模型或研究玩家行为，看不到实际使用的匹配器。下面说明每项研究能告诉我们什么、不能告诉我们什么（汇总于\cref{tab:1a-games}）。
 
-\subsection{《光环》与《战争机器》}\label{sec:1a-games-halo}
-
-微软系游戏是唯一由系统设计者完整公开评分模型的案例（\cref{sec:1a-trueskill,sec:1a-ts2}）\cite{herbrich2006trueskill,minka2018trueskill}\tagLit。Huang 等与微软研究院、微软游戏工作室合作，用《光环：致远星》7 个月、300 多万名玩家的 TrueSkill 评分研究技能发展：早期对局中的评分变化能预测之后的技能，游戏强度能预测最终打多少局，长时间中断后评分下降但恢复训练后回升较快\cite{huang2013mastering}\tagLit。这些研究给出了评分模型、参数和已知偏差，但不涉及匹配器怎样在评分、延迟和等待时间之间取舍，也不涉及后来的作品。
-
-\subsection{CS:GO：研究的是职业比赛，不是官方匹配}\label{sec:1a-games-cs}
-
-常被引为“CS:GO 评分系统分析”的 Skill Issues，数据是 HLTV 收录的 2017—2022 年 9929 场职业与半职业比赛，不是 Valve 官方匹配的对局\cite{bober2024skill}\tagLit。在这批数据上，以队伍为单位时 Glicko-2 全面略优于 Elo 和 TrueSkill，作者称这“出乎意料”；给 10 名选手各自评分的 TrueSkill 最好，最高平均准确率 64.1\%；TrueSkill 默认参数已接近最优，最重要的是 $\beta$ 与 $\sigma$ 之比。关于 Valve 实际使用的系统，学术文献只引用了社区说法。这些研究说明不了官方匹配是否公平，也说明不了它是否参考连胜连败。
-
-\subsection{PUBG 与大逃杀：评估指标与团队聚合}\label{sec:1a-games-br}
-
-DePaul 大学的 Dehpanah 等用 Kaggle 公开的 PUBG 数据做了一组研究：在 10 万多场、200 多万名玩家的单人对局上比较 6 种评估指标，发现有的不区分名次差了几位，有的受新玩家影响过大，有的不区分高名次与低名次的错误，最终推荐归一化折损累计增益（NDCG）\cite{dehpanah2020evaluation}\tagLit；在 2.5 万多场双人组队对局上结论相同\cite{dehpanah2021evaluation}\tagLit。团队聚合研究在 PUBG、英雄联盟、CS:GO 三个公开数据集上比较 SUM、MAX、MIN，MAX（队伍实力 = 队内最强者）在 PUBG 和英雄联盟的所有设定中最好，在 CS:GO 上不稳定\cite{dehpanah2021evaluating}\tagLit；用移动距离、击杀等行为特征构建的简单玩家模型，名次预测胜过三种主流评分系统\cite{dehpanah2021player}\tagLit。这些结论对 8 人名次游戏（包括酒馆战棋）很有参考价值，但它们是在公开数据上重跑 Elo、Glicko、TrueSkill，并不知道 PUBG 自己怎样评分和匹配。
-
-\subsection{英雄联盟、Dota 2 与同类 MOBA}\label{sec:1a-games-lol}
-
-英雄联盟是行为研究最多的游戏：除 Kou、Deng、Sapienza 等（\cref{sec:1a-churn}）外，Do 等用 Riot 公开 API 抓取的 5000 场排位对局，仅凭每名玩家对所选英雄的熟练度就能在开局前以 75.1\% 的准确率预测胜负，作者据此认为按分匹配后两队实力仍差异很大\cite{do2021using}\tagLit；但样本较小，熟练度等特征在抓取时读取，论文没有说明是否严格限于赛前，可能高估可预测性\tagOwn。Véron 等抓取一个英雄联盟服务器 2800 多万局的公开数据分析匹配服务的需求\cite{veron2014matchmaking}\tagLit\needcheck[；只读到摘要]。PandaSkill 用机器学习估计职业选手的单局表现，再以 OpenSkill 按“表现”而非胜负更新评分\cite{debois2025pandaskill}\tagLit，针对的是职业赛事而非天梯。Dota 2 的研究集中在胜负预测：Semenov 等发现仅凭选人阵容预测能力有限，且分段越高越难预测\cite{semenov2017performance}\tagLit\needcheck[；具体数值来自作者报告幻灯片的二手转述]；Yang 等在 7.8 万场对局上把赛前特征从英雄扩展到玩家历史后，准确率从 58.69\% 升到 71.49\%，加入第 40 分钟实时数据可达 93.73\%\cite{yang2016real}\tagLit；另有混合段位数据预测职业比赛\cite{hodge2017win}\tagLit和个性化选人推荐\cite{lee2022draftrec}\tagLit。与匹配直接相关的是 Caplar 等对《英雄纽斯》（Heroes of Newerth）的分析：其 Elo 型匹配评分总体能反映技能，但存在被利用的漏洞，如有组织地故意压低 MMR，新玩家定位过慢，“小号”问题没有解决\cite{caplar2013analysis}\tagLit。这些研究说明连串真实存在、玩家高度敏感、开局前可预测性不低，但没有一项在隐藏 MMR 数据上检验过匹配器是否依赖近期战绩。
-
-\subsection{王者荣耀}\label{sec:1a-games-hok}
-
-Cheng 等（浙江大学、科罗拉多大学与腾讯合著）用《王者荣耀》9600 万局、1 亿名玩家的数据研究阵容构成，其中 5443 万局为排位赛\cite{cheng2019makes}\tagLit。与匹配有关的细节是：两队成员段位等级之和的差值，在超过 90\% 的排位对局中在 $\pm5$ 级以内，但段位和较低的一方只赢下 28.7\% 的对局。也就是说，匹配器在可见段位上留下的小差距仍与胜负强烈相关；可能的原因是匹配依据隐藏分而非可见段位，论文没有讨论匹配机制本身。腾讯团队的 QuickSkill 和 CUPID 都以“一款知名手机 MOBA”为对象而不点名，CUPID 透露其对照组为基于 TrueSkill 的 MMR 匹配（\cref{sec:1a-mm-team}）\cite{zhang2022quickskill,fan2024cupid}\tagLit。这些论文说明腾讯在研究新手定级、分队与位置分配，但都不涉及按近期胜负调整对手；官方说明和诉讼见本章厂商部分。
-
-\subsection{国际象棋：最透明的数据}\label{sec:1a-games-chess}
-
-国际象棋是唯一规则完全公开、又有大量公开对局的项目，因此是检验理论的主要场地。除 Glickman、Regan 与 Haworth、TTT 外，2010 年 Kaggle“Elo 对阵世界其他方法”竞赛的冠军 Elo++ 仍基于单一评分和逻辑斯蒂曲线，核心改进是防止过拟合的正则化\cite{sismanis2010how}\tagLit。Chowdhary 等分析 Lichess 上 98 万名玩家的 1.23 亿局，发现热连串和冷连串都比“打乱同一玩家对局顺序”的零模型更长，初学者的热连串比高手更长\cite{chowdhary2023quantifying}\tagLit；但打乱顺序同时抹掉了心理惯性和实力的缓慢漂移，“比打乱后更长”不能区分两者\tagOwn。Rosenthal 应 Chess.com 首席执行官之邀、用平台提供的数据，独立检验 Kramnik 对中村光（Hikaru）长连胜的质疑：中村光在 Chess.com 下了 57421 局，得分率 83.4\%；一次 116 连胜期间他平均 3017 分、对手平均 1526 分；在合理的胜和概率模型下这些连胜“完全在统计预期范围内”，相邻对局的超额得分几乎不相关\cite{rosenthal2025investigation}\tagLit。这也顺带说明，在线平台的顶端玩家常常遇到弱得多的对手：按分匹配在分布尾部找不到实力相近的人。
-
-\subsection{星际争霸 II}\label{sec:1a-games-sc2}
-
-星际争霸 II 的学术研究很少讨论天梯算法本身，而是把评级当作技能的测量值：Thompson 等用 3360 名玩家、7 个联赛等级的录像遥测数据研究复杂技能习得，发现不同水平下决定表现的变量并不相同\cite{thompson2013video}\tagLit\needcheck[；只读到题录与摘要]；DeepMind 的 AlphaStar 在 Battle.net 官方天梯上与人类匹配对战，按天梯 MMR 评估，三个种族均达到宗师级、高于 99.8\% 的排名玩家\cite{vinyals2019grandmaster}\tagLit\needcheck[；未重读《自然》原文]。暴雪对天梯机制的官方说明见本章厂商部分。
-
-\subsection{炉石传说与酒馆战棋：几乎没有学术研究}\label{sec:1a-games-hs}
-
-炉石传说的学术研究集中在人工智能对弈与构筑，例如 Hearthstone-AI 竞赛框架\cite{dockhorn2019introducing}\tagLit和用代理模型辅助 MAP-Elites 自动构筑卡组\cite{zhang2022deep}\tagLit；本次检索没有找到研究炉石天梯评分或匹配的同行评审论文。对酒馆战棋说得更直白：\textbf{没有找到任何关于其评分或匹配的学术研究}，只找到一份放在 ResearchGate 上、用蒙特卡洛树搜索辅助决策的学生报告，与评分无关。酒馆战棋评分的公开信息全部来自暴雪的开发者文章（见本章厂商部分）。从学术角度能借用的只有通用工具：8 人名次可用 Plackett–Luce、TrueSkill 自由混战或 Elo-MMR 建模（\cref{sec:1a-ffa}），名次预测宜用 NDCG 评估（\cref{sec:1a-games-br}）。
-
-\begin{table}[htbp]
-  \centering\small
+\begin{table}[tbp]
+  \centering\footnotesize
   \caption{各游戏专门研究能回答与不能回答的问题（摘要）。“公司数据”指作者使用了运营方提供的日志。}
   \label{tab:1a-games}
   \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
@@ -345,46 +307,69 @@ Cheng 等（浙江大学、科罗拉多大学与腾讯合著）用《王者荣�
   \end{tabularx}
 \end{table}
 
+\subsection{《光环》与《战争机器》}\label{sec:1a-games-halo}
+
+\Cref{sec:1a-trueskill}与\cref{sec:1a-ts2}介绍的微软系游戏，是唯一由系统设计者完整公开评分模型的案例\cite{herbrich2006trueskill,minka2018trueskill}\tagLit。Huang 等与微软研究院、微软游戏工作室合作，用《光环：致远星》7 个月、300 多万名玩家的 TrueSkill 评分研究技能发展：早期对局中的评分变化能预测之后的技能，游戏强度能预测最终打多少局，长时间中断后评分下降但恢复训练后回升较快\cite{huang2013mastering}\tagLit。这些研究给出了评分模型、参数和已知偏差，但不涉及匹配器怎样在评分、延迟和等待时间之间取舍，也不涉及后来的作品。
+
+\subsection{CS:GO：研究的是职业比赛，不是官方匹配}\label{sec:1a-games-cs}
+
+常被引为“CS:GO 评分系统分析”的 Skill Issues，数据是 HLTV 收录的 2017—2022 年 9929 场职业与半职业比赛，不是 Valve 官方匹配的对局\cite{bober2024skill}\tagLit。在这批数据上，以队伍为单位时 Glicko-2 略优于 Elo 和 TrueSkill，给 10 名选手各自评分的 TrueSkill 最好（平均准确率最高 64.1\%），TrueSkill 默认参数已接近最优。关于 Valve 实际使用的系统，学术文献只引用社区说法；这些研究说明不了官方匹配是否公平，也说明不了它是否参考连胜连败。
+
+\subsection{PUBG 与大逃杀：评估指标与团队聚合}\label{sec:1a-games-br}
+
+DePaul 大学的 Dehpanah 等用 Kaggle 公开的 PUBG 数据做了一组研究：在 10 万多场单人对局上比较 6 种评估指标，发现有的不区分名次差了几位、有的受新玩家影响过大，最终推荐归一化折损累计增益（NDCG）\cite{dehpanah2020evaluation}\tagLit，在 2.5 万多场双人组队对局上结论相同\cite{dehpanah2021evaluation}\tagLit。团队聚合研究在 PUBG、英雄联盟、CS:GO 三个公开数据集上比较 SUM、MAX、MIN，MAX（队伍实力 = 队内最强者）在 PUBG 和英雄联盟的所有设定中最好，在 CS:GO 上不稳定\cite{dehpanah2021evaluating}\tagLit；用行为特征构建的简单玩家模型，名次预测胜过三种主流评分系统\cite{dehpanah2021player}\tagLit。这些结论对 8 人名次游戏（包括酒馆战棋）很有参考价值，但它们并不知道 PUBG 自己怎样评分和匹配。
+
+\subsection{英雄联盟、Dota 2 与同类 MOBA}\label{sec:1a-games-lol}
+
+英雄联盟是行为研究最多的游戏。除 Kou、Deng、Sapienza 等（\cref{sec:1a-churn}）外，Do 等用 Riot 公开 API 抓取的 5000 场排位对局，仅凭玩家对所选英雄的熟练度就在开局前以 75.1\% 的准确率预测胜负，认为按分匹配后两队实力仍差异很大\cite{do2021using}\tagLit；但样本较小，熟练度在抓取时读取、论文未说明是否严格限于赛前，可能高估可预测性\tagOwn。Véron 等用一个服务器 2800 多万局的公开数据分析匹配服务的需求\cite{veron2014matchmaking}\tagLit\needcheck[；只读到摘要]。Dota 2 的研究集中在胜负预测：Semenov 等发现仅凭阵容预测能力有限，且分段越高越难预测\cite{semenov2017performance}\tagLit\needcheck[；具体数值来自作者报告幻灯片的二手转述]；Yang 等在 7.8 万场对局上把赛前特征从英雄扩展到玩家历史，准确率从 58.69\% 升到 71.49\%\cite{yang2016real}\tagLit；另有混合段位预测\cite{hodge2017win}\tagLit{}、选人推荐\cite{lee2022draftrec}\tagLit{}和职业选手评分\cite{debois2025pandaskill}\tagLit{}等工作。与匹配直接相关的是 Caplar 等对《英雄纽斯》的分析：其 Elo 型匹配评分总体能反映技能，但存在有组织地故意压低 MMR 等漏洞，新玩家定位过慢，“小号”问题没有解决\cite{caplar2013analysis}\tagLit。这些研究说明连串真实存在、开局前可预测性不低，但没有一项在隐藏 MMR 数据上检验过匹配器是否依赖近期战绩。
+
+\subsection{王者荣耀}\label{sec:1a-games-hok}
+
+Cheng 等（浙江大学、科罗拉多大学与腾讯合著）用《王者荣耀》9600 万局、1 亿名玩家的数据研究阵容构成，其中 5443 万局为排位赛\cite{cheng2019makes}\tagLit。与匹配有关的细节是：两队成员段位等级之和的差值，在超过 90\% 的排位对局中在 $\pm5$ 级以内，但段位和较低的一方只赢下 28.7\% 的对局。也就是说，匹配器在可见段位上留下的小差距仍与胜负强烈相关；可能的原因是匹配依据隐藏分而非可见段位，论文没有讨论匹配机制本身。腾讯团队的 QuickSkill 和 CUPID 都以“一款知名手机 MOBA”为对象而不点名，CUPID 透露其对照组为基于 TrueSkill 的 MMR 匹配（\cref{sec:1a-mm-team}）\cite{zhang2022quickskill,fan2024cupid}\tagLit。这些论文说明腾讯在研究新手定级、分队与位置分配，但都不涉及按近期胜负调整对手；官方说明和诉讼见本章厂商部分。
+
+\subsection{国际象棋：最透明的数据}\label{sec:1a-games-chess}
+
+国际象棋规则完全公开、对局数据丰富，是检验理论的主要场地。除前述 Glickman、Regan 与 Haworth、TTT 外，Kaggle 2010 年竞赛的冠军 Elo++ 仍基于单一评分和逻辑斯蒂曲线，核心是防止过拟合的正则化\cite{sismanis2010how}\tagLit。Chowdhary 等分析 Lichess 上 98 万名玩家的 1.23 亿局，发现热、冷连串都比“打乱同一玩家对局顺序”的零模型更长\cite{chowdhary2023quantifying}\tagLit；但打乱顺序同时抹掉了心理惯性和实力的缓慢漂移，“比打乱后更长”不能区分两者\tagOwn。Rosenthal 应 Chess.com 首席执行官之邀、用平台提供的数据检验 Kramnik 对中村光（Hikaru）长连胜的质疑：中村光在 Chess.com 下了 57421 局，一次 116 连胜期间他平均 3017 分、对手平均 1526 分；在合理的胜和概率模型下这些连胜“完全在统计预期范围内”，相邻对局的超额得分几乎不相关\cite{rosenthal2025investigation}\tagLit。这也说明在线平台的顶端玩家常遇到弱得多的对手：分布尾部找不到实力相近的人。
+
+\subsection{星际争霸 II}\label{sec:1a-games-sc2}
+
+星际争霸 II 的学术研究很少讨论天梯算法本身，而是把评级当作技能的测量值：Thompson 等用 3360 名玩家、7 个联赛等级的录像遥测数据研究复杂技能习得，发现不同水平下决定表现的变量并不相同\cite{thompson2013video}\tagLit\needcheck[；只读到题录与摘要]；DeepMind 的 AlphaStar 在 Battle.net 官方天梯上与人类匹配对战，按天梯 MMR 评估，三个种族均达到宗师级、高于 99.8\% 的排名玩家\cite{vinyals2019grandmaster}\tagLit\needcheck[；未重读《自然》原文]。暴雪对天梯机制的官方说明见本章厂商部分。
+
+\subsection{炉石传说与酒馆战棋：几乎没有学术研究}\label{sec:1a-games-hs}
+
+炉石传说的学术研究集中在人工智能对弈与构筑，例如 Hearthstone-AI 竞赛框架\cite{dockhorn2019introducing}\tagLit{}和用代理模型辅助 MAP-Elites 自动构筑卡组\cite{zhang2022deep}\tagLit；本次检索没有找到研究炉石天梯评分或匹配的同行评审论文。对酒馆战棋说得更直白：\textbf{没有找到任何关于其评分或匹配的学术研究}，只找到一份放在 ResearchGate 上、用蒙特卡洛树搜索辅助决策的学生报告，与评分无关。酒馆战棋评分的公开信息全部来自暴雪的开发者文章（见本章厂商部分）。从学术角度能借用的只有通用工具：8 人名次可用 Plackett–Luce、TrueSkill 自由混战或 Elo-MMR 建模（\cref{sec:1a-ffa}），名次预测宜用 NDCG 评估（\cref{sec:1a-games-br}）。
+
+
 \begin{keybox}
 \begin{itemize}
-  \item 只有微软系游戏由系统设计者完整公开了评分模型；腾讯、网易、EA 的论文透露了部分做法（如腾讯某 MOBA 的对照组是 TrueSkill 型 MMR），但不点名或不涉及排位匹配的全部规则。
-  \item 外部研究者只能在公开数据上重跑通用模型或研究玩家行为，无法判断任何游戏的匹配器是否参考近期胜负。
-  \item 酒馆战棋没有任何评分或匹配方面的学术研究；可借用的只有 Plackett–Luce、Elo-MMR、NDCG 等通用工具。
+  \item 只有微软系游戏由设计者完整公开了评分模型；腾讯、网易、EA 的论文只透露部分做法（如腾讯某 MOBA 的对照组是 TrueSkill 型 MMR）。
+  \item 外部研究者只能在公开数据上重跑通用模型或研究玩家行为，无法判断任何游戏的匹配器是否参考近期胜负；酒馆战棋没有任何评分或匹配研究。
 \end{itemize}
 \end{keybox}
 
 \section{中文学术文献}\label{sec:1a-cn}
 
-本次尝试从本环境直接检索中国知网、万方和百度学术，均未成功：知网检索域名的证书与主机不符被拒绝连接，百度学术返回 403，万方检索页完全由脚本渲染、无法取得结果。下面的中文文献只能经通用搜索引擎和第三方题录站间接找到，多数只读到题录或摘要，均标注待核对；结论只代表本次检索的覆盖范围。
+本次从本环境直接检索中国知网、万方和百度学术均未成功（知网证书与主机不符被拒，百度学术返回 403，万方检索页需脚本渲染）。下面的中文文献经通用搜索引擎和第三方题录站间接找到，只读到题录或摘要，均标注待核对；结论只代表本次检索的覆盖范围。
 
 \paragraph{学位论文。}间接找到三篇与游戏匹配直接相关的学位论文。安徽大学王瑞 2019 年的硕士论文《竞技游戏中的 ELO 算法与匹配算法研究》（导师吴建国）只找到题录\cite{wang2019jingji}\needcheck[；仅见第三方题录]。台湾交通大学陈韦成 2012 年的论文（指导教授孙春在）指出，现行配对系统多以 ELO 积分配对，但 ELO 需要足够场次才会收敛，配对系统又无法分辨积分是否已收敛，因此常产生不平衡的对局；作者估计玩家与团队的“影响力”来补足未收敛的积分\cite{chen2012pinggu}\tagLit\needcheck[；仅读到检索摘要]。这是本次找到的唯一一篇直接讨论“评分未收敛导致团队对局失衡”的论文，与玩家所说的“Elo 地狱”最接近。同一实验室黄志宏 2010 年的论文用团体动力学，在玩家能力之外加入团体结构和沟通因素来改善团队配对\cite{huang2010tuanti}\tagLit\needcheck[；仅读到检索摘要]。
 
-\paragraph{中国机构的英文论文。}中国游戏公司最有分量的成果都以英文发表在国际会议上：网易伏羲的 OptMatch（KDD 2020）、GloMatch（KDD 2021）、EnMatch（AAAI 2024），腾讯的 QuickSkill（CIKM 2022）、CUPID（CSCW 2024），以及腾讯合著的王者荣耀团队构成研究（WWW 2019）\cite{gong2020optmatch,deng2021globally,wang2024enmatch,zhang2022quickskill,fan2024cupid,cheng2019makes}\tagLit。共同特点是作者即运营方、数据不公开、实验对象常不点名、线上效果只报告相对提升。
+\paragraph{中国机构的英文论文。}中国游戏公司最有分量的成果都以英文发表在国际会议上：网易伏羲的 OptMatch（KDD 2020）、GloMatch（KDD 2021）、EnMatch（AAAI 2024），腾讯的 QuickSkill（CIKM 2022）、CUPID（CSCW 2024），以及腾讯合著的王者荣耀团队构成研究（WWW 2019）\cite{gong2020optmatch,deng2021globally,wang2024enmatch,zhang2022quickskill,fan2024cupid,cheng2019makes}\tagLit。作者即运营方，数据不公开，实验对象常不点名。
 
-\paragraph{非学术资料与用语。}中文互联网上大量关于“ELO 机制”的文章来自技术博客、游戏媒体和自媒体（如 GameRes 游资网的原理介绍、CSDN 上“按分数和等待时长扩大匹配范围”的实现教程），有助于了解从业者的通行做法，但不作为本章的证据。中文语境里的“ELO 机制”已从“Elo 评分公式”演变为“系统操控胜率”的代称，与学术用法完全不同；第三章专门讨论这一语义变化（\cref{ch:streaks}）。
+\paragraph{非学术资料与用语。}中文互联网上关于“ELO 机制”的大量文章来自技术博客和自媒体（如 GameRes 游资网的原理介绍、CSDN 上“按分数和等待时长扩大匹配范围”的实现教程），能反映从业者的通行做法，但不作为证据。中文语境里的“ELO 机制”已演变为“系统操控胜率”的代称，与学术用法不同（\cref{ch:streaks}）。
 
 \begin{keybox}
 \begin{itemize}
-  \item 本环境无法直接检索知网、万方、百度学术；间接找到的中文学位论文只读到题录或摘要，已标注待核对。
-  \item 最接近“Elo 地狱”的学术讨论是一篇 2012 年的台湾学位论文：评分未收敛时团队配对会系统性失衡。
+  \item 间接找到的中文学位论文只读到题录或摘要；最接近“Elo 地狱”的是一篇 2012 年的台湾学位论文（评分未收敛时团队配对失衡）。
   \item 中国公司的匹配研究以英文发表在 KDD、AAAI、CIKM、CSCW、WWW 等会议，作者即运营方，数据不公开。
 \end{itemize}
 \end{keybox}
 
 \section{学术研究小结：什么已经清楚，什么有争议，什么还没人做}\label{sec:1a-summary}
 
-\paragraph{已经比较清楚的。}（1）评分的统计基础成熟：Elo 是 Bradley–Terry 模型上的在线随机梯度，$\Kf$ 在“追得快”与“抖得小”之间取舍，固定 $\Kf$ 时评分收敛到一个围绕实力抖动的平稳分布，预测误差很难低于 10\%。（2）用带误差的评分直接预测会过度自信，Glicko 的折减与 Szczecinski 的“排名与预测解耦”是同一问题的两种修正。（3）封闭分池在新玩家持续进步时会通缩，USCF 与 FIDE 都不得不人工干预。（4）“队伍实力 = 成员之和”在车队和部分团队模式中系统性失效，TrueSkill 的作者在 2006 年和 2018 年两次给出证据。（5）公平的对局也是信息量最大的对局；有匹配器参与时，原始预测准确率接近 50\% 并不说明评分系统差。
+\paragraph{已经比较清楚的。}（1）评分的统计基础成熟：Elo 是 Bradley–Terry 模型上的在线随机梯度，$\Kf$ 在“追得快”与“抖得小”之间取舍，预测误差很难低于 10\%。（2）用带误差的评分直接预测会过度自信，Glicko 的折减与“排名与预测解耦”是同一问题的两种修正。（3）封闭分池在玩家持续进步时会通缩，USCF 与 FIDE 都不得不人工干预。（4）“队伍实力 = 成员之和”在车队和部分团队模式中系统性失效。（5）公平的对局也是信息量最大的对局；有匹配器参与时，原始预测准确率接近 50\% 并不说明评分系统差。
 
-\paragraph{仍有争议的。}（1）以留存为目标的匹配是否值得做：EOMM、EnMatch、Chen 等报告了正向但不大的效应，全部来自作者自有数据或模型计算；Yuksel 则主张用匹配抑制连串。（2）连败是否导致流失：条件均值说是，控制个体差异的面板回归说连败不显著、连胜显著降低流失，定性研究说两者都伤害体验。（3）一维评分是否足够：非传递性在理论和 AI 对战数据中确实存在，但在稀疏的真实天梯数据上 Elo 常常预测得更好。（4）评分系统孰优孰劣取决于数据、指标和是否有匹配器参与：KGS 围棋、《光环 2》、职业 CS:GO 给出的排序各不相同。
+\paragraph{仍有争议的。}（1）以留存为目标的匹配是否值得做：效应正向但不大，且全部来自作者自有数据或模型计算。（2）连败是否导致流失：条件均值说是，控制个体差异后连败不显著、连胜显著降低流失，定性研究说两者都伤害体验。（3）一维评分是否足够：非传递性确实存在，但在稀疏的天梯数据上 Elo 常常预测得更好。（4）评分系统孰优孰劣取决于数据、指标和是否有匹配器参与。
 
-\paragraph{还没有人做的。}（1）\textbf{没有任何同行评审研究在真实的隐藏 MMR 数据上检验过“输家队列”}，即匹配器是否在连胜后安排更强的对手或更弱的队友：外部研究者拿不到隐藏分和匹配日志，内部研究者发表的论文又不涉及排位匹配的这一环节。（2）\textbf{“Elo 地狱”几乎没有被正式研究}：除一篇 2012 年的台湾学位论文和 TrueSkill 2 的车队数据外，没有找到定量研究“个人对团队胜负影响小、评分收敛慢”是否会把玩家困在某个分段。（3）没有研究检验过酒馆战棋或其他自走棋的 8 人名次评分。（4）没有找到对参与度导向匹配的独立复现或伦理审查。（5）等待与质量的权衡理论只在模拟中检验过。
+\paragraph{还没有人做的。}（1）\textbf{没有任何同行评审研究在真实的隐藏 MMR 数据上检验过“输家队列”}，即匹配器是否在连胜后安排更强的对手或更弱的队友：外部研究者拿不到隐藏分和匹配日志，内部研究者发表的论文又不涉及这一环节。（2）\textbf{“Elo 地狱”几乎没有被正式研究}：除一篇 2012 年的台湾学位论文和 TrueSkill 2 的车队数据外，没有定量研究“个人对团队胜负影响小、评分收敛慢”是否会把玩家困在某个分段。（3）没有研究检验过酒馆战棋或其他自走棋的 8 人名次评分。（4）没有找到对参与度导向匹配的独立复现或伦理审查。
 
-这些空白决定了后面三章的定位：既然无法从外部看到真实的匹配器，本研究就从另一端入手，先推导完全诚实的系统在数学上会产生怎样的胜率与连败（\cref{ch:winrate,ch:streaks}），再从训练模型的角度说明胜负数据里有多少关于实力的信息（\cref{ch:ml}）。这样得到的是“无需操纵即可解释”的基准，而不是“已证明没有操纵”的结论。
-
-\begin{keybox}[本节要点]
-\begin{itemize}
-  \item 评分理论成熟，争议集中在匹配目标（公平还是留存）和连串对玩家的真实影响。
-  \item 最关键的空白：没有同行评审研究在真实隐藏分数据上检验“输家队列”，“Elo 地狱”也几乎没人正式研究。
-  \item 酒馆战棋等 8 人名次游戏的评分与匹配在学术上完全空白，可借用 Plackett–Luce、Elo-MMR 与 NDCG。
-\end{itemize}
-\end{keybox}
+这些空白决定了后面三章的定位：既然无法从外部看到真实的匹配器，本研究就从另一端入手，先推导完全诚实的系统在数学上会产生怎样的胜率与连败（\cref{ch:winrate}与\cref{ch:streaks}），再从训练模型的角度说明胜负数据里有多少关于实力的信息（\cref{ch:ml}）。这样得到的是“无需操纵即可解释”的基准，而不是“已证明没有操纵”的结论。

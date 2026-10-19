@@ -62,12 +62,12 @@ Elo 曲线\cref{eq:1a-elo-curve} 在分差 0 处的斜率为 $\Elogit'(0)=\cElo/
 \subsection{Weng–Lin 的 Bradley–Terry 全配对更新}\label{app:ch1a-wenglin}
 
 按 Weng 与 Lin 的算法 1\cite{weng2011bayesian}：队伍 $i$ 的实力均值与方差取成员之和 $\mu_i=\sum_j\mu_{ij}$、$\sigma_i^2=\sum_j\sigma_{ij}^2$；对每支对手队 $q\ne i$，
-\[
+\begin{gather*}
   c_{iq}=\sqrt{\sigma_i^2+\sigma_q^2+2\beta^2},\qquad
-  \hat p_{iq}=\frac{e^{\mu_i/c_{iq}}}{e^{\mu_i/c_{iq}}+e^{\mu_q/c_{iq}}},\qquad
+  \hat p_{iq}=\frac{e^{\mu_i/c_{iq}}}{e^{\mu_i/c_{iq}}+e^{\mu_q/c_{iq}}},\\
   \delta_q=\frac{\sigma_i^2}{c_{iq}}\big(s_{iq}-\hat p_{iq}\big),\qquad
   \eta_q=\gamma_q\frac{\sigma_i^2}{c_{iq}^2}\hat p_{iq}\hat p_{qi},
-\]
+\end{gather*}
 其中 $s_{iq}$ 为 1（$i$ 名次在前）、1/2（并列）或 0，$\gamma_q$ 为可选的缩放因子。令 $\Omega_i=\sum_{q\ne i}\delta_q$、$\Delta_i=\sum_{q\ne i}\eta_q$，成员更新为
 \[
   \mu_{ij}\leftarrow\mu_{ij}+\frac{\sigma_{ij}^2}{\sigma_i^2}\,\Omega_i,\qquad

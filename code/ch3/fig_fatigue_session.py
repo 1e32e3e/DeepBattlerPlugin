@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from _common import CH, INK, SERIES, WIDTH_FULL, save, use
+from _common import FONT_SCALE, CH, INK, SERIES, WIDTH_FULL, save, use
 from experiments import K_ELO, SIGMA_Q, STANDARD, run_standard
 from model import win_prob_noisy
 
@@ -26,7 +26,7 @@ def main():
     ax.set_xlabel("本次游玩中的第几局 $j$")
     ax.set_ylabel("真实单局胜率（%）")
     ax.set_title(f"(a) 疲劳 φ={phi:g}，平均每次 8 局", loc="left")
-    ax.legend(loc="lower left", fontsize=7.5)
+    ax.legend(loc="lower left", fontsize=7.5 * FONT_SCALE)
     ax = axes[1]
     p = 0.5
     mid = p * (1 - S_WIN) / (p * (1 - S_WIN) + (1 - p) * (1 - S_LOSS))
@@ -38,9 +38,9 @@ def main():
     ax.axhline(50, color=INK["muted"], lw=0.8)
     ax.set_xlabel("这次游玩中的第几局")
     ax.set_ylabel("该位置的胜率（%）")
-    ax.set_title(f"(b) 独立结果 + 输后下线概率 {S_LOSS:g}、赢后 {S_WIN:g}", loc="left", fontsize=9)
-    ax.set_ylim(25, 60)
-    ax.legend(loc="lower left", fontsize=7.5)
+    ax.set_title(f"(b) 独立结果 + 输后下线概率 {S_LOSS:g}、赢后 {S_WIN:g}", loc="left", fontsize=9 * FONT_SCALE)
+    ax.set_ylim(15, 60)
+    ax.legend(loc="lower left", fontsize=7 * FONT_SCALE, ncol=2, columnspacing=1.0)
     fig.tight_layout()
     save(fig, CH, "fatigue_session")
 

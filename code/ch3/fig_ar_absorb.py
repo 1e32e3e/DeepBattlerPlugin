@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from _common import CH, INK, SERIES, WIDTH_FULL, save, use
+from _common import FONT_SCALE, CH, INK, SERIES, WIDTH_FULL, save, use
 from experiments import K_ELO, run_ar_absorption
 from model import ar1_retained, elo_error_sd, elo_gain, linear_outcome_acf, slope_attenuation
 from experiments import SIGMA_Q
@@ -23,7 +23,7 @@ def main():
     ax.set_ylabel("残留比例")
     ax.set_ylim(0, 1.05)
     ax.set_title("(a) 评分没吸收掉的状态方差", loc="left")
-    ax.legend(loc="lower left", fontsize=7.5)
+    ax.legend(loc="lower left", fontsize=7.5 * FONT_SCALE)
     ax = axes[1]
     h = np.arange(1, 21)
     series = [("ar_K0", 0, 0.9, 60, "AR(0.9, 60)，评分不动"),
@@ -40,7 +40,7 @@ def main():
     ax.set_xlabel("滞后 $h$（局）")
     ax.set_ylabel("Corr$(y_t, y_{t+h})$")
     ax.set_title("(b) 结果自相关（线：线性近似；点：模拟）", loc="left")
-    ax.legend(loc="upper right", fontsize=7.5)
+    ax.legend(loc="upper right", fontsize=7.5 * FONT_SCALE)
     fig.tight_layout()
     save(fig, CH, "ar_absorb")
 

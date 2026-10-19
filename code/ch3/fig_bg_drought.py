@@ -10,7 +10,7 @@ N_MAX = 500
 
 def main():
     use()
-    fig, ax = plt.subplots(figsize=(WIDTH_FULL * 0.72, 2.8))
+    fig, ax = plt.subplots(figsize=(WIDTH_FULL * 0.72, 2.3))
     n = np.arange(N_MAX + 1)
     for i, d in enumerate((10, 20, 30, 40)):
         cur = prob_longest_ge_curve(N_MAX, 7 / 8, d)

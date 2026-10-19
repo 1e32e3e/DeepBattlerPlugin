@@ -5,7 +5,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from _common import CH, INK, SERIES, WIDTH_FULL, bottom_legend, log_count_axis, save, use
+from _common import FONT_SCALE, CH, INK, SERIES, WIDTH_FULL, bottom_legend, log_count_axis, save, use
 from experiments import K_ELO, NATURAL_TEST, TESTS, run_power, run_power_resid
 
 MODELS = [("none", "无波动（诚实 Elo）"), ("ar1", "(b) AR(1)"), ("hmm", "(c) 两状态"),
@@ -41,7 +41,7 @@ def main():
         ax.set_xlim(T[0] * 0.9, T[-1] * 1.1)
         ax.set_ylim(0, 1.02)
         ax.set_xlabel("局数 $T$")
-        ax.set_title(title, loc="left", fontsize=9)
+        ax.set_title(title, loc="left", fontsize=9 * FONT_SCALE)
     axes[0].set_ylabel("检验力")
     h, l = axes[1].get_legend_handles_labels()
     fig.tight_layout()

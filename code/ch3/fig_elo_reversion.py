@@ -4,7 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from _common import CH, INK, SERIES, WIDTH_FULL, save, use
+from _common import FONT_SCALE, CH, INK, SERIES, WIDTH_FULL, save, use
 from experiments import SIGMA_Q, STANDARD
 from model import cond_excess, elo_streak_excess, simulate_player
 from population import load
@@ -41,7 +41,7 @@ def main():
     ax.set_title("(a) 单人、校准对手池（κ=1）", loc="left")
     ax.set_xlabel("连胜局数 $k$")
     ax.set_ylabel("下一局胜率超额（百分点）")
-    ax.legend(loc="lower left", fontsize=7.5)
+    ax.legend(loc="lower left", fontsize=7.5 * FONT_SCALE)
     ax = axes[1]
     for i, (nm, K, n, lab) in enumerate((("elo10", 10, 1, "1v1 K=10"), ("elo32", 32, 1, "1v1 K=32"),
                                          ("t5_elo32", 32, 5, "5v5 K=32"))):
@@ -52,7 +52,7 @@ def main():
         ax.plot(KS, 100 * d["W"][:8], "o", color=SERIES[i], ms=3.5, mec="white", mew=0.6)
     ax.set_title("(b) 闭合人群（点：模拟；线：近似）", loc="left")
     ax.set_xlabel("连胜局数 $k$")
-    ax.legend(loc="lower left", fontsize=7.5)
+    ax.legend(loc="lower left", fontsize=7.5 * FONT_SCALE)
     for ax in axes:
         ax.axhline(0, color=INK["muted"], lw=0.8)
         ax.set_xticks(KS)

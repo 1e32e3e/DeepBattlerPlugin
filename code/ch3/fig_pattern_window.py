@@ -55,7 +55,7 @@ def main():
     ax.set_xlim(10, nm)
     ax.set_xlabel("局数 $n$（对数刻度）")
     ax.set_title("(b) 滑动窗口里的低谷", loc="left")
-    ax.legend(loc="upper left")
+    ax.legend(loc="lower right")
     fig.tight_layout()
     save(fig, CH, "pattern_window")
 
