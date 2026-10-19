@@ -24,3 +24,5 @@ __pycache__/
 data/private/
 # 单章试编译产物
 paper/single_*.pdf
+# 模拟缓存（脚本会自动重算）
+code/*/cache/

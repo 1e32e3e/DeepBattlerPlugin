@@ -1,1 +1,25 @@
 % 第一章（1b）附录
+\section{厂商披露与专利部分的检索方法与核算}
+\label{app:ch1b}
+
+\subsection{来源与读取方式}
+\label{app:ch1b-method}
+
+\Cref{sec:ch1b-disclosure,sec:ch1b-fifty,sec:ch1b-patents,sec:ch1b-legal,sec:ch1b-evidence}的材料于 2026 年 10 月 18—19 日读取，分三类：
+
+\begin{itemize}
+  \item \textbf{官方网页与白皮书}：直接下载原页面或 PDF 并通读。Riot、Blizzard、Respawn、343、KRAFTON、微软研究院、Lichess、Chess.com 的页面，以及 Activision 的博客和三份白皮书 PDF，均读到原文；Valve 的 Dota 2 与 CS2 公告经 Steam 新闻接口读取原文。以下只读到二手转述，正文已加脚注：Valve 2013 年 Dota 2 天梯博客（原页已下线，依据 PCGamesN 引文）、Epic 2019 年公告（依据 PC Gamer 引文）、Riot 2025 年 15.14 版本推文、Valve 员工 2015 年 Reddit 回复、《王者荣耀》2018 年《狄仁杰答疑》原文、2026 年 8 月“对局环境优化专栏”原文、《漫威争锋》说明视频、ARC Raiders 访谈。
+  \item \textbf{专利}：Google Patents、Justia 等在本研究网络环境中拒绝自动访问，因此改用美国专利商标局的全文图像 PDF（\texttt{image-ppubs.uspto.gov}），用 Tesseract 5.3 对首页和最后五页做光学字符识别，读取著录项（专利号、权利人、发明人、申请号、提交日、授权日、优先权、续案关系）和全部独立权利要求，必要时读从属权利要求。OCR 文本偶有断词和双栏串行，正文只转述可以确认的内容。专利的法律状态（是否维持、是否到期）未核对。中国国家知识产权局检索系统同样不可访问，中国专利只能通过搜索引擎查找，未能核对权利要求。
+  \item \textbf{诉讼与法规}：Zajonc 诉 EA 的起诉状与撤诉通知取自 CourtListener 收录的联邦法院电子案卷（PACER/RECAP）；王者荣耀案的判决书未公开，依据扬子晚报、澎湃新闻、每日经济新闻、IT之家、同花顺财经等多家报道交叉核对；《算法推荐管理规定》取自中国政府网全文。
+\end{itemize}
+
+\subsection{公平对局中的连败概率}
+\label{app:ch1b-streak}
+
+正文两处厂商说法涉及“完全公平时会出现多少连败”。设每局胜率恰为 $1/2$、各局独立，令 $q_k(n)$ 为 $n$ 局中至少出现一次长度不小于 $k$ 的连败的概率。用“当前连败长度” $j\in\{0,\dots,k-1\}$ 作状态做动态规划：每局以 $1/2$ 的概率 $j\to j+1$（若达到 $k$ 则记为命中并吸收），以 $1/2$ 的概率 $j\to0$。数值结果\tagOwn：
+\begin{itemize}
+  \item 连续 5 局全负的概率 $=2^{-5}=3.1\%$，与 Activision 白皮书“约 3\% 的玩家会经历五连败”一致\cite{activision2024skill}；
+  \item 100 局中至少一次 10 连败：$q_{10}(100)\approx4.4\%$；至少一次 10 连胜\emph{或} 10 连败：约 $8.7\%$。《英雄联盟手游》说明称“100 局里 10 连败的概率接近 10\%”\cite{riot2021wildrift}，与后一个数相符；
+  \item 100 局中至少一次 5 连败：$q_5(100)\approx81\%$。
+\end{itemize}
+更一般的连串分布及其在评分系统中的变化见\cref{ch:streaks}。

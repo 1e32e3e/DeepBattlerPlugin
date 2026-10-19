@@ -1,1 +1,137 @@
-% 第2章附录：如无需要可留空
+\section{第二章的推导与模拟参数}
+\label{app:ch2}
+
+本节给出\cref{ch:winrate}中较长的推导和全部模拟设定。记号同正文：$F(x)=1/(1+10^{-x/400})$，$c=\ln10/400$，$F'(x)=c\,F(x)\bigl(1-F(x)\bigr)$，$F'(0)=c/4$；$\sigma_d=1.702/c\approx295.7$。
+
+\subsection{模拟设定}
+\label{app:ch2-params}
+
+所有模拟由 \texttt{code/ch2/model.py} 完成（numpy 向量化，固定随机种子），结果缓存在 \texttt{code/ch2/cache/}。共同设定：
+\begin{itemize}
+\item 玩家实力 $s\sim\Normal(1500,\tau^2)$，默认 $\tau=200$；初始评分全部为 1500（刻度拉伸实验取初始评分等于实力）。
+\item 每轮每人恰好一局。标准实验 10,000 人、3,000 轮，前 1,000 轮预热，统计第 1,001–3,000 局（每人 2,000 局，个人胜率的二项标准误约 1.1 个百分点）。
+\item 1v1：$p=F(s_i-s_j)$，评分 $R_i\leftarrow R_i+K(y-E)$，$E=F(R_i-R_j)$。
+\item 5v5：加和模型 $p=F\bigl((\sum s_A-\sum s_B)/\sqrt5\bigr)$，均值模型 $p=F(\bar s_A-\bar s_B)$；每名队员按团队的 $K(y-E)$ 更新，$E$ 用与结果模型相同的形式。
+\item 8 人自由混战：表现 $=s+$Gumbel（尺度 $400/\ln10$），评分按两两比较更新，$\Delta R_i=\frac{K}{7}\sum_{j\ne i}\bigl(S_{ij}-F(R_i-R_j)\bigr)$，$S_{ij}=1$ 表示 $i$ 名次在 $j$ 之前。
+\item 匹配：随机匹配为每轮全体随机打乱后依次成组；按分匹配为按 $R+\Normal(0,\sigma_q^2)$ 排序后相邻成组，团队在 10 人组内蛇形分队（按评分排序后 ABBAABBAAB）。不使用任何隐藏变量。
+\end{itemize}
+
+\begin{table}[h]
+  \centering\small
+  \caption{第二章的模拟实验（标准实验均为 10,000 人、3,000 轮、统计第 1,001–3,000 局）。}
+  \label{tab:ch2-params}
+  \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.2cm}}
+    \toprule
+    实验 & 设定 & 用于\\
+    \midrule
+    1v1 随机匹配 & $K=16,32$；另有 $\tau=100,300$；单局噪声 $\sigma_x=150$；AR(1) 状态 $\sigma_u=100$、$\phi=0.99$ & \cref{fig:ch2-three}、\ref{fig:ch2-random}、\ref{fig:ch2-fair}、\ref{fig:ch2-ar1}\\
+    1v1 按分匹配 & $\sigma_q=20,50,100,200$，$K=16,32$；另有 $\sigma_q=100$ 加单局噪声或 AR(1) 状态 & \cref{fig:ch2-three}、\ref{fig:ch2-sbmm}、\ref{fig:ch2-error}、\ref{fig:ch2-ar1}\\
+    5v5 & 随机分队（加和、均值）；按分匹配 $\sigma_q=100$（加和、均值）、$\sigma_q=200$（加和）；$K=16$ & \cref{fig:ch2-fair}、\ref{fig:ch2-team}\\
+    8 人自由混战 & 随机组局、按分匹配 $\sigma_q=100$；$K=16$ & \cref{sec:ch2-ffa}\\
+    $K$ 扫描 & 4,000 人，2,500 轮，$K=8$–64，随机匹配与 $\sigma_q=100,200$ & \cref{fig:ch2-error}(a)\\
+    重置实验 & 运行 1,000 轮后从实力前 10\% 中重置 500 人为 1500，跟踪 400 局 & \cref{fig:ch2-reset}\\
+    刻度拉伸 & 2,000 人，初始评分 $=$ 实力，$K=16$，10,000 轮，$\sigma_q=20,50,100,200$ & \cref{fig:ch2-stretch}\\
+    进步实验 & 运行 1,000 轮后随机抽 2\%（对照：10\%）玩家每局进步 $v=0.25,0.5,1$，共 $+300$，再观察 200 局；$\sigma_q=100$ & \cref{fig:ch2-improve}\\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{随机匹配与团队胜率}
+\label{app:ch2-random}
+
+\textbf{高斯恒等式。}设 $Z,Z'$ 独立标准正态。$\E[\Phi(a+bZ)]=\E[\Prob(Z'\le a+bZ\mid Z)]=\Prob(Z'-bZ\le a)=\Phi(a/\sqrt{1+b^2})$。取 $Z=(t-\mu)/\tau$、$a=(s-\mu)/\sigma_d$、$b=-\tau/\sigma_d$，即得\cref{eq:ch2-random}。数值表（\cref{tab:ch2-tau}、\ref{tab:ch2-team}）不用正态近似，而是用 80 点 Gauss–Hermite 求积直接计算 $\E[F(X)]$；“前 10\% 平均”对第 90–100 百分位的 20,001 个等距百分位点求平均。
+
+\textbf{团队。}焦点玩家实力 $\mu+d$，$n-1$ 名队友与 $n$ 名对手独立取自 $\Normal(\mu,\tau^2)$。加和模型下 $\sum s_A-\sum s_B=d+\sum_{i=1}^{n-1}(t_i-\mu)-\sum_{j=1}^{n}(o_j-\mu)$，均值为 $d$、方差 $(2n-1)\tau^2$，除以 $\sqrt n$ 得 $X\sim\Normal(d/\sqrt n,(2n-1)\tau^2/n)$；均值模型除以 $n$。再套用高斯恒等式得\cref{eq:ch2-team}。$d=0$ 处的斜率：加和模型 $\phi(0)\big/\bigl(\sqrt n\sqrt{\sigma_d^2+(2n-1)\tau^2/n}\bigr)$，$n$ 大时 $\approx\phi(0)/\bigl(\sqrt n\sqrt{\sigma_d^2+2\tau^2}\bigr)$；均值模型 $\phi(0)\big/\bigl(n\sqrt{\sigma_d^2+(2n-1)\tau^2/n^2}\bigr)\approx\phi(0)/(n\sigma_d)$。
+
+\subsection{“五五开”对局的真实胜率}
+\label{app:ch2-fair}
+
+设 $s\sim\Normal(\mu,\tau^2)$，$R=s+e$，$e\sim\Normal(0,\sigma_e^2)$ 独立。由正态共轭，$s\mid R\sim\Normal\bigl(\mu+\tfrac{\tau^2}{\tau^2+\sigma_e^2}(R-\mu),\,v\bigr)$，$v=\tau^2\sigma_e^2/(\tau^2+\sigma_e^2)$。两名评分同为 $r$ 的玩家，实力条件独立且均值相同，故 $\Delta s=s_A-s_B\sim\Normal(0,2v)$，与 $r$ 无关。令 $p=F(\Delta s)$，$x=F^{-1}(p)$，$\dd p/\dd x=c\,p(1-p)$，换元得
+\[
+  f_p(p)=\frac{1}{\sigma_\Delta}\phi\Bigl(\frac{F^{-1}(p)}{\sigma_\Delta}\Bigr)\cdot\frac{1}{c\,p(1-p)},\qquad \sigma_\Delta=\sqrt{2v}.
+\]
+$p$ 的分位数为 $F(z_q\sigma_\Delta)$。团队加和模型下，给定两队评分和相等，$(\sum s_A-\sum s_B)/\sqrt n$ 的方差为 $2nv/n=2v$，只是 $v$ 中的 $\sigma_e$ 换成团队游戏的个人评分误差。
+
+\subsection{恒等式与评分误差的线性化}
+\label{app:ch2-linear}
+
+\textbf{恒等式}：$R_T-R_0=\sum_t\Delta R_t=K\sum_t(y_t-E_t)$，除以 $KT$ 即得\cref{eq:ch2-identity}；不需要任何模型假设，只要求每局更新恰为 $K(y_t-E_t)$。
+
+\textbf{稳态误差。}按分匹配下对手评分 $R'\approx R$。令 $e=R-s$、$e'=R'-s'$，则 $y-E=\bigl[F(s-s')-F(R-R')\bigr]+\eta$，$\eta=y-F(s-s')$ 满足 $\E\eta=0$、$\Var\eta=p(1-p)\approx\tfrac14$。线性化 $F(s-s')-F(R-R')\approx-\tfrac c4(e-e')$，记 $k=Kc/4$：
+\[
+  e_{t+1}=(1-k)e_t+k\,e'_t+K\eta_t .
+\]
+设 $e,e',\eta$ 两两独立、$\Var e=\Var e'=V$，平稳时 $V=(1-k)^2V+k^2V+K^2/4$，解得
+\[
+  V=\frac{K^2}{8k(1-k)}=\frac{K}{2c\,(1-Kc/4)} .
+\]
+略去对手误差（$e'\equiv0$）则为 $V=K^2/\bigl(4(2k-k^2)\bigr)\approx K/(2c)$，即\cref{tab:ch2-sigmae}的第二列。评分刻度为 $\lambda$ 时，实力差 $=(R-R'-e+e')/\lambda$，回复系数变为 $k_\lambda=Kc/(4\lambda)$，于是 $V=K\lambda/\bigl(2c(1-Kc/(4\lambda))\bigr)$，这就是按分匹配下误差略大的原因。
+
+\textbf{时间常数。}理想情况下误差每局衰减 $1-k$，时间常数 $1/k=4/(Kc)\approx695/K$。一般情形需要两处修正。其一，线性化斜率应取 $F'$ 在实际实力差上的平均，即 $c\,\E[P(1-P)]=\tfrac c4\cdot4\E[P(1-P)]$。其二，在\cref{app:ch2-edge}的窗口模型下，玩家的期望评分变化为
+\[
+  \E[\Delta R]\approx K\tfrac c4\bigl[(s-\mu)-(1-g+bg)(R-\mu)\bigr],\qquad b=\frac{\lambda\tau^2}{\sigma_R^2},
+\]
+其中 $bg$ 来自“配到的对手评分向均值回归，其实力又按 $b$ 回归”。把 $R-\mu=\lambda(s-\mu)+e$ 代入，$e$ 的系数为 $-K\tfrac c4\bigl(1-g(1-b)\bigr)=-K\tfrac c4\cdot\frac{\lambda\tau^2+\sigma_q^2}{\sigma_R^2+\sigma_q^2}$。合并两处得 $\tau_R=4/(Kc\kappa)$，$\kappa=4\E[P(1-P)]\cdot(\lambda\tau^2+\sigma_q^2)/(\sigma_R^2+\sigma_q^2)$。随机匹配时 $\sigma_q\to\infty$，$\kappa\to4\E[P(1-P)]$，但 $\E[P(1-P)]$ 因人而异（实力越极端越小），群体的误差自相关是各人指数衰减的平均，\cref{fig:ch2-error}(b) 的随机匹配虚线即按此计算。
+
+\subsection{匹配窗口的边缘效应}
+\label{app:ch2-edge}
+
+设评分在群体中近似正态，均值 $\mu$、方差 $\sigma_R^2=\lambda^2\tau^2+\sigma_e^2$。排序键 $k=R+\xi$，$\xi\sim\Normal(0,\sigma_q^2)$；人口足够多时，相邻者的键几乎相等。由正态共轭，$R'\mid k\sim\Normal\bigl(\mu+g(k-\mu),\,g\sigma_q^2\bigr)$，$g=\sigma_R^2/(\sigma_R^2+\sigma_q^2)$。给定自己的 $R$，$k=R+\xi$，于是 $R'\mid R\sim\Normal\bigl(\mu+g(R-\mu),\,g^2\sigma_q^2+g\sigma_q^2\bigr)$，即
+\[
+  R-R'\sim\Normal\bigl((1-g)(R-\mu),\ g(1+g)\sigma_q^2\bigr).
+\]
+平稳时 $\Delta R/(KT)\to0$，长期胜率等于平均预测胜率 $\bar E=\E[F(R-R')]$，用 $F\approx\Phi(\cdot/\sigma_d)$ 和高斯恒等式得\cref{eq:ch2-edge}。计算时 $\lambda$ 取平稳值 $\lambda^*$（\cref{app:ch2-stretch}），$\sigma_e$ 取 $\sigma_e(K,\lambda^*)$；十分位平均对评分标准化位置 $z\in$ 最高 10\% 求平均。配对两人评分差的方差为 $2g\sigma_q^2$（两人的 $\xi$ 在给定相同键时各有条件方差 $g\sigma_q^2$，条件均值相同）。
+
+\subsection{刻度拉伸}
+\label{app:ch2-stretch}
+
+\textbf{精确结论。}若一局双方评分相等，则 $E=\tfrac12$，赛后两人评分为 $R\pm K/2$，两人评分平方和增加 $K^2/2$，平均每人 $K^2/4$；均值不变，所以群体评分方差每局增加 $K^2/4$。更一般地，只要给定自己的评分时对手实力与自己的实力可交换，就有 $\E[y-E\mid R]=0$，进而 $\Cov(R,y-E)=0$，于是 $\Var(R_{t+1})=\Var(R_t)+K^2\Var(y-E)$，方差只增不减。真实实力分布不变，排序又近乎正确，增加的方差只能表现为斜率 $\lambda$ 变大：$\lambda^2\tau^2\approx\lambda_0^2\tau^2+K^2t/4$。
+
+\textbf{平均场方程。}沿用\cref{app:ch2-linear}的期望评分变化，把它投影到 $s$ 上：
+\[
+  \frac{\dd\lambda}{\dd t}=\frac{\Cov(\E[\Delta R],s)}{\tau^2}=K\tfrac c4\bigl[1-(1-g+bg)\lambda\bigr].
+\]
+代入 $g$、$b$ 化简：$1-(1-g(1-b))\lambda=\bigl[\sigma_R^2+\sigma_q^2-\lambda\sigma_q^2-\lambda^2\tau^2\bigr]/(\sigma_R^2+\sigma_q^2)=\bigl[\sigma_e^2+\sigma_q^2(1-\lambda)\bigr]/(\lambda^2\tau^2+\sigma_e^2+\sigma_q^2)$，即\cref{eq:ch2-stretch}。令分子为零得 $\lambda^*=1+\sigma_e^2(\lambda^*)/\sigma_q^2$；由于 $\sigma_e^2(\lambda)\approx\lambda\,\sigma_e^2(1)$，解得 $\lambda^*=1/\bigl(1-\sigma_e^2(1)/\sigma_q^2\bigr)$，仅当 $\sigma_q>\sigma_e(1)$ 时为正。$\sigma_q\to0$ 时方程化为 $\dd\lambda/\dd t\approx K\tfrac c4\sigma_e^2/(\lambda^2\tau^2)=K^2/(8\lambda\tau^2)$，与精确结论一致。\Cref{fig:ch2-stretch} 的虚线用步长 1 局的欧拉法积分这一方程，$\sigma_e^2$ 取 $K\lambda/\bigl(2c(1-Kc/(4\lambda))\bigr)$。
+
+\subsection{团队与自由混战的评分误差、Plackett–Luce 名次}
+\label{app:ch2-team}
+
+\textbf{Gumbel 表现与 Plackett–Luce。}设表现 $X_i=s_i+bG_i$，$G_i$ 独立标准 Gumbel，$b=400/\ln10$。标准 Gumbel 满足 $e^{-G}\sim$ 指数分布（率 1），所以 $Y_i=e^{-X_i/b}=e^{-s_i/b}e^{-G_i}$ 服从率为 $w_i=e^{s_i/b}=10^{s_i/400}$ 的指数分布，且“表现最高”等价于“$Y$ 最小”。独立指数变量中 $Y_i$ 最小的概率为 $w_i/\sum_jw_j$；由无记忆性，最小值的大小与“谁最小”独立，去掉第一名后其余人仍是同样的结构，所以完整名次是依次按 worth 比例抽取的 Plackett–Luce 模型。$N=2$ 时 $w_i/(w_i+w_j)=F(s_i-s_j)$，即两两边际恰为 Elo 曲线。焦点玩家 worth 为 $w$、其余 $N-1$ 人为 1 时，第 $j+1$ 次抽取（$j=0,\dots,k-1$）没有抽中焦点玩家的条件概率为 $(N-1-j)/(w+N-1-j)$，连乘取补即得\cref{eq:ch2-pl}。
+
+\textbf{自由混战的评分误差。}同水平的 $N$ 人一局，名次均匀分布，$\sum_jS_{ij}=N-\text{名次}$ 的方差为 $(N^2-1)/12$；步长 $K/(N-1)$ 使单局评分变化方差为 $K^2(N^2-1)/\bigl(12(N-1)^2\bigr)=K^2(N+1)/\bigl(12(N-1)\bigr)$。每局的回复力为 $\frac{K}{N-1}\sum_jF'(0)=K\tfrac c4$，与 1v1 相同，故方差之比为 $\frac{(N+1)/(12(N-1))}{1/4}=\frac{N+1}{3(N-1)}$，$N=8$ 时为 0.43，标准差之比 0.65。
+
+\textbf{团队中的个人评分误差（粗略）。}加和模型下个人评分误差 $e$ 对团队评分差的贡献为 $e/\sqrt n$，回复系数变为 $Kc/(4\sqrt n)$；忽略其余 9 人的误差相关，套用\cref{app:ch2-linear}得 $V\approx K\sqrt n/\bigl(2c(1-\sqrt nKc/4)\bigr)$，$n=5$、$K=16$ 时标准差 57.2，模拟 57.7。均值模型的回复系数为 $Kc/(4n)$，误差更大。
+
+\subsection{状态起伏与窗口胜率的方差}
+\label{app:ch2-ar1}
+
+\textbf{评分对状态的吸收。}在实力单位下把评分写成 $\hat s_t=(1-\alpha)\hat s_{t-1}+\alpha(s+u_t)+$噪声，$\alpha=1/\tau_R$。状态部分 $x_t=\sum_{i\ge0}\alpha(1-\alpha)^iu_{t-i}$。$u$ 为 AR(1)，$\Cov(u_{t-i},u_t)=\sigma_u^2\phi^i$，故
+\[
+  \Cov(x_t,u_t)=\alpha\sigma_u^2\sum_i\bigl[(1-\alpha)\phi\bigr]^i=\frac{\alpha\sigma_u^2}{1-(1-\alpha)\phi},
+\]
+即\cref{eq:ch2-absorb}。记 $a_0=1-\alpha$，$x$ 的自协方差可以递推得到：$\gamma_x(0)=\alpha^2\sigma_u^2(1+a_0\phi)/\bigl((1-a_0^2)(1-a_0\phi)\bigr)$，$k\ge1$ 时
+\[
+  \gamma_x(k)=a_0^k\gamma_x(0)+\frac{\alpha^2\sigma_u^2}{1-a_0\phi}\cdot\frac{\phi\,(\phi^k-a_0^k)}{\phi-a_0}.
+\]
+
+\textbf{按分匹配下的窗口方差。}由\cref{eq:ch2-identity}，$n$ 局窗口胜率 $W_n=\bar E_n+(R_{t+n}-R_t)/(Kn)$。第一项的局间波动来自窗口内对手评分的随机性，方差约 $\Var(E_t)/n$，其中 $\Var(E_t)=\Var\bigl(F(R-R')\bigr)$ 按\cref{app:ch2-edge}的 $R-R'$ 分布计算（$\sigma_q=100$、$K=16$ 时约 0.026）。第二项的方差为 $2[\Gamma(0)-\Gamma(n)]/(K^2n^2)$，评分（评分单位）的自协方差取 $\Gamma(k)=\lambda^2\gamma_x(k)+\sigma_e^2(1-\alpha)^k$，前者是对状态的跟踪，后者是评分噪声。除以二项方差 $p(1-p)/n\approx1/(4n)$ 即得\cref{eq:ch2-varratio}。模拟中的方差比是“每人 $m=2000/n$ 个连续窗口的样本方差”，期望值为 $\frac{m}{m-1}\bigl[D(n)-D(mn)/m^2\bigr]$，$D(h)=2[\Gamma(0)-\Gamma(h)]$；\cref{fig:ch2-ar1}(b) 的曲线已含此修正，\cref{fig:ch2-ci}(a) 取 $m\to\infty$。$\alpha$ 用修正后的时间常数，$\lambda$、$\sigma_e$ 用平稳值 $\lambda^*$、$\sigma_e(K,\lambda^*)$，均不由模拟拟合。实力固定（$\sigma_u=0$）且 $n\gg\tau_R$ 时，$\Var(R_{t+n}-R_t)\to2\sigma_e^2$，$\mathrm{sd}(W_n)\approx\sqrt2\sigma_e/(Kn)$。
+
+\textbf{随机匹配下的窗口方差。}此时胜负与评分无关，单局胜率 $p_t\approx p(s)+\beta(s)u_t$，$\beta(s)$ 为随机匹配胜率曲线在 $s$ 处的斜率（对手的状态并入对手实力的离散，$\tau\to\sqrt{\tau^2+\sigma_u^2}$）。$n$ 局状态均值的方差为
+\[
+  V_n=\frac{\sigma_u^2}{n}\Bigl[\frac{1+\phi}{1-\phi}-\frac{2\phi(1-\phi^n)}{n(1-\phi)^2}\Bigr],
+\]
+方差比约为 $1+n\beta^2V_n/\bigl(p(1-p)\bigr)$，再对实力分布取平均，并作同样的样本方差修正。
+
+\subsection{进步时的胜率与滞后}
+\label{app:ch2-improve}
+
+实力以 $v$ 每局上升，评分折算的实力 $\hat s=\mu+(R-a)/\lambda$ 的差距 $g=s-\hat s$ 满足 $\dd g/\dd t=v-\frac{1}{\lambda}\frac{\dd R}{\dd t}$，而 $\frac{\dd R}{\dd t}\approx K\frac c4g$。于是 $g$ 以时间常数 $4\lambda/(Kc)$ 趋于 $g^*=4\lambda v/(Kc)$；稳态时 $\hat s$ 与 $s$ 同速，$\dd R/\dd t=\lambda v$，由\cref{eq:ch2-identity}得 $W-\bar E=\lambda v/K$。这里忽略了窗口回归（会使滞后略大）和零和池中其他玩家的下沉。
+
+\subsection{样本量与 8 人局指标}
+\label{app:ch2-sample}
+
+\cref{eq:ch2-samplesize}是比例检验的正态近似。Wilson 区间为
+\[
+  \Bigl[\hat p+\frac{z^2}{2n}\pm z\sqrt{\frac{\hat p(1-\hat p)}{n}+\frac{z^2}{4n^2}}\Bigr]\Big/\Bigl(1+\frac{z^2}{n}\Bigr).
+\]
+8 人局同水平时名次均匀，平均名次的方差为 $(N^2-1)/12=5.25$；检验平均名次时用 $n=\bigl((z_{1-\alpha/2}\sigma_0+z_{1-\beta}\sigma_1)/\delta\bigr)^2$，$\sigma_0=2.29$，$\sigma_1$ 与 $\delta$ 由 Plackett–Luce 名次分布算出。前四率 52\% 对应 $d=10.9$ 分，此时第一名率 13.2\%、平均名次 4.39、$\sigma_1=2.27$。若改用正态表现（Thurstone，$\beta=\sigma_d/\sqrt2$），所需局数为 3,472，与 Plackett–Luce 的 3,413 相近\tagOwn。
