@@ -335,7 +335,12 @@ def load_or_run(name, fn, *args, **kw):
     return res
 
 
-def _run_standard(cfg, seed=1, n_players=10000, rounds=ROUNDS, burn=BURN):
+# 只有这些实验需要逐轮评分快照（误差自相关、状态轨迹），其余不存以减小缓存
+SNAP_RUNS = {"r_k16", "r_k32", "s100_k16", "s100_k32", "s200_k16", "s200_k32",
+             "s100_k16_ar", "s100_k32_ar", "r_k16_ar"}
+
+
+def _run_standard(cfg, seed=1, n_players=10000, rounds=ROUNDS, burn=BURN, keep_snaps=True):
     sim = EloSim(n_players=n_players, seed=seed, **cfg)
     N = sim.N
     acc = {k: np.zeros(N) for k in ("wins", "Esum", "psum", "top", "place")}
@@ -376,9 +381,11 @@ def _run_standard(cfg, seed=1, n_players=10000, rounds=ROUNDS, burn=BURN):
                W=acc["wins"] / T, Ebar=acc["Esum"] / T, pbar=acc["psum"] / T,
                top=acc["top"] / T, place=acc["place"] / T,
                seq_y_packed=np.packbits(seq_y, axis=1), seq_len=np.array(T),
-               snaps16=(snaps - 1500.0).astype(np.float16), checkpoints=checkpoints,
+               checkpoints=checkpoints,
                lam_t=np.array(lam_t), resid_t=np.array(resid_t), sdR_t=np.array(sdR_t),
                varR_t=np.array(varR_t), K=np.array(sim.K))
+    if keep_snaps:
+        res["snaps16"] = (snaps - 1500.0).astype(np.float16)
     if has_ar:
         res["u_snap16"] = u_snap.astype(np.float16)
         res["hot_cold"] = hot
@@ -389,10 +396,11 @@ def get(name):
     """读取（或运行并缓存）一个标准实验，并把压缩存储的数组还原：
     seq_y（前 N_SEQ 人第 1001–3000 局的胜负，int8）、snaps（第 1001–1400 轮的评分）、
     u_snap（同期的状态 u，仅 AR 实验）、hot_cold（u>σ_u / u<-σ_u 时的胜场与局数）。"""
-    r = load_or_run(name, _run_standard, EXPERIMENTS[name])
+    r = load_or_run(name, _run_standard, EXPERIMENTS[name], keep_snaps=name in SNAP_RUNS)
     if "seq_y" not in r:
         r["seq_y"] = np.unpackbits(r["seq_y_packed"], axis=1)[:, :int(r["seq_len"])].astype(np.int8)
-        r["snaps"] = r["snaps16"].astype(np.float64) + 1500.0
+        if "snaps16" in r:
+            r["snaps"] = r["snaps16"].astype(np.float64) + 1500.0
         if "u_snap16" in r:
             r["u_snap"] = r["u_snap16"].astype(np.float64)
     return r
