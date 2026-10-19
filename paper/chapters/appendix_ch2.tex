@@ -13,7 +13,7 @@
 \item 1v1：$p=F(s_i-s_j)$，评分 $R_i\leftarrow R_i+K(y-E)$，$E=F(R_i-R_j)$。
 \item 5v5：加和模型 $p=F\bigl((\sum s_A-\sum s_B)/\sqrt5\bigr)$，均值模型 $p=F(\bar s_A-\bar s_B)$；每名队员按团队的 $K(y-E)$ 更新，$E$ 用与结果模型相同的形式。
 \item 8 人自由混战：表现 $=s+$Gumbel（尺度 $400/\ln10$），评分按两两比较更新，$\Delta R_i=\frac{K}{7}\sum_{j\ne i}\bigl(S_{ij}-F(R_i-R_j)\bigr)$，$S_{ij}=1$ 表示 $i$ 名次在 $j$ 之前。
-\item 匹配：随机匹配为每轮全体随机打乱后依次成组；按分匹配为按 $R+\Normal(0,\sigma_q^2)$ 排序后相邻成组，团队在 10 人组内蛇形分队（按评分排序后 ABBAABBAAB）。不使用任何隐藏变量。
+\item 匹配：随机匹配为每轮全体随机打乱后依次成组；按分匹配为按 $R+\Normal(0,\sigma_q^2)$ 排序后相邻成组，团队在 10 人组内按评分从高到低排序后蛇形分队（ABBAABBAAB）；房间由带噪的排队键组成，分队用的是评分本身。不使用任何隐藏变量。
 \end{itemize}
 
 \begin{table}[h]
@@ -24,7 +24,7 @@
     \toprule
     实验 & 设定 & 用于\\
     \midrule
-    1v1 随机匹配 & $K=16,32$；另有 $\tau=100,300$；单局噪声 $\sigma_x=150$；AR(1) 状态 $\sigma_u=100$、$\phi=0.99$ & \cref{fig:ch2-three}、\ref{fig:ch2-random}、\ref{fig:ch2-fair}、\ref{fig:ch2-ar1}\\
+    1v1 随机匹配 & $K=16,32$；另有 $\tau=100,300$；单局噪声 $\sigma_x=150$；AR(1) 状态 $\sigma_u=100$、$\rho=0.99$ & \cref{fig:ch2-three}、\ref{fig:ch2-random}、\ref{fig:ch2-fair}、\ref{fig:ch2-ar1}\\
     1v1 按分匹配 & $\sigma_q=20,50,100,200$，$K=16,32$；另有 $\sigma_q=100$ 加单局噪声或 AR(1) 状态 & \cref{fig:ch2-three}、\ref{fig:ch2-sbmm}、\ref{fig:ch2-error}、\ref{fig:ch2-ar1}\\
     5v5 & 随机分队（加和、均值）；按分匹配 $\sigma_q=100$（加和、均值）、$\sigma_q=200$（加和）；$K=16$ & \cref{fig:ch2-fair}、\ref{fig:ch2-team}\\
     8 人自由混战 & 随机组局、按分匹配 $\sigma_q=100$；$K=16$ & \cref{sec:ch2-ffa}\\
@@ -69,9 +69,9 @@ $p$ 的分位数为 $F(z_q\sigma_\Delta)$。团队加和模型下，给定两队
 
 \textbf{时间常数。}理想情况下误差每局衰减 $1-k$，时间常数 $1/k=4/(Kc)\approx695/K$。一般情形需要两处修正。其一，线性化斜率应取 $F'$ 在实际实力差上的平均，即 $c\,\E[P(1-P)]=\tfrac c4\cdot4\E[P(1-P)]$。其二，在\cref{app:ch2-edge}的窗口模型下，玩家的期望评分变化为
 \[
-  \E[\Delta R]\approx K\tfrac c4\bigl[(s-\mu)-(1-g+bg)(R-\mu)\bigr],\qquad b=\frac{\lambda\tau^2}{\sigma_R^2},
+  \E[\Delta R]\approx K\tfrac c4\bigl[(s-\mu)-(1-g+hg)(R-\mu)\bigr],\qquad h=\frac{\lambda\tau^2}{\sigma_R^2},
 \]
-其中 $bg$ 来自“配到的对手评分向均值回归，其实力又按 $b$ 回归”。把 $R-\mu=\lambda(s-\mu)+e$ 代入，$e$ 的系数为 $-K\tfrac c4\bigl(1-g(1-b)\bigr)=-K\tfrac c4\cdot\frac{\lambda\tau^2+\sigma_q^2}{\sigma_R^2+\sigma_q^2}$。合并两处得 $\tau_R=4/(Kc\kappa)$，$\kappa=4\E[P(1-P)]\cdot(\lambda\tau^2+\sigma_q^2)/(\sigma_R^2+\sigma_q^2)$。随机匹配时 $\sigma_q\to\infty$，$\kappa\to4\E[P(1-P)]$，但 $\E[P(1-P)]$ 因人而异（实力越极端越小），群体的误差自相关是各人指数衰减的平均，\cref{fig:ch2-error}(b) 的随机匹配虚线即按此计算。
+其中 $hg$ 来自“配到的对手评分向均值回归，其实力又按 $h$ 回归”。把 $R-\mu=\lambda(s-\mu)+e$ 代入，$e$ 的系数为 $-K\tfrac c4\bigl(1-g(1-h)\bigr)=-K\tfrac c4\cdot\frac{\lambda\tau^2+\sigma_q^2}{\sigma_R^2+\sigma_q^2}$。合并两处得 $\tau_R=4/(Kc\kappa_R)$，$\kappa_R=4\E[P(1-P)]\cdot(\lambda\tau^2+\sigma_q^2)/(\sigma_R^2+\sigma_q^2)$。随机匹配时 $\sigma_q\to\infty$，$\kappa_R\to4\E[P(1-P)]$，但 $\E[P(1-P)]$ 因人而异（实力越极端越小），群体的误差自相关是各人指数衰减的平均，\cref{fig:ch2-error}(b) 的随机匹配虚线即按此计算。
 
 \subsection{匹配窗口的边缘效应}
 \label{app:ch2-edge}
@@ -89,9 +89,9 @@ $p$ 的分位数为 $F(z_q\sigma_\Delta)$。团队加和模型下，给定两队
 
 \textbf{平均场方程。}沿用\cref{app:ch2-linear}的期望评分变化，把它投影到 $s$ 上：
 \[
-  \frac{\dd\lambda}{\dd t}=\frac{\Cov(\E[\Delta R],s)}{\tau^2}=K\tfrac c4\bigl[1-(1-g+bg)\lambda\bigr].
+  \frac{\dd\lambda}{\dd t}=\frac{\Cov(\E[\Delta R],s)}{\tau^2}=K\tfrac c4\bigl[1-(1-g+hg)\lambda\bigr].
 \]
-代入 $g$、$b$ 化简：$1-(1-g(1-b))\lambda=\bigl[\sigma_R^2+\sigma_q^2-\lambda\sigma_q^2-\lambda^2\tau^2\bigr]/(\sigma_R^2+\sigma_q^2)=\bigl[\sigma_e^2+\sigma_q^2(1-\lambda)\bigr]/(\lambda^2\tau^2+\sigma_e^2+\sigma_q^2)$，即\cref{eq:ch2-stretch}。令分子为零得 $\lambda^*=1+\sigma_e^2(\lambda^*)/\sigma_q^2$；由于 $\sigma_e^2(\lambda)\approx\lambda\,\sigma_e^2(1)$，解得 $\lambda^*=1/\bigl(1-\sigma_e^2(1)/\sigma_q^2\bigr)$，仅当 $\sigma_q>\sigma_e(1)$ 时为正。$\sigma_q\to0$ 时方程化为 $\dd\lambda/\dd t\approx K\tfrac c4\sigma_e^2/(\lambda^2\tau^2)=K^2/(8\lambda\tau^2)$，与精确结论一致。\Cref{fig:ch2-stretch} 的虚线用步长 1 局的欧拉法积分这一方程，$\sigma_e^2$ 取 $K\lambda/\bigl(2c(1-Kc/(4\lambda))\bigr)$。
+代入 $g$、$b$ 化简：$1-(1-g(1-h))\lambda=\bigl[\sigma_R^2+\sigma_q^2-\lambda\sigma_q^2-\lambda^2\tau^2\bigr]/(\sigma_R^2+\sigma_q^2)=\bigl[\sigma_e^2+\sigma_q^2(1-\lambda)\bigr]/(\lambda^2\tau^2+\sigma_e^2+\sigma_q^2)$，即\cref{eq:ch2-stretch}。令分子为零得 $\lambda^*=1+\sigma_e^2(\lambda^*)/\sigma_q^2$；由于 $\sigma_e^2(\lambda)\approx\lambda\,\sigma_e^2(1)$，解得 $\lambda^*=1/\bigl(1-\sigma_e^2(1)/\sigma_q^2\bigr)$，仅当 $\sigma_q>\sigma_e(1)$ 时为正。$\sigma_q\to0$ 时方程化为 $\dd\lambda/\dd t\approx K\tfrac c4\sigma_e^2/(\lambda^2\tau^2)=K^2/(8\lambda\tau^2)$，与精确结论一致。\Cref{fig:ch2-stretch} 的虚线用步长 1 局的欧拉法积分这一方程，$\sigma_e^2$ 取 $K\lambda/\bigl(2c(1-Kc/(4\lambda))\bigr)$。
 
 \subsection{团队与自由混战的评分误差、Plackett–Luce 名次}
 \label{app:ch2-team}
@@ -105,20 +105,20 @@ $p$ 的分位数为 $F(z_q\sigma_\Delta)$。团队加和模型下，给定两队
 \subsection{状态起伏与窗口胜率的方差}
 \label{app:ch2-ar1}
 
-\textbf{评分对状态的吸收。}在实力单位下把评分写成 $\hat s_t=(1-\alpha)\hat s_{t-1}+\alpha(s+u_t)+$噪声，$\alpha=1/\tau_R$。状态部分 $x_t=\sum_{i\ge0}\alpha(1-\alpha)^iu_{t-i}$。$u$ 为 AR(1)，$\Cov(u_{t-i},u_t)=\sigma_u^2\phi^i$，故
+\textbf{评分对状态的吸收。}在实力单位下把第 $t$ 局的赛前评分写成 $\hat s_t=(1-b)\hat s_{t-1}+b(s+u_{t-1})+$噪声，$b=1/\tau_R$。状态部分 $x_t=\sum_{i\ge1}b(1-b)^{i-1}u_{t-i}$（只含第 $t$ 局之前的状态，因为决定第 $t$ 局胜率的是赛前评分）。$u$ 为 AR(1)，$\Cov(u_{t-i},u_t)=\sigma_u^2\rho^i$，故
 \[
-  \Cov(x_t,u_t)=\alpha\sigma_u^2\sum_i\bigl[(1-\alpha)\phi\bigr]^i=\frac{\alpha\sigma_u^2}{1-(1-\alpha)\phi},
+  \Cov(x_t,u_t)=b\sigma_u^2\sum_{i\ge1}(1-b)^{i-1}\rho^i=\frac{b\rho\,\sigma_u^2}{1-(1-b)\rho},
 \]
-即\cref{eq:ch2-absorb}。记 $a_0=1-\alpha$，$x$ 的自协方差可以递推得到：$\gamma_x(0)=\alpha^2\sigma_u^2(1+a_0\phi)/\bigl((1-a_0^2)(1-a_0\phi)\bigr)$，$k\ge1$ 时
+即\cref{eq:ch2-absorb}（与第三章\cref{app:ch3-ar}的 $\Cov(u_t,x_t)$ 一致）。记 $a_0=1-b$，$x$ 的自协方差可以递推得到：$\gamma_x(0)=b^2\sigma_u^2(1+a_0\rho)/\bigl((1-a_0^2)(1-a_0\rho)\bigr)$，$k\ge1$ 时
 \[
-  \gamma_x(k)=a_0^k\gamma_x(0)+\frac{\alpha^2\sigma_u^2}{1-a_0\phi}\cdot\frac{\phi\,(\phi^k-a_0^k)}{\phi-a_0}.
+  \gamma_x(k)=a_0^k\gamma_x(0)+\frac{b^2\sigma_u^2}{1-a_0\rho}\cdot\frac{\rho\,(\rho^k-a_0^k)}{\rho-a_0}.
 \]
 
-\textbf{按分匹配下的窗口方差。}由\cref{eq:ch2-identity}，$n$ 局窗口胜率 $W_n=\bar E_n+(R_{t+n}-R_t)/(Kn)$。第一项的局间波动来自窗口内对手评分的随机性，方差约 $\Var(E_t)/n$，其中 $\Var(E_t)=\Var\bigl(F(R-R')\bigr)$ 按\cref{app:ch2-edge}的 $R-R'$ 分布计算（$\sigma_q=100$、$K=16$ 时约 0.026）。第二项的方差为 $2[\Gamma(0)-\Gamma(n)]/(K^2n^2)$，评分（评分单位）的自协方差取 $\Gamma(k)=\lambda^2\gamma_x(k)+\sigma_e^2(1-\alpha)^k$，前者是对状态的跟踪，后者是评分噪声。除以二项方差 $p(1-p)/n\approx1/(4n)$ 即得\cref{eq:ch2-varratio}。模拟中的方差比是“每人 $m=2000/n$ 个连续窗口的样本方差”，期望值为 $\frac{m}{m-1}\bigl[D(n)-D(mn)/m^2\bigr]$，$D(h)=2[\Gamma(0)-\Gamma(h)]$；\cref{fig:ch2-ar1}(b) 的曲线已含此修正，\cref{fig:ch2-ci}(a) 取 $m\to\infty$。$\alpha$ 用修正后的时间常数，$\lambda$、$\sigma_e$ 用平稳值 $\lambda^*$、$\sigma_e(K,\lambda^*)$，均不由模拟拟合。实力固定（$\sigma_u=0$）且 $n\gg\tau_R$ 时，$\Var(R_{t+n}-R_t)\to2\sigma_e^2$，$\mathrm{sd}(W_n)\approx\sqrt2\sigma_e/(Kn)$。
+\textbf{按分匹配下的窗口方差。}由\cref{eq:ch2-identity}，$n$ 局窗口胜率 $W_n=\bar E_n+(R_{t+n}-R_t)/(Kn)$。第一项的局间波动来自窗口内对手评分的随机性，方差约 $\Var(E_t)/n$，其中 $\Var(E_t)=\Var\bigl(F(R-R')\bigr)$ 按\cref{app:ch2-edge}的 $R-R'$ 分布计算（$\sigma_q=100$、$K=16$ 时约 0.026）。第二项的方差为 $2[\Gamma(0)-\Gamma(n)]/(K^2n^2)$，评分（评分单位）的自协方差取 $\Gamma(k)=\lambda^2\gamma_x(k)+\sigma_e^2(1-b)^k$，前者是对状态的跟踪，后者是评分噪声。除以二项方差 $p(1-p)/n\approx1/(4n)$ 即得\cref{eq:ch2-varratio}。模拟中的方差比是“每人 $m=2000/n$ 个连续窗口的样本方差”，期望值为 $\frac{m}{m-1}\bigl[D(n)-D(mn)/m^2\bigr]$，$D(h)=2[\Gamma(0)-\Gamma(h)]$；\cref{fig:ch2-ar1}(b) 的曲线已含此修正，\cref{fig:ch2-ci}(a) 取 $m\to\infty$。$b$ 用修正后的时间常数，$\lambda$、$\sigma_e$ 用平稳值 $\lambda^*$、$\sigma_e(K,\lambda^*)$，均不由模拟拟合。实力固定（$\sigma_u=0$）且 $n\gg\tau_R$ 时，$\Var(R_{t+n}-R_t)\to2\sigma_e^2$，于是 $\mathrm{sd}(W_n)^2\approx\Var(E_t)/n+2\sigma_e^2(\lambda^*)/(K^2n^2)$。两项在 $n\approx2\sigma_e^2/(K^2\Var E_t)$ 处相等，$\sigma_q=100$、$K=16$ 时约 500 局：$\tau_R\ll n\lesssim500$ 时第二项占主导，标准差约按 $1/n$ 衰减；$n$ 更大时第一项占主导，标准差按 $1/\sqrt n$ 衰减，方差约为二项方差的 $4\Var(E_t)\approx0.1$ 倍（$\sigma_q\to0$ 时第一项消失）。$n=1000$ 时公式给出 $\mathrm{sd}(W_n)\approx0.63$ 个百分点。
 
 \textbf{随机匹配下的窗口方差。}此时胜负与评分无关，单局胜率 $p_t\approx p(s)+\beta(s)u_t$，$\beta(s)$ 为随机匹配胜率曲线在 $s$ 处的斜率（对手的状态并入对手实力的离散，$\tau\to\sqrt{\tau^2+\sigma_u^2}$）。$n$ 局状态均值的方差为
 \[
-  V_n=\frac{\sigma_u^2}{n}\Bigl[\frac{1+\phi}{1-\phi}-\frac{2\phi(1-\phi^n)}{n(1-\phi)^2}\Bigr],
+  V_n=\frac{\sigma_u^2}{n}\Bigl[\frac{1+\rho}{1-\rho}-\frac{2\rho(1-\rho^n)}{n(1-\rho)^2}\Bigr],
 \]
 方差比约为 $1+n\beta^2V_n/\bigl(p(1-p)\bigr)$，再对实力分布取平均，并作同样的样本方差修正。
 

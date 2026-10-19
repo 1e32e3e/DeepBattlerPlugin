@@ -228,6 +228,70 @@ def run_power(M=3000, M_null=8000, Tmax=4000, models=("none", "ar1", "hmm", "til
     return out
 
 
+def run_power_elonull(M=3000, M_null=8000, Tmax=4000,
+                      models=("ar1", "hmm", "tilt", "tilt_break", "fatigue")):
+    """Elo（K=K_ELO）下原始胜负的检验力，零分布换成“无波动的诚实 Elo（K=K_ELO）”。
+
+    备择模型的模拟与 run_power 完全相同（同一种子），只换临界值。i.i.d. 零分布回答“序列像不像独立抛硬币”，
+    诚实 Elo 零分布回答“在诚实 Elo 之上是否还有状态”；后者要求知道（或假设）K 与匹配规则。
+    """
+    tag = "power_elonull"
+    if _path(tag).exists():
+        return _load(tag)
+    null_model = PlayerModel("none", end_prob=END_PROB)
+    rec0 = simulate_player(null_model, M=M_null, T=Tmax, K=K_ELO, sigma_q=SIGMA_Q, seed=1003)
+    crit = {}
+    for Tp in POWER_T:
+        for tname, v in _stats(rec0, Tp).items():
+            crit[(tname, Tp)] = np.quantile(v, [0.025, 0.975])
+    del rec0
+    out = dict(T=POWER_T)
+    for name in models:
+        mdl = STANDARD[name] if name == "tilt" else replace(STANDARD[name], end_prob=END_PROB)
+        rec = simulate_player(mdl, M=M, T=Tmax, K=K_ELO, sigma_q=SIGMA_Q,
+                              seed=2000 + 31 * len(name) + K_ELO)
+        for tname in TESTS:
+            pw = []
+            for Tp in POWER_T:
+                v = _stats(rec, Tp)[tname]
+                lo, hi = crit[(tname, Tp)]
+                pw.append(np.mean((v < lo) | (v > hi)))
+            out[f"{name}_K{K_ELO}_{tname}"] = np.array(pw)
+        print(f"[power_elonull {name}] " + " ".join(
+            f"{t}:" + "/".join(f"{x:.2f}" for x in out[f'{name}_K{K_ELO}_{t}']) for t in TESTS),
+            flush=True)
+        del rec
+    _save(tag, out)
+    return out
+
+
+def run_detect(M=20000, T=1000, K=K_ELO, windows=(20, 35, 50)):
+    """诚实 Elo 单人可察觉性：同一份模拟上比较几种统计量与无波动玩家的相关和所需局数。
+
+    滞后 1 自相关、“前 w 局胜场”、自身评分（减该玩家平均）三类统计量；以及前 20 局 14–6 / 6–14 之后、
+    5 连胜 / 5 连败之后下一局真实胜率相对自身平均的超额。
+    """
+    tag = "detect"
+    if _path(tag).exists():
+        return _load(tag)
+    from population import form_stats
+    rec = simulate_player(STANDARD["none"], M=M, T=T, K=K, sigma_q=SIGMA_Q, seed=1201, record_R=True)
+    y, p = rec["y"], rec["p"]
+    out = form_stats(y, p, rec["R"], windows=windows)
+    rng = np.random.default_rng(1202)
+    out["rho1"] = lag_autocorr(y)
+    out["rho1_shuf"] = lag_autocorr(shuffle_within(y, rng))
+    W, L = cond_excess(p, rec["ws"], rec["ls"], kmax=6)
+    out["W5"], out["L5"] = float(W[4]), float(L[4])
+    out["share_ws5"] = float((rec["ws"] >= 5).mean())
+    # 理论：y 对自身评分误差的相关 −√(b/(2−b))，b = cK/4（κ=1）
+    b = K * np.log(10) / 1600
+    out["ownR_theory"] = -np.sqrt(b / (2 - b))
+    _save(tag, out)
+    print("[detect] " + " ".join(f"{k}={v:.4g}" for k, v in out.items()), flush=True)
+    return out
+
+
 def opponent_residuals(rec, Tp, iters=12):
     """用“对手评分”做协变量、把自身实力当作常数 ŝ（最大似然）时的残差 r_t = y_t - F(ŝ - opp_t)。
 
@@ -318,3 +382,5 @@ if __name__ == "__main__":
     run_ar_absorption()
     run_power()
     run_power_resid()
+    run_power_elonull()
+    run_detect()

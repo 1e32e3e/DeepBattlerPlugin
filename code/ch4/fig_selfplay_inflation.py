@@ -49,7 +49,9 @@ def main():
         if dh > 0:
             ax1.plot(k, h / C, color=col, lw=1.0, ls=":", label=f"{name}：真实传递进步")
         print(f"{name}: 对上一代胜率 {p_step:.3f}，每代自博弈 Elo {logit_step/C:.1f}，"
-              f"{GENS} 代累计 {self_elo[-1]:.0f}；真实传递进步 {h[-1]/C:.0f} Elo；"
+              f"{GENS} 代累计 {self_elo[-1]:.0f}（这一次实现；期望值 {GENS * logit_step / C:.0f}，"
+              f"400 局估计噪声使 {GENS} 代累计的标准差约 "
+              f"{np.sqrt(GENS / (NGAMES * p_step * (1 - p_step))) / C:.0f}）；真实传递进步 {h[-1]/C:.0f} Elo；"
               f"对参照池胜率 第0代 {100*vs_pool[0]:.1f}% -> 第{GENS}代 {100*vs_pool[-1]:.1f}%")
         if i == 0:
             vs_g0 = sig(A * np.sin(th))

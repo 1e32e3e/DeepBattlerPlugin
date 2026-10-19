@@ -25,7 +25,7 @@ def main():
     ax.set_xticks([1, 3, 5, 7, 9, 11, 13, 15])
     ax.set_xlabel("本次游玩中的第几局 $j$")
     ax.set_ylabel("真实单局胜率（%）")
-    ax.set_title(f"(a) 疲劳 φ={phi:g}，平均每次 8 局", loc="left")
+    ax.set_title(f"(a) 疲劳 ψ={phi:g}，平均每次 8 局", loc="left")
     ax.legend(loc="lower left", fontsize=7.5 * FONT_SCALE)
     ax = axes[1]
     p = 0.5

@@ -29,7 +29,9 @@ cd paper && latexmk -xelatex main.tex
 cd slides && latexmk -xelatex slides.tex
 ```
 
-Windows 本地：安装 TeX Live（含 latexmk、biber、ctex、biblatex-gb7714-2015）和 Python 3.11+。ctex 会自动使用 Windows 自带中文字体；`figstyle.py` 会依次尝试思源黑体、微软雅黑、黑体。
+出图耗时（4 核 Linux 实测）：没有缓存时全部约 21 分钟（第一章约 10 秒、第二章约 3.5 分钟、第三章约 16.5 分钟、第四章约 1 分钟；最慢的 `ch3/fig_power.py` 约 8.5 分钟）；模拟结果缓存在 `code/chN/cache/`（不入库），有缓存时几分钟。第三章正文数字由 `python code/ch3/ch3_numbers.py` 打印，它还需要另外约 20 组模拟，首次运行约 12 分钟。论文编译约 1 分钟。图都已入库，只改正文时不必重新出图。
+
+Windows 本地：安装 TeX Live（含 latexmk、biber、ctex、biblatex-gb7714-2015）和 Python 3.11+。ctex 会自动使用 Windows 自带中文字体；`figstyle.py` 会依次尝试思源黑体、微软雅黑、黑体（找不到前几个字体时打印的 `findfont: Font family ... not found` 可忽略；换字体后文字宽度略有变化，出图后看一遍 PNG，若负号“−”显示成方框，说明所选字体缺这个字符）。Windows PowerShell 5.1 不支持 `&&`，改用 `cd paper; latexmk -xelatex main.tex`。单独运行脚本、输出重定向到文件时若报 `UnicodeEncodeError`，先设环境变量 `PYTHONUTF8=1`（`run_all.py` 已为子进程设好 UTF-8）。
 
 ## 约定
 

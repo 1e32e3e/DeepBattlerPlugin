@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from _common import CH, INK, SERIES, WIDTH_FULL, bottom_legend, save, use
 from population import load
 
-CASES = [("elo32", "诚实 Elo"), ("tilt30_elo32", "上头 θ=30"),
+CASES = [("elo32", "诚实 Elo（(b) 中与上头几乎重合）"), ("tilt30_elo32", "上头 θ=30"),
          ("manip_sym", "对称操纵：连胜≥3 配 +100、连败≥3 配 −100"),
          ("manip_asym", "非对称操纵：只对连胜≥3 配 +100")]
 KMAX = 7
@@ -20,14 +20,18 @@ def main():
         d = load(nm)
         win = np.r_[d["L"][:KMAX][::-1], d["W"][:KMAX]] * 100
         opp = np.r_[d["oppR_L"][:KMAX][::-1], d["oppR_W"][:KMAX]]
+        # 诚实 Elo 用空心方块、虚线画在最上层，避免在 (b) 中被上头的曲线完全盖住
+        mk, ls, mfc, z = ("s", "--", "white", 5) if nm == "elo32" else ("o", "-", SERIES[i], 3)
         for ax, val in zip(axes, (win, opp)):
-            ax.plot(ks[ks < 0], val[ks < 0], "-o", color=SERIES[i], ms=3, lw=1.3, label=lab)
-            ax.plot(ks[ks > 0], val[ks > 0], "-o", color=SERIES[i], ms=3, lw=1.3)
+            ax.plot(ks[ks < 0], val[ks < 0], ls=ls, marker=mk, color=SERIES[i], mfc=mfc, ms=3.2, lw=1.3,
+                    label=lab, zorder=z)
+            ax.plot(ks[ks > 0], val[ks > 0], ls=ls, marker=mk, color=SERIES[i], mfc=mfc, ms=3.2, lw=1.3,
+                    zorder=z)
     for ax in axes:
         ax.axhline(0, color=INK["muted"], lw=0.8)
         ax.axvline(0, color=INK["grid"], lw=0.8)
-        for x in (-3, 3):
-            ax.axvline(x, color=INK["grid"], lw=0.8, ls=(0, (2, 2)))
+        for x in (-3, 3):     # 操纵的触发阈值 ±3：用墨色虚线，保证印刷后可见
+            ax.axvline(x, color=INK["secondary"], lw=0.8, ls=(0, (3, 2)))
         ticks = [-7, -5, -3, -1, 1, 3, 5, 7]
         ax.set_xticks(ticks)
         ax.set_xticklabels([f"{t:+d}".replace("-", "−") for t in ticks])

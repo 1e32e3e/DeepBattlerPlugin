@@ -58,7 +58,7 @@ def main():
     # 图例：两组颜色
     from matplotlib.patches import Patch
     ax.legend(handles=[Patch(color=SERIES[0], label="随机匹配"), Patch(color=SERIES[1], label="按分匹配")],
-              loc="lower right", fontsize=7, handlelength=1.0)
+              loc="lower right", fontsize=7.5, handlelength=1.0)
 
     r = m.get("s100_k16")
     rng = np.random.default_rng(0)
@@ -75,7 +75,7 @@ def main():
     bx.set_xlim(900, 2100); bx.set_ylim(700, 2300)
     bx.set_xlabel("真实实力 $s$（Elo）")
     bx.set_ylabel("评分 $R$（Elo）")
-    bx.legend(loc="lower right", fontsize=7)
+    bx.legend(loc="lower right", fontsize=7.5)
     bx.set_title("(b) 按分匹配稳态下的评分", loc="left", fontsize=9)
     save(fig, "ch2", "three_quantities")
     for (lab, n, _), (w, k) in zip(rows, vals):

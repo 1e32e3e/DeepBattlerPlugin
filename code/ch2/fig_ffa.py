@@ -44,11 +44,11 @@ def main():
     ax.plot(dd, [np.mean(p == 1) * 100 for p in mc], "o", ms=3.5, color=SERIES[2], mec="white", mew=0.5)
     ax.axhline(50, color=INK["muted"], lw=0.8, ls=":")
     ax.axhline(12.5, color=INK["muted"], lw=0.8, ls=":")
-    ax.text(-395, 13.5, "1/8", fontsize=7, color=INK["secondary"])
+    ax.text(-395, 13.5, "1/8", fontsize=7.5, color=INK["secondary"])
     ax.set_xlabel("对其余 7 人的实力优势 $d$（Elo）")
     ax.set_ylabel("概率（%）")
     ax.set_xlim(-400, 400); ax.set_ylim(0, 100)
-    ax.legend(loc="upper left", fontsize=7)
+    ax.legend(loc="upper left", fontsize=7.5)
     ax.set_title("(a) 名次概率（Plackett–Luce）", loc="left", fontsize=9)
 
     places = np.arange(1, N + 1)
@@ -63,7 +63,7 @@ def main():
     bx.set_ylabel("概率（%）")
     bx.set_ylim(0, 62)
     bx.grid(axis="x", visible=False)
-    bx.legend(loc="upper right", fontsize=6.6)
+    bx.legend(loc="upper right", fontsize=7.5)
     bx.set_title("(b) 名次分布", loc="left", fontsize=9)
     save(fig, "ch2", "ffa")
 

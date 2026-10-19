@@ -35,11 +35,11 @@ def main():
         implied = true_gain - r["lag"]
         ax.plot(t, implied, color=SERIES[i], lw=1.4, ls=["-", "--"][i], label=f"评分折算的增量，$K$={K}")
     ax.axvline(ramp, color=INK["muted"], lw=0.8, ls=":")
-    ax.text(ramp - 8, 20, "停止进步", ha="right", fontsize=7, color=INK["secondary"])
+    ax.text(ramp - 8, 20, "停止进步", ha="right", fontsize=7.5, color=INK["secondary"])
     ax.set_xlabel("开始进步后的局数")
     ax.set_ylabel("实力增量（Elo）")
     ax.set_xlim(0, t[-1]); ax.set_ylim(-20, 340)
-    ax.legend(loc="upper left", fontsize=6.8)
+    ax.legend(loc="upper left", fontsize=7.5)
     ax.set_title("(a) 评分滞后（每局 +0.5 分）", loc="left", fontsize=9)
 
     vv = np.linspace(0, 1.1, 50)
@@ -54,11 +54,11 @@ def main():
             pts.append((r["W"][100:rp].mean() - r["E"][100:rp].mean()) * 100)
         bx.plot([0.25, 0.5, 1.0], pts, "o" if K == 16 else "s", ms=4.5, color=SERIES[i], mec="white", mew=0.6,
                 label=f"模拟，$K$={K}")
-    bx.text(1.08, 1.08 / 32 * 100 - 0.25, "$v/K$", fontsize=6.6, color=INK["secondary"], ha="right", va="top")
+    bx.text(1.08, 1.08 / 32 * 100 - 0.25, "$v/K$", fontsize=7.5, color=INK["secondary"], ha="right", va="top")
     bx.set_xlabel("进步速度 $v$（Elo/局）")
     bx.set_ylabel("胜率 − 期望得分（百分点）")
     bx.set_xlim(0, 1.1); bx.set_ylim(0, 8.5)
-    bx.legend(loc="upper left", fontsize=6.6)
+    bx.legend(loc="upper left", fontsize=7.5)
     bx.set_title("(b) 胜率超出期望得分", loc="left", fontsize=9)
     save(fig, "ch2", "improve")
 

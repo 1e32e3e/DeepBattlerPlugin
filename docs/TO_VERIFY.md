@@ -9,7 +9,6 @@
 | 章节 | 来源（键名） | 需要核对的说法 | 原因 | 正文脚注 |
 |---|---|---|---|---|
 | 1a §成对比较；2.1 | thurstone1927law, mosteller1951remarks, zermelo1929berechnung, bradley1952rank, luce1959individual, plackett1975analysis | 各模型的公式；“Zermelo 用该模型从循环赛结果推算棋手实力”；Thurstone Case V 与 Bradley–Terry 的形式 | 经典原文未重读，只核对题录（APA、JSTOR 付费墙）；模型形式依据 Glickman 1995、TrueSkill 论文、Weng–Lin、Aldous 2017 的转述。优先级低 | 是 |
-| 1a §Elo 理论 | jabin2015continuous | “在一定假设下评分密度收敛到实力密度” | SIAM 付费墙；结论来自 Aldous 2017 与 Düring 等 2022 的转述（第二章读到了作者预印本） | 是 |
 | 1a §Elo 理论 | during2019boltzmann | “加入学习效应” | 只读到 arXiv 摘要与引言、Crossref 题录。优先级低 | 否 |
 | 1a §组队 | gong2020optmatch | OptMatch 在《潮人篮球》上的线上实验及效果 | ACM 页面无法访问，只读到 Semantic Scholar 上的摘要 | 是 |
 | 1a §组队 | deng2021globally | GloMatch 用自注意力和强化学习做全局优化 | 只读到 EnMatch 论文对它的描述 | 是 |
@@ -18,9 +17,9 @@
 | 1a §DDA | hunicke2005case | 2005 年论文报告的用户研究结果 | ACM 全文未读到；正文只说“报告了用户研究”，未引具体数字 | 是 |
 | 1a §连胜连败；3.4.4；3.5 | kou2018playing | 连胜连败都损害体验、“暂时脱离”是主要应对，连串是一种社会建构 | ACM 付费墙，只读到摘要（Penn State 机构库） | 是 |
 | 1a §连胜连败；3.4.4 | deng2024streaks | 597,680 场英雄联盟顶级玩家对局；连串与表现的相关“显著但很小”；连败后休息更久、输后略改善表现 | 论文为 CC-BY，但 ACM 页面被 Cloudflare 拦截，只读到摘要 | 是 |
-| 1a §英雄联盟 | veron2014matchmaking | 2800 多万局公开数据、分析匹配服务需求 | HAL/作者主页下载失败，只读到摘要 | 是 |
+| 1a §英雄联盟 | veron2014matchmaking | 2800 多万局公开数据、分析匹配服务需求 | 只读到摘要（摘要确认数据来自一个公开英雄联盟服务器的 2800 多万场对局）；作者主页全文 https://pages.lip6.fr/Olivier.Marin/Publis/nossdav14.pdf 在 2026-10-19 两次下载均被连接重置，需换网络重试 | 是 |
 | 1a §Dota 2；4.5 表 4.2 | semenov2017performance, yashkov2016applications | 仅凭阵容预测能力有限、分段越高越难预测；AUC 0.66—0.70；阵容在极高分段至少解释约 6% 的信息、普通分段约 10% | 只读到作者在 MLSA16 的报告幻灯片；论文（AIST 2016，CCIS 661:26–37）在 Springer 付费墙后 | 是 |
-| 1a §星际争霸 II；4.6 | vinyals2019grandmaster | “按天梯 MMR 评估”的细节；PFSP 权重、联赛构成（35/50/15）、主剥削者 20% 规则、MMR 极大似然公式与 TLO 校验（6334 vs 6336）、三族 MMR | 第四章依据 DeepMind 公开的未排版作者稿全文；Nature 正式版在付费墙后，未逐字比对。“约 300 万个循环”取自 Nature 页面公开的 Extended Data Fig. 8 图注 | 1a 是；4 否 |
+| 4.6 | vinyals2019grandmaster | PFSP 权重、联赛构成（35/50/15）、主剥削者 20% 规则、MMR 极大似然公式与 TLO 校验（6334 vs 6336） | 依据 DeepMind 公开的未排版作者稿全文；Nature 正式版在付费墙后，未逐字比对。“约 300 万个循环”取自 Nature 页面公开的 Extended Data Fig. 8 图注 | 否 |
 | 4.6.1 | silver2017mastering | 400 局、>55% 门槛；BayesElo、$c_{\mathrm{elo}}=1/400$；5185/4858/3739/3144/3055；89:11 | 依据 UCL Discovery 上的作者接受稿全文；Nature 正式版在付费墙后，未逐字比对 | 否 |
 | 4.2.3、4.3 | szczecinski2026new | 稳态方差近似 $v\approx sK/2$（转引 Zanco 等）；“排名模型与预测模型解耦” | arXiv 预印本（2026-04），尚未见同行评审版本 | 否 |
 | 4.4.2、4.9 | microsoft2005trueskill | FAQ 表格“识别实力所需的最少局数”：8 人混战约 3 局、2 人对局约 12 局，实际可能高到三倍 | 微软页面对命令行抓取返回反爬页，此表数字经网页抓取工具转述读取；FAQ 中两句引文已逐字核对 | 否 |
@@ -29,10 +28,9 @@
 | 1a §中文文献 | huang2010tuanti | 用团体动力学加入团体结构与沟通因素改善团队配对 | 同上 | 是 |
 | 1b Riot | ggscore2025riot | Phroxzon 在 15.14 版本预告（约 2025-07）中称匹配不看荣誉等级、标记次数、符文、是否连败 | GGScore 页面与 X 原帖均无法访问，只见搜索摘要 | 是 |
 | 1b Valve | pcgamesn2013dota | Dota 2 2013 年天梯博客原文（“一直在计算 MMR”“胜负为主、不确定度高时个人表现也起作用”、匹配目标含“每队 50% 获胜机会”） | Valve 原博客页已下线，web.archive.org 不可访问；依据 PCGamesN 的大段引文 | 是 |
-| 1b Valve | pcgamer2021csgo | Valve 员工 2015 年 Reddit 回复：CS:GO 段位“起初基于 Glicko-2 的思想” | Reddit 拒绝访问；依据 PC Gamer 转述 | 是 |
 | 1b Blizzard | hswiki2026ranked | 炉石构筑天梯按不随赛季重置的 MMR 匹配 | 只有社区维基，未找到 Blizzard 官方说明 | 是 |
 | 1b 大逃杀 | pcgamer2019fortnite | Epic 2019-09 公告原文“as your skill improves, you'll face fewer bots” | Epic/Fortnite 官网对自动访问返回 403；依据 PC Gamer 当日引文 | 是 |
-| 1b 大逃杀 | techradar2026arc | Embark CEO 称“现在也按你倾向 PvP 还是 PvE 来匹配” | GamesBeat 访谈视频未观看，依据 TechRadar 转述 | 是 |
+| 1b 大逃杀 | techradar2026arc | Embark CEO 称“现在也按你倾向 PvP 还是 PvE 来匹配”（正文按员工公开发言标【官方】） | GamesBeat 访谈视频未观看，依据 TechRadar 转述 | 是 |
 | 1b 腾讯 | zhang2025hok | 2018 年官网《狄仁杰答疑｜匹配算法全面解析》原文（“没有任何动机去干预……胜率”“ELO 等级分系统”“势均力敌”等句） | 官网原页未找到；依据《每日经济新闻》报道（虎嗅转载）中的摘录。2026-10-19 已确认该报道含这些句子；光环助手页面（ghzs2022wangzhe）不含这些句子，不能作为官方来源 | 是 |
 | 1b 腾讯 | kuaikeji2026hok | 2026-08“对局环境优化专栏”首期：负面信誉维度、7000 多条反馈、段位差 5 星内 66.8%→99.6%、2 星内 36.1%→90.7% | 未读到官方专栏原文，依据快科技（17173 转载） | 是 |
 | 1b 网易 | sportskeeda2025rivals | 《漫威争锋》匹配说明视频（Zhiyong）内容 | 未观看原视频，依据媒体转述 | 是 |
@@ -69,3 +67,10 @@
 | 2 | elo1978rating | 读的是 1986 年第 2 版扫描本（1.24–1.27 节、8.94 节）；refs.bib 按第 2 版著录 | 2026-10-18 |
 | 2 | cortez2024convergence | 依据 arXiv v2（2026-01-26）定理 2 的 $\sqrt K$ 收敛率；v1 发布于 2024-10 | 2026-10-18 |
 | 4 | silver2017mastering, berner2019dota | AlphaGo Zero 的 55% 门槛（400 局）与 BayesElo 说明、OpenAI Five 的 80%/20% 与对手质量分更新式均已在作者稿/附录中逐字核对 | 2026-10-18 |
+| 1a §Elo 理论、2、3 | jabin2015continuous | 读作者 2014-05-16 预印本全文（KineticRating7.pdf）：“所有人都能相遇”时指数收敛到实力；“只与评分相近者相遇”时评分也收敛、“总给人系统在正常工作的印象”，但可能停在依赖初始分布的亚稳平衡、与实力相差很大、无收敛速率；失效只在出现孤立群体（评分分布有缺口）时发生。原第一章“证明评分密度收敛到实力密度”的转述有误，已改。SIAM 正式版未与预印本逐字比对 | 2026-10-19 |
+| 1a §星际争霸 II | vinyals2019grandmaster | 作者稿写明 AlphaStar 在 Battle.net 天梯与人类匹配，三族 MMR 6,275 / 6,048 / 5,835，高于 99.8% 的排名玩家；第一章的脚注已删除 | 2026-10-19 |
+| 1a §Glicko、1b Valve | pcgamer2021csgo → vitaliy2014comment | 经 Arctic Shift 归档读到原评论（r/GlobalOffensive 帖 2g3r4c，评论 ckfhfir，u/vitaliy\_valve，Valve Employee 标记）：发表于 2014-09-11（PC Gamer 误记为 2015）；原句“started with ideas based on Glicko-2 rating model and improved over time”，并称竞技系统“significantly different and more complex than Elo”、2012 年底推出。正文改引原评论，标【官方】 | 2026-10-19 |
+| 1b Apex | respawn2023matchmaking | 原文写明以长期留存作为匹配改动的上线标准（“unless we see a positive change in long-term retention, we are unlikely to accept a matchmaking change worldwide”，证明有益“至少一个月”），并称不构建直接优化留存或参与度的算法；已补入正文与证据表 | 2026-10-19 |
+| 3.4 | itero2020analyzing | 原文另有钻石 I（前 1%）的结果：输后短暂休息胜率明显下降、立即再排略升，与黄金段位相反；作者归因于高分段玩家适应了上头。已补入正文 | 2026-10-19 |
+| 1b 拳头 | oneesports2024valorant | 页面作者为 Wanzi Koh，标题“This may be why you're hard stuck in ranked, says Valorant dev”（2024-10-03）；bib 著录已改 | 2026-10-19 |
+| 4.6 | silver2017mastering | UCL 接受稿方法部分的胜率式为 $1/(1+\exp(c_{elo}(e(b)-e(a))))$、$c_{elo}=1/400$（以 $e$ 为底）；文中数字（327 分差与 89:11）与以 10 为底的刻度相符，已加脚注说明 | 2026-10-19 |

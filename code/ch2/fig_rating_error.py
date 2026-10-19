@@ -42,7 +42,7 @@ def main():
     ax.set_xlabel("K 因子")
     ax.set_ylabel("稳态评分误差 $\\sigma_e$（Elo）")
     ax.set_xlim(0, 70); ax.set_ylim(0, 140)
-    ax.legend(loc="upper left", fontsize=6.6)
+    ax.legend(loc="upper left", fontsize=7.5)
     ax.set_title("(a) 误差大小 $\\propto\\sqrt{K}$", loc="left", fontsize=9)
 
     lags = np.arange(0, 201, 2)
@@ -56,13 +56,20 @@ def main():
         bx.plot(lags, th, color=SERIES[i], lw=1.0, ls="--")
     for K in (16, 32):
         bx.plot(lags, np.exp(-lags / m.tau_R_ideal(K)), color=INK["muted"], lw=0.9, ls=":")
-        t0 = 75 if K == 16 else 42
-        bx.text(t0 + 4, np.exp(-t0 / m.tau_R_ideal(K)), f"695/{K}", fontsize=6.5, color=INK["secondary"])
+        # 两条理想曲线的标注错开：K=16 标在曲线右上方，K=32 标在曲线左下方
+        t0 = 90 if K == 16 else 30
+        y0 = np.exp(-t0 / m.tau_R_ideal(K))
+        if K == 16:
+            bx.annotate(f"695/{K}", (t0, y0), xytext=(4, 2), textcoords="offset points", ha="left", va="bottom",
+                        fontsize=7.5, color=INK["secondary"])
+        else:
+            bx.annotate(f"695/{K}", (t0, y0), xytext=(-3, -3), textcoords="offset points", ha="right", va="top",
+                        fontsize=7.5, color=INK["secondary"])
     bx.axhline(np.exp(-1), color=INK["grid"], lw=0.8)
     bx.set_xlabel("滞后（局）")
     bx.set_ylabel("评分误差自相关")
     bx.set_xlim(0, 200); bx.set_ylim(-0.02, 1.0)
-    bx.legend(loc="upper right", fontsize=6.4)
+    bx.legend(loc="upper right", fontsize=7.5)
     bx.set_title("(b) 误差衰减：实线模拟，虚线公式", loc="left", fontsize=9)
     save(fig, "ch2", "rating_error")
 

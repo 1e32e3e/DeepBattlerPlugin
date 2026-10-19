@@ -83,7 +83,7 @@ def main():
     ax.set_ylim(0, 7.2)
     ax.set_xlabel("这一局的真实胜率 $p=F(s_A-s_B)$")
     ax.set_ylabel("密度")
-    ax.legend(loc="upper left", fontsize=7)
+    ax.legend(loc="upper left", fontsize=7.5)
     ax.set_title("(a) 1v1：系统预测 50% 的对局", loc="left", fontsize=9)
 
     E, p, duel, resid, lobby_sd = lobbies_5v5()
@@ -96,12 +96,12 @@ def main():
     pp2 = np.linspace(0.05, 0.95, 400)
     bx.plot(pp2, p_density(pp2, sd_t), color=SERIES[0], lw=1.6, label="团队理论密度")
     bx.axvline(0.5, color=INK["muted"], lw=0.8, ls=":")
-    bx.text(0.99, 0.97, f"系统预测：90% 的对局\n在 {np.quantile(E, 0.05) * 100:.1f}%–{np.quantile(E, 0.95) * 100:.1f}% 之间",
-            transform=bx.transAxes, va="top", ha="right", fontsize=7, color=INK["primary"])
+    bx.text(0.99, 0.70, f"系统预测：90% 的对局\n在 {np.quantile(E, 0.05) * 100:.1f}%–{np.quantile(E, 0.95) * 100:.1f}% 之间",
+            transform=bx.transAxes, va="top", ha="right", fontsize=7.5, color=INK["primary"])
     bx.set_xlim(0.0, 1.0)
-    bx.set_ylim(0, 6.0)
+    bx.set_ylim(0, 6.5)
     bx.set_xlabel("真实胜率")
-    bx.legend(loc="upper left", fontsize=6.5)
+    bx.legend(loc="upper left", fontsize=7.5)
     bx.set_title("(b) 5v5：两队评分和相等的对局", loc="left", fontsize=9)
     save(fig, "ch2", "fair_game")
     for K, sd, q, mad, emax in info:

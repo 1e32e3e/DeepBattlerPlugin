@@ -38,14 +38,14 @@ def main():
                                  gridspec_kw=dict(wspace=0.08))
     for i, (tau, name) in enumerate(((100, "r_k16_tau100"), (200, "r_k16"), (300, "r_k16_tau300"))):
         ax.plot(q * 100, curve(q, tau) * 100, color=SERIES[i], ls=["-", "--", "-."][i],
-                label=f"$\\tau={tau}$（$\\rho$={m.rho(tau):.2f}）")
+                label=f"$\\tau={tau}$（$r$={m.rho(tau):.2f}）")
         x, y = binned(name)
         ax.plot(x * 100, y * 100, "o", ms=3.2, color=SERIES[i], mec="white", mew=0.6)
     ax.set_xlabel("实力百分位 $q$（%）")
     ax.set_ylabel("长期胜率 $W$（%）")
     ax.set_xlim(0, 100); ax.set_ylim(0, 100)
     ax.axhline(50, color=INK["muted"], lw=0.8, ls=":")
-    ax.legend(loc="upper left", fontsize=7)
+    ax.legend(loc="upper left", fontsize=7.5)
     ax.set_title("(a) 群体实力离散度 $\\tau$", loc="left", fontsize=9)
 
     for i, (sx, name) in enumerate(((0, "r_k16"), (150, "r_k16_noise150"), (300, None))):
@@ -58,7 +58,7 @@ def main():
     bx.set_xlabel("实力百分位 $q$（%）")
     bx.set_xlim(0, 100)
     bx.axhline(50, color=INK["muted"], lw=0.8, ls=":")
-    bx.legend(loc="upper left", fontsize=7)
+    bx.legend(loc="upper left", fontsize=7.5)
     bx.set_title("(b) 单局随机性 $\\sigma_x$（$\\tau=200$）", loc="left", fontsize=9)
     save(fig, "ch2", "random_1v1")
 

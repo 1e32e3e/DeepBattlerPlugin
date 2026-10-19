@@ -48,7 +48,7 @@ def main():
     ax1.set_xlabel("局数 $t$")
     ax1.set_ylabel("Elo")
     ax1.set_title("(a) 实力跳升 200 后的跟踪", loc="left")
-    ax1.legend(loc="upper left", fontsize=7.5)
+    ax1.legend(loc="lower right", fontsize=7.5)
     ax1.set_ylim(-120, 330)
 
     kk = np.linspace(1.6, 70, 300)

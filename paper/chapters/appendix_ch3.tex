@@ -7,13 +7,13 @@
 \subsection{游程的精确计算}
 \label{app:ch3-runs}
 
-\paragraph{最长连败。} 设各局独立，赢的概率为 $p$、输的概率为 $q$。记 $a_n=\Prob(L_n<r)$。若 $n<r$，必然 $L_n<r$，故 $a_n=1$。若 $n\ge r$，考虑第一场胜利的位置：前 $j$ 局全输（$0\le j\le r-1$，否则已出现 $r$ 连败）、第 $j+1$ 局赢，此后 $n-j-1$ 局中不能出现 $r$ 连败，得到\cref{eq:ch3-recursion}。另一种做法是马尔可夫链：状态 $\ell=0,\dots,r-1$ 为当前尾部连败长度，转移 $\ell\to0$（概率 $p$）、$\ell\to\ell+1$（概率 $q$），$\ell+1=r$ 时吸收。两种方法在所有检查点上一致到 $10^{-5}$，并与 Monte Carlo（$10^5$ 条序列）一致到抽样误差以内。$\E L_n=\sum_{r\ge1}\Prob(L_n\ge r)$，$\E L_n^2=\sum_{r\ge1}(2r-1)\Prob(L_n\ge r)$。
+\paragraph{最长连败。} 设各局独立，赢的概率为 $p$、输的概率为 $q$。记 $a_n=\Prob(L_n<r)$。若 $n<r$，必然 $L_n<r$，故 $a_n=1$。若 $n\ge r$，考虑第一场胜利的位置：前 $j$ 局全输（$0\le j\le r-1$，否则已出现 $r$ 连败）、第 $j+1$ 局赢，此后 $n-j-1$ 局中不能出现 $r$ 连败，得到\cref{eq:ch3-recursion}。另一种做法是马尔可夫链：状态 $\ell=0,\dots,r-1$ 为当前尾部连败长度，转移 $\ell\to0$（概率 $p$）、$\ell\to\ell+1$（概率 $q$），$\ell+1=r$ 时吸收。两种方法在所有检查点上一致到 $10^{-5}$，并与 蒙特卡洛模拟（$10^5$ 条序列）一致到抽样误差以内。$\E L_n=\sum_{r\ge1}\Prob(L_n\ge r)$，$\E L_n^2=\sum_{r\ge1}(2r-1)\Prob(L_n\ge r)$。
 
 \paragraph{连败段的期望个数。} 一段 $\ge r$ 连败从第 1 局开始的概率为 $q^r$，从第 $i\ge2$ 局开始的概率为 $p\,q^r$（第 $i-1$ 局赢），可能的起点有 $n-r$ 个，故 $\E N_r=q^r[1+(n-r)p]$。
 
 \paragraph{$\mathrm W^k\mathrm L^k$ 的精确性与变体。} 子串 $\mathrm W^k\mathrm L^k$ 的任何真前缀都不是它的真后缀（前缀以 W 开头，后缀以 L 结尾），所以两次出现不重叠，每次出现与一个“左侧连胜 $\ge k$、右侧连败 $\ge k$ 的胜负交界”一一对应，期望由线性性直接得到\cref{eq:ch3-wklk}。“恰好 $k$ 胜接恰好 $k$ 负”要求两端再各有一个相反结果（或序列边界），内部位置的概率为 $p^{k+1}q^{k+1}$，$n=1000$、$k=4$、$p=0.5$ 时期望为 0.97。“至少出现一次”用 KMP 自动机：状态 $0,\dots,2k-1$ 为已匹配的前缀长度，W/L 两种转移由失配函数给出，到达 $2k$ 即吸收；对 $n$ 步做前向动态规划。
 
-\paragraph{滑动窗口。} “存在某个 $w$ 局窗口只赢 $\le x$ 局”：以最近 $w-1$ 局的胜负（$2^{w-1}$ 个状态）为状态做前向动态规划，每步把“加上本局后窗口胜场 $\le x$”的概率质量移入吸收态。$w=20$ 时状态数约 52 万，100 局约需数秒。$w=50$ 无法精确计算，用 Monte Carlo（$5\times10^4$ 条序列）。
+\paragraph{滑动窗口。} “存在某个 $w$ 局窗口只赢 $\le x$ 局”：以最近 $w-1$ 局的胜负（$2^{w-1}$ 个状态）为状态做前向动态规划，每步把“加上本局后窗口胜场 $\le x$”的概率质量移入吸收态。$w=20$ 时状态数约 52 万，100 局约需数秒。$w=50$ 无法精确计算，用 蒙特卡洛模拟（$5\times10^4$ 条序列）。
 
 \subsection{Miller–Sanjurjo 估计量的精确动态规划}
 \label{app:ch3-ms}
@@ -25,13 +25,13 @@
 \subsection{诚实 Elo 均值回归的线性高斯推导}
 \label{app:ch3-elo}
 
-\paragraph{设定。} 记 $e_t$ 为玩家评分相对“公平评分”的误差（评分单位），$n$ 为每队人数。按评分匹配时，系统预测胜率 $E_t=\Elogit(\text{双方评分差})\approx\frac12$。真实胜率对自己评分误差的线性敏感度写成 $g=\kappa c/(4n)$：$c/4$ 是 $\Elogit$ 在 0 处的斜率，$1/n$ 来自团队平均，$\kappa$ 是“评分误差传到真实胜率的比例”。单人对校准对手池时，对手的真实实力就是对手评分 $=R_t+\eta_t$，于是 $p_t=\Elogit(-e_t-\eta_t)$，$\kappa=1$（对 $\eta$ 平均后实际斜率略小，$\sigma_q=50$ 时约 0.98）。闭合人群中，评分刻度相对实力拉伸了 $\lambda$ 倍并带有误差，我的评分升高 $\Delta$ 时，同评分对手的期望实力升高 $\Delta\cdot\beta_{s\mid R}$，其中 $\beta_{s\mid R}=\Cov(s,R)/\Var R=\rho_{Rs}^2/\lambda$ 是实力对评分的回归斜率，于是 $\kappa\approx\beta_{s\mid R}$。匹配窗口远宽于人群的评分离散时，同评分的对手不再跟随我的评分（向人群中部回归），$\kappa$ 进一步减小，随机匹配时 $\kappa\to0$；这时式\eqref{eq:ch3-elo-excess}高估效应（\cref{tab:ch3-elo}中 $\sigma_q\ge200$ 的行）。
+\paragraph{设定。} 记 $e_t$ 为玩家评分相对“公平评分”的误差（评分单位），$n$ 为每队人数。按评分匹配时，系统预测胜率 $E_t=\Elogit(\text{双方评分差})\approx\frac12$。真实胜率对自己评分误差的线性敏感度写成 $g=\kappa c/(4n)$：$c/4$ 是 $\Elogit$ 在 0 处的斜率，$1/n$ 来自团队平均（均值团队模型；加和模型 $P=\Elogit((\sum s_A-\sum s_B)/\sqrt n)$ 下为 $1/\sqrt n$，下文的 $n$ 都换成 $\sqrt n$），$\kappa$ 是“评分误差传到真实胜率的比例”。单人对校准对手池时，对手的真实实力就是对手评分 $=R_t+\eta_t$，于是 $p_t=\Elogit(-e_t-\eta_t)$，$\kappa=1$（对 $\eta$ 平均后实际斜率略小，$\sigma_q=50$ 时约 0.98）。闭合人群中，评分刻度相对实力拉伸了 $\lambda$ 倍并带有误差，我的评分升高 $\Delta$ 时，同评分对手的期望实力升高 $\Delta\cdot\beta_{s\mid R}$，其中 $\beta_{s\mid R}=\Cov(s,R)/\Var R=\rho_{Rs}^2/\lambda$ 是实力对评分的回归斜率，于是 $\kappa\approx\beta_{s\mid R}$。匹配窗口远宽于人群的评分离散时，同评分的对手不再跟随我的评分（向人群中部回归），$\kappa$ 进一步减小，随机匹配时 $\kappa\to0$；这时\cref{eq:ch3-elo-excess}高估效应（\cref{tab:ch3-elo}中 $\sigma_q\ge200$ 的行）。
 
 \paragraph{稳态。} $y_t=p_t+\xi_t$，$\E\xi_t=0$，$\Var\xi_t=p_t(1-p_t)\approx\frac14$。Elo 更新 $e_{t+1}=e_t+K(y_t-E_t)$。代入 $p_t-E_t\approx-g\,e_t+\zeta_t$（$\zeta_t$ 汇集对手误差和排队噪声，与 $e_t$ 独立，对均值无贡献），得 $e_{t+1}=(1-b)e_t+K\xi_t+K\zeta_t$，$b=gK$。忽略 $\zeta$ 的方差贡献（它的量级为 $(Kc/4)^2\sigma_\zeta^2$，在本章参数下不到 $K^2/4$ 的 3\%），
 \[
 \sigma_e^2=\frac{K^2/4}{1-(1-b)^2}=\frac{K^2}{4b(2-b)} .
 \]
-$n=\kappa=1$ 时，$\sigma_e^2=K/[c(2-b)]\approx(200/\ln10)\,K/(1-cK/8)$，即 $\sigma_e\approx9.3\sqrt K$。
+$n=\kappa=1$ 时，$\sigma_e^2=K/[c(2-b)]\approx(200/\ln10)\,K/(1-cK/8)$，即 $\sigma_e\approx9.3\sqrt K$。这里对手评分没有误差（校准对手池），所以修正因子是 $1-cK/8$；第二章\cref{eq:ch2-sigmae}假设对手评分与自己有同样大小的独立误差，修正因子为 $1-Kc/4$，$K=32$ 时两者分别给出 53.3 和 54.0 分。
 
 \paragraph{条件期望。} 事件 $A_k=\{y_{t-k}=\dots=y_{t-1}=1\}$ 等价于“第 $t$ 局开始时连胜 $\ge k$”。在 $A_k$ 上，评分每局增加 $K(1-E)\approx K/2$，故 $e_t=e_{t-k}+kK/2$（忽略 $\eta$ 带来的二阶修正）。$e_{t-k}$ 的先验为 $\Normal(0,\sigma_e^2)$。给定 $e_{t-k}$，$k$ 场胜利的似然为 $\prod_{m=0}^{k-1}\big(\frac12-g\,e_{t-k+m}+\dots\big)$；一阶近似下 $\log(\frac12-g e)\approx-\ln2-2g e$，而 $e_{t-k+m}-e_{t-k}$ 在 $A_k$ 上是确定的（$mK/2$），所以似然对 $e_{t-k}$ 的依赖为 $\exp(-2gk\,e_{t-k})$。高斯先验乘以指数倾斜仍是高斯，均值平移 $-2gk\sigma_e^2$，方差不变。于是
 \[
@@ -48,11 +48,11 @@ $n=\kappa=1$ 时，$\sigma_e^2=K/[c(2-b)]\approx(200/\ln10)\,K/(1-cK/8)$，即 $
 \[
 u_t=\rho u_{t-1}+\varepsilon_t,\qquad x_{t+1}=(1-b)x_t+b\,u_t+K\xi_t,\qquad y_t=\tfrac12+g(u_t-x_t)+\xi_t ,
 \]
-$\Var\varepsilon=\sigma_u^2(1-\rho^2)$，$\Var\xi=\frac14$，$x_t=R_t-s$。记 $D_t=u_t-x_t=\sum_{m\ge0}\psi_m\varepsilon_{t-m}+\sum_{m\ge1}\phi_m\xi_{t-m}$，其中 $\phi_m=-K(1-b)^{m-1}$，$\psi_m=\rho^m-b\sum_{i=0}^{m-1}(1-b)^i\rho^{m-1-i}$（$m\ge1$），$\psi_0=1$。于是对 $h\ge1$，
+$\Var\varepsilon=\sigma_u^2(1-\rho^2)$，$\Var\xi=\frac14$，$x_t=R_t-s$。记 $D_t=u_t-x_t=\sum_{m\ge0}\omega_m\varepsilon_{t-m}+\sum_{m\ge1}\chi_m\xi_{t-m}$，其中 $\chi_m=-K(1-b)^{m-1}$，$\omega_m=\rho^m-b\sum_{i=0}^{m-1}(1-b)^i\rho^{m-1-i}$（$m\ge1$），$\omega_0=1$。于是对 $h\ge1$，
 \[
-\Cov(y_t,y_{t+h})=g^2\Big[\sigma_\varepsilon^2\sum_m\psi_m\psi_{m+h}+\tfrac14\sum_m\phi_m\phi_{m+h}\Big]+\tfrac14\,g\,\phi_h ,
+\Cov(y_t,y_{t+h})=g^2\Big[\sigma_\varepsilon^2\sum_m\omega_m\omega_{m+h}+\tfrac14\sum_m\chi_m\chi_{m+h}\Big]+\tfrac14\,g\,\chi_h ,
 \]
-除以 $\frac14$ 即得自相关；数值上把无穷和截断到 4000 项（\texttt{model.linear\_outcome\_acf}）。$K=0$ 时 $\phi\equiv0$、$\psi_m=\rho^m$，退化为\cref{eq:ch3-ar-acf}；$\sigma_u=0$ 时退化为诚实 Elo 的 $\rho_h=-\frac{gK}{2-b}(1-b)^{h-1}$。只保留 $\varepsilon$ 部分并取 $h=0$，即得\cref{eq:ch3-ar-retained}的方差比。$\Elogit$ 偏离 0 后变平，线性近似会高估自相关；\cref{fig:ch3-ar}(b) 用 $\kappa_F=\E[\Elogit'(X)]/\Elogit'(0)$ 代替 $\kappa$，$X\sim\Normal(0,\Var D+\sigma_q^2)$，修正后与模拟的差距在 0.002 以内（其中约 0.001 是估计量的 $-1/T$ 偏差）。
+除以 $\frac14$ 即得自相关；数值上把无穷和截断到 4000 项（\texttt{model.linear\_outcome\_acf}）。$K=0$ 时 $\chi\equiv0$、$\omega_m=\rho^m$，退化为\cref{eq:ch3-ar-acf}；$\sigma_u=0$ 时退化为诚实 Elo 的 $\rho_h=-\frac{gK}{2-b}(1-b)^{h-1}$。只保留 $\varepsilon$ 部分并取 $h=0$，即得\cref{eq:ch3-ar-retained}的方差比。$\Elogit$ 偏离 0 后变平，线性近似会高估自相关；\cref{fig:ch3-ar}(b) 用 $\kappa_F=\E[\Elogit'(X)]/\Elogit'(0)$ 代替 $\kappa$，$X\sim\Normal(0,\Var D+\sigma_q^2)$，修正后与模拟的差距在 0.002 以内（其中约 0.001 是估计量的 $-1/T$ 偏差）。
 
 \subsection{马尔可夫调制的伯努利序列}
 \label{app:ch3-chain}
@@ -83,14 +83,14 @@ $M=T_W+T_L$。则（行向量 $\pi$ 为 $M$ 的平稳分布，$\bm p$ 为 $p_z$ 
 \toprule
 项目 & 设定 \\
 \midrule
-人群模拟（\cref{sec:ch3-elo}、\cref{sec:ch3-manip}，\texttt{population.py}） & $N=10{,}000$；实力 $s\sim\Normal(0,200^2)$；评分从 0 起步；每轮所有人各打一局；预热 1500 轮后记录 2000 局/人。匹配键 = 评分 + $\Normal(0,\sigma_q^2)$（+ 操纵偏移），1v1 排序后相邻配对（默认 $\sigma_q=100$），5v5 每 10 人一房间（$\sigma_q=250$），随机分队或按评分蛇形分队。团队强度 = 5 人有效实力均值。Elo：$R\leftarrow R+K(y-\Elogit(\Delta R))$，团队成员同增减。上头：有效实力 $s-\theta\min(L,m)$，$\theta=30$、$m=3$。操纵：M1 匹配键 $\pm100$（连胜/连败 $\ge3$），M2 只 $+100$，M3 分队时评分按 $\pm300$ 计。“超额”均为玩家内部：$\E[\text{量}\mid\text{状态}]$ 减该玩家自身平均。连败统计取两个 1000 局半段，与玩家内打乱的序列对比。种子 3101–3143。 \\
+人群模拟（\cref{sec:ch3-elo}、\cref{sec:ch3-hell}、\cref{sec:ch3-manip}，\texttt{population.py}） & $N=10{,}000$；实力 $s\sim\Normal(0,200^2)$；评分从 0 起步；每轮所有人各打一局；预热 1500 轮后记录 2000 局/人。匹配键 = 评分 + $\Normal(0,\sigma_q^2)$（+ 操纵偏移），1v1 排序后相邻配对（默认 $\sigma_q=100$），5v5 每 10 人一房间（$\sigma_q=250$）。分队四种：随机；按评分蛇形；126 种分法中两队评分均值最接近的一种；M4（见下）。团队强度默认为 5 人有效实力均值（均值模型），另有加和模型（和$/\sqrt5$）。Elo：$R\leftarrow R+K(y-\Elogit(\Delta R))$，$\Delta R$ 与结果用同一团队模型，团队成员同增减。上头：有效实力 $s-\theta\min(L,m)$，$\theta=30$、$m=3$。AR 状态：有效实力再加 $u_t$，$\rho=0.9$、$\sigma_u=60$。连胜加分：赛前已连胜 $\ge2$ 局者再赢，本局收益 $\times2$（只乘赢家）。操纵：M1 匹配键 $\pm100$（连胜/连败 $\ge3$），M2 只 $+100$，M3 分队时评分按 $\pm300$ 计后蛇形分队，M4 在两队评分均值差 $\le25$ 的分法中选连胜 $\ge3$ 者同队、连败 $\ge3$ 者同在另一队的一种。爬分：预热结束时随机 500 人的评分压低 150 个实力分，记录 1000 局。“超额”均为玩家内部：$\E[\text{量}\mid\text{状态}]$ 减该玩家自身平均；近期战绩统计量为 $y_t$ 与前 $w$ 局胜场、与赛前自身评分的玩家内部相关。连败统计取两个 1000 局半段，与玩家内打乱的序列对比。种子 3101–3173。 \\
 单人模拟（\cref{sec:ch3-elo}、\cref{sec:ch3-fluct}，\texttt{experiments.py}） & 一名平均实力为 0 的玩家对校准对手池：对手实力 = 对手评分 = 我的评分 + $\Normal(0,50^2)$。评分不动（$K=0$）或 Elo $K=20$（波动模型）、$K=10/32$（\cref{fig:ch3-event}、\cref{fig:ch3-reversion}(a)）。预热 400 局；标准模型 $2\times10^4$ 名玩家 $\times$ 1000 局；事件研究 $4\times10^4\times400$；AR 吸收 $4000\times3000$。休息：每局后以 1/8 概率结束本次游玩（疲劳与带休息的上头）。波动参数见\cref{tab:ch3-params}。 \\
-检验力（\cref{sec:ch3-power}） & 每个模型 3000 名玩家 $\times$ 4000 局，取前 $T\in\{100,200,500,1000,2000,4000\}$ 局。零分布：无波动模型 8000 名玩家（(a)(b) 为 $K=0$ 的独立序列，(c) 为诚实 Elo $K=20$ 的残差）。检验：滞后 1 自相关；$y_t$（或残差）对 $\min(L_{t-1},3)$ 的斜率；非重叠 10 局分块胜场方差 / 二项方差（残差版为分块残差平方和 / $\sum\Elogit(1-\Elogit)$）；对 $\min(j_t,15)$ 的斜率。双侧 5\%。残差版先对每名玩家用牛顿法求常数实力 $\hat s$ 的最大似然。 \\
+检验力（\cref{sec:ch3-power}） & 每个模型 3000 名玩家 $\times$ 4000 局，取前 $T\in\{100,200,500,1000,2000,4000\}$ 局。零分布：无波动模型 8000 名玩家（(a)(b) 为 $K=0$ 的独立序列，(c) 为诚实 Elo $K=20$ 的原始胜负，(d) 为诚实 Elo $K=20$ 的残差）；(b) 与 (c) 共用同一份备择模拟。单人可察觉性（\cref{tab:ch3-detect}）另用 $2\times10^4$ 名玩家 $\times$ 1000 局（$K=20$）。检验：滞后 1 自相关；$y_t$（或残差）对 $\min(L_{t-1},3)$ 的斜率；非重叠 10 局分块胜场方差 / 二项方差（残差版为分块残差平方和 / $\sum\Elogit(1-\Elogit)$）；对 $\min(j_t,15)$ 的斜率。双侧 5\%。残差版先对每名玩家用牛顿法求常数实力 $\hat s$ 的最大似然。 \\
 精确计算 & 最长连败、模式、滑动窗口（$w\le20$）、Miller–Sanjurjo、马尔可夫调制链：见上文；8 人游戏的“无冠”即 $q=7/8$ 的最长连败。 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-{\sloppy 图与脚本的对应（\cref{fig:ch3-longest} 至\cref{fig:ch3-bg}，按出现顺序）：\texttt{fig\_longest\_run}、\texttt{fig\_pattern\_window}、\texttt{fig\_ms\_bias}、\texttt{fig\_elo\_event}、\texttt{fig\_elo\_reversion}、\texttt{fig\_models\_traj}、\texttt{fig\_ar\_absorb}、\texttt{fig\_tilt\_chain}、\texttt{fig\_fatigue\_session}、\texttt{fig\_models\_conditional}、\texttt{fig\_models\_longest}、\texttt{fig\_power}、\texttt{fig\_manip}、\texttt{fig\_bg\_drought}，均为 \texttt{code/ch3/} 下的 \texttt{.py} 脚本。\par}
+{\sloppy 图与脚本的对应（\cref{fig:ch3-longest} 至\cref{fig:ch3-bg}，按出现顺序）：\texttt{fig\_longest\_run}、\texttt{fig\_pattern\_window}、\texttt{fig\_ms\_bias}、\texttt{fig\_elo\_event}、\texttt{fig\_elo\_reversion}、\texttt{fig\_models\_traj}、\texttt{fig\_ar\_absorb}、\texttt{fig\_tilt\_chain}、\texttt{fig\_fatigue\_session}、\texttt{fig\_models\_conditional}、\texttt{fig\_power}、\texttt{fig\_manip}、\texttt{fig\_bg\_drought}，均为 \texttt{code/ch3/} 下的 \texttt{.py} 脚本。\par}
 
-模型的局限需要如实说明：人群模拟假设正态实力、模型设定正确、固定 $K$、封闭人群、人人每轮都打、无组排和流失；窄窗口与按评分蛇形分队时评分刻度在统计期内仍在拉伸，相应数字只是快照。真实游戏多用 Glicko、TrueSkill 一类变步长系统，本章的固定 $K$ 结果只给出效应量的量级和区间。所有实力波动参数都是示意值。
+模型的局限需要如实说明：人群模拟假设正态实力、模型设定正确、固定 $K$、封闭人群、人人每轮都打、无组排和流失；对手池的时段与赛季变化、小号、组排等诚实但非平稳的机制都没有模拟。窄窗口与按评分蛇形或最平衡分队时评分刻度在统计期内仍在拉伸，相应数字只是快照。真实游戏多用 Glicko、TrueSkill 一类变步长系统，本章的固定 $K$ 结果只给出效应量的量级和区间。所有实力波动参数都是示意值。

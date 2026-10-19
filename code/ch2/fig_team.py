@@ -60,7 +60,7 @@ def main():
         ax.set_xlabel("个人实力优势 $d=s-\\mu$（Elo）")
         ax.set_xlim(-500, 500); ax.set_ylim(0, 100)
         ax.set_title(title, loc="left", fontsize=9)
-        ax.legend(loc="upper left", fontsize=7)
+        ax.legend(loc="upper left", fontsize=7.5)
     axes[0].set_ylabel("长期胜率（%）")
     save(fig, "ch2", "team")
 

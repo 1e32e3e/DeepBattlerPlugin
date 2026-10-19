@@ -35,8 +35,8 @@ def main():
             label="上包络 $\\sqrt{1+K^2t/4\\tau^2}$")
     ax.set_xlabel("局数 $t$")
     ax.set_ylabel("评分-实力斜率 $\\lambda$")
-    ax.set_xlim(0, 10000); ax.set_ylim(0.9, 4.4)
-    ax.legend(loc="upper left", fontsize=6.6)
+    ax.set_xlim(0, 10000); ax.set_ylim(0.9, 5.2)
+    ax.legend(loc="upper left", fontsize=7.5, ncol=2, columnspacing=1.0)
     ax.set_title("(a) 刻度随时间（$K$=16）", loc="left", fontsize=9)
 
     for j, KK in enumerate((16, 32)):
@@ -45,9 +45,9 @@ def main():
         bx.plot(sq, m.lambda_star(KK, sq), color=SERIES[j], ls=["-", "--"][j], label=f"$\\lambda^*$，$K$={KK}")
         bx.axvline(thr, color=SERIES[j], lw=0.8, ls=":")
         if KK == 16:
-            bx.text(thr - 3, 4.0, f"$\\sigma_e$={thr:.0f}", fontsize=6.6, color=INK["primary"], ha="right")
+            bx.text(thr - 3, 4.0, f"$\\sigma_e$={thr:.0f}", fontsize=7.5, color=INK["primary"], ha="right")
         else:
-            bx.text(thr + 4, 1.06, f"$\\sigma_e$={thr:.0f}", fontsize=6.6, color=INK["primary"], ha="left")
+            bx.text(thr + 4, 1.06, f"$\\sigma_e$={thr:.0f}", fontsize=7.5, color=INK["primary"], ha="left")
     bx.plot([50, 100, 200], [runs[q]["lam"][-1] for q in (50, 100, 200)], "o", ms=4, color=SERIES[0],
             mec="white", mew=0.6, label="模拟 $K$=16，$t$=10,000")
     lam32 = [m.get(f"s{q}_k32")["lam_t"][-1] for q in (100, 200)]
@@ -56,7 +56,7 @@ def main():
     bx.set_xlabel("匹配噪声 $\\sigma_q$（Elo）")
     bx.set_ylabel("平稳斜率 $\\lambda^*$")
     bx.set_xlim(0, 300); bx.set_ylim(0.9, 4.4)
-    bx.legend(loc="upper right", fontsize=6.6)
+    bx.legend(loc="upper right", fontsize=7.5)
     bx.set_title("(b) 平稳刻度存在的条件", loc="left", fontsize=9)
     save(fig, "ch2", "stretch")
 

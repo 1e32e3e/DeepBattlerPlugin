@@ -53,12 +53,12 @@ def xmap(year):
 
 def main():
     use()
-    n_rows = 5
+    n_rows = 6
     lane_h = n_rows + 0.9
-    fig, ax = plt.subplots(figsize=(WIDTH_FULL, 4.5))
+    fig, ax = plt.subplots(figsize=(WIDTH_FULL, 5.2))
     ax.set_xlim(-0.01, 1.0)
     total_h = lane_h * len(LANES)
-    ax.set_ylim(-0.4, total_h)
+    ax.set_ylim(-2.1, total_h)
     ax.axis("off")
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
@@ -81,7 +81,7 @@ def main():
                 if x > 0.82:
                     opts = opts[::-1]
                 for ha, dx in opts:
-                    t = ax.text(x + dx, y, label, fontsize=6.5, color=INK["primary"], va="center", ha=ha, zorder=4,
+                    t = ax.text(x + dx, y, label, fontsize=7.0, color=INK["primary"], va="center", ha=ha, zorder=4,
                                 bbox=dict(boxstyle="square,pad=0.08", fc="white", ec="none"))
                     bb = t.get_window_extent(renderer)
                     (x_a, _), (x_b, _) = inv.transform([(bb.x0, bb.y0), (bb.x1, bb.y1)])
@@ -108,8 +108,8 @@ def main():
     ax.plot([0, 1], [0.0, 0.0], color=INK["axis"], lw=0.8)
     xb = xmap(XB)
     ax.plot([xb, xb], [0.0, total_h - 0.2], color=INK["muted"], lw=0.6, ls=(0, (2, 3)))
-    ax.text(xb + 0.005, total_h - 0.25, "1995 年后横轴放大约 7 倍", fontsize=6.5, color=INK["muted"],
-            ha="left", va="top")
+    # 换刻度说明放在横轴下方，避免与上方的标签重叠
+    ax.text(xb, -1.45, "↑ 1995 年后横轴放大约 7 倍", fontsize=7.0, color=INK["muted"], ha="left", va="top")
     save(fig, "ch1", "1a_timeline")
 
 

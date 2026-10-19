@@ -8,9 +8,12 @@
   \addbibresource{refs/ch2.bib}\addbibresource{refs/ch3.bib}\addbibresource{refs/ch4.bib}}
 
 \begin{document}
+\pagenumbering{Alph}% 标题页单独编号，避免与正文第 1 页的 PDF 锚点重名
 \input{frontmatter/titlepage}
+\pagenumbering{roman}
 \input{frontmatter/abstract}
 \tableofcontents
+\cleardoublepage\pagenumbering{arabic}
 \input{chapters/intro}
 \input{chapters/ch1}
 \input{chapters/ch2}

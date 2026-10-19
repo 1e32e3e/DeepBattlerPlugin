@@ -41,18 +41,18 @@ def main():
     ax.set_xlabel("重置后的局数")
     ax.set_ylabel("评分落后于实力（实力分）")
     ax.set_xlim(0, 400); ax.set_ylim(-20, 370)
-    ax.legend(loc="upper right", fontsize=6.4, title="括号内：追回 50% / 90% 差距的局数", title_fontsize=6.4)
+    ax.legend(loc="upper right", fontsize=7.5, title="括号内：追回 50% / 90% 差距的局数", title_fontsize=7.5)
     ax.set_title("(a) 评分追回实力", loc="left", fontsize=9)
     stat = m.get("s100_k16")
     top = stat["W"][stat["s"] >= np.quantile(stat["s"], 0.9)].mean() * 100
     bx.axhline(top, color=INK["secondary"], lw=0.8, ls=":")
-    bx.text(398, top - 1.5, f"平稳时前 10% 的胜率 {top:.0f}%（$K$=16）", ha="right", va="top", fontsize=6.5,
+    bx.text(398, top - 1.5, f"平稳时前 10% 的胜率 {top:.0f}%（$K$=16）", ha="right", va="top", fontsize=7.5,
             color=INK["primary"])
     bx.axhline(50, color=INK["muted"], lw=0.8, ls=":")
     bx.set_xlabel("重置后的局数")
     bx.set_ylabel("胜率（%，10 局滑动平均）")
     bx.set_xlim(0, 400); bx.set_ylim(40, 100)
-    bx.legend(loc="upper right", fontsize=6.4)
+    bx.legend(loc="upper right", fontsize=7.5)
     bx.set_title("(b) 这批玩家的胜率", loc="left", fontsize=9)
     save(fig, "ch2", "reset")
     for key, r in runs.items():

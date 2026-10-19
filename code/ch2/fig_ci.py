@@ -60,7 +60,7 @@ def main():
     ax.set_xlabel("局数 $n$")
     ax.set_ylabel("95% 区间半宽（百分点）")
     ax.set_ylim(0, 35)
-    ax.legend(loc="upper right", fontsize=6.6)
+    ax.legend(loc="upper right", fontsize=7.5)
     ax.set_title("(a) 观测胜率的误差范围", loc="left", fontsize=9)
 
     x = np.linspace(0.505, 0.60, 60)
@@ -80,18 +80,19 @@ def main():
     sd52 = float(np.sqrt((pd52 * PLACES ** 2).sum() - mu52 ** 2))
     exact = (n_binom(0.5, 0.52), ((ZA * sd0 + ZB * sd52) / (4.5 - mu52)) ** 2,
              n_binom(0.125, float(m.pl_top_k(w52, N8, 1))))
-    bx.plot(x * 100, n_first, color=SERIES[2], ls="-.", label=f"8 人局第一名率，对 12.5%（{exact[2]:,.0f}）")
-    bx.plot(x * 100, n_top4, color=SERIES[0], label=f"1v1 胜率或 8 人局前四率，对 50%（{exact[0]:,.0f}）")
-    bx.plot(x * 100, n_place, color=SERIES[1], ls="--", label=f"8 人局平均名次，对 4.5（{exact[1]:,.0f}）")
+    bx.plot(x * 100, n_first, color=SERIES[2], ls="-.", label=f"8 人第一名率 vs 12.5%（{exact[2]:,.0f}）")
+    bx.plot(x * 100, n_top4, color=SERIES[0], label=f"胜率或前四率 vs 50%（{exact[0]:,.0f}）")
+    bx.plot(x * 100, n_place, color=SERIES[1], ls="--", label=f"8 人平均名次 vs 4.5（{exact[1]:,.0f}）")
     for v, col in zip(exact, (SERIES[0], SERIES[1], SERIES[2])):
         bx.plot(52, v, "o", ms=4, color=col, mec="white", mew=0.6)
     bx.axvline(52, color=INK["muted"], lw=0.8, ls=":")
     bx.set_yscale("log")
     bx.set_xlabel("真实胜率 / 前四率（%）")
-    bx.set_ylabel("所需局数（80% 功效）")
+    bx.set_ylabel("所需局数（80% 检验力）")
     bx.set_xlim(50.5, 60)
-    bx.set_ylim(100, 4e6)
-    bx.legend(loc="upper right", fontsize=6.0, title="括号内：真实值 52% 时所需局数", title_fontsize=6.0)
+    bx.set_ylim(100, 3e7)
+    bx.legend(loc="upper right", fontsize=7.5, title="括号内：真实值 52% 时所需局数", title_fontsize=7.5,
+              borderaxespad=0.2)
     bx.set_title("(b) 区分“五五开”所需局数", loc="left", fontsize=9)
     save(fig, "ch2", "ci")
 

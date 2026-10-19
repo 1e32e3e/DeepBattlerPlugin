@@ -1,4 +1,7 @@
-numpy>=1.26
-scipy>=1.11
-matplotlib>=3.8
-pandas>=2.0
+# Keep this file ASCII-only (older pip on Windows decodes it with the locale code page).
+# Verified: Python 3.11 + numpy 2.0.2 / scipy 1.13.1 / matplotlib 3.11.2 and
+# Python 3.13 + numpy 2.5 / scipy 1.18 / matplotlib 3.11 give pixel-identical figures.
+numpy>=2.0        # np.trapezoid (code/ch4/derivations_check.py) needs NumPy 2.0+
+scipy>=1.13       # first SciPy release that supports NumPy 2
+matplotlib>=3.11  # <=3.10 only sees the first face of a .ttc collection, so on Linux it misses Noto Sans CJK SC
+pandas>=2.0       # not needed for figures; reserved for analysing personal match data in data/

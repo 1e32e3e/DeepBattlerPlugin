@@ -1,12 +1,13 @@
 """图：单个玩家要多少局才能从自己的战绩里检出各种效应（检验力，双侧 5%）。
 
-(a) 评分不动（K=0），原始胜负；(b) Elo（K=20），原始胜负；(c) Elo（K=20），以对手评分为协变量、
-自身实力取常数后的残差。每个模型用它“对口”的检验；零分布由无波动模型模拟得到（(c) 为诚实 Elo）。"""
+(a) 评分不动（K=0），原始胜负，零分布为 i.i.d.；(b) Elo（K=20），原始胜负，零分布为 i.i.d.（不知道系统
+是 Elo 的玩家会用的零分布）；(c) Elo（K=20），原始胜负，零分布为无波动的诚实 Elo（K=20）；(d) Elo（K=20），
+以对手评分为协变量、自身实力取常数后的残差，零分布为诚实 Elo。每个模型用它“对口”的检验。"""
 import numpy as np
 import matplotlib.pyplot as plt
 
 from _common import FONT_SCALE, CH, INK, SERIES, WIDTH_FULL, bottom_legend, log_count_axis, save, use
-from experiments import K_ELO, NATURAL_TEST, TESTS, run_power, run_power_resid
+from experiments import K_ELO, NATURAL_TEST, TESTS, run_power, run_power_elonull, run_power_resid
 
 MODELS = [("none", "无波动（诚实 Elo）"), ("ar1", "(b) AR(1)"), ("hmm", "(c) 两状态"),
           ("tilt", "(d) 上头"), ("tilt_break", "(d') 上头+休息"), ("fatigue", "(e) 疲劳")]
@@ -18,11 +19,15 @@ def main():
     use()
     d = run_power()
     dr = run_power_resid()
+    de = run_power_elonull()
     T = d["T"]
-    fig, axes = plt.subplots(1, 3, figsize=(WIDTH_FULL, 2.7), sharey=True)
-    panels = [(axes[0], "(a) K=0，原始胜负", lambda nm, t: d[f"{nm}_K0_{t}"]),
-              (axes[1], f"(b) K={K_ELO}，原始胜负", lambda nm, t: d[f"{nm}_K{K_ELO}_{t}"]),
-              (axes[2], f"(c) K={K_ELO}，对手评分残差", lambda nm, t: dr.get(f"{nm}_{t}"))]
+    fig, axs = plt.subplots(2, 2, figsize=(WIDTH_FULL, 4.6), sharey=True, sharex=True)
+    axes = axs.ravel()
+    panels = [(axes[0], "(a) K=0，原始胜负；零分布 i.i.d.", lambda nm, t: d[f"{nm}_K0_{t}"]),
+              (axes[1], f"(b) K={K_ELO}，原始胜负；零分布 i.i.d.", lambda nm, t: d[f"{nm}_K{K_ELO}_{t}"]),
+              (axes[2], f"(c) K={K_ELO}，原始胜负；零分布诚实 Elo",
+               lambda nm, t: de.get(f"{nm}_K{K_ELO}_{t}")),
+              (axes[3], f"(d) K={K_ELO}，对手评分残差；零分布诚实 Elo", lambda nm, t: dr.get(f"{nm}_{t}"))]
     for ax, title, get in panels:
         for nm, lab in MODELS:
             test = NATURAL_TEST[nm]
@@ -40,9 +45,11 @@ def main():
         ax.set_xticklabels(["100", "1000", "4000"])
         ax.set_xlim(T[0] * 0.9, T[-1] * 1.1)
         ax.set_ylim(0, 1.02)
+        ax.set_title(title, loc="left", fontsize=8.5 * FONT_SCALE)
+    for ax in axs[1]:
         ax.set_xlabel("局数 $T$")
-        ax.set_title(title, loc="left", fontsize=9 * FONT_SCALE)
-    axes[0].set_ylabel("检验力")
+    for ax in axs[:, 0]:
+        ax.set_ylabel("检验力")
     h, l = axes[1].get_legend_handles_labels()
     fig.tight_layout()
     bottom_legend(fig, h, l, ncol=2)

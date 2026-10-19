@@ -39,11 +39,11 @@ def main():
     ax.plot(t, s[j] + u[j], color=SERIES[0], lw=1.4, label="当局实力 $s+u_t$")
     ax.plot(t, shat[:, j], color=SERIES[1], lw=1.4, ls="--", label="评分折算的实力")
     ax.axhline(s[j], color=INK["muted"], lw=0.9, ls=":")
-    ax.text(t[0] + 6, s[j] - 8, "长期实力 $s$", ha="left", va="top", fontsize=7, color=INK["secondary"])
+    ax.text(t[0] + 6, s[j] - 8, "长期实力 $s$", ha="left", va="top", fontsize=7.5, color=INK["secondary"])
     ax.set_xlabel("局数")
     ax.set_ylabel("实力（Elo）")
     ax.set_xlim(t[0], t[-1])
-    ax.legend(loc="lower left", fontsize=7)
+    ax.legend(loc="lower left", fontsize=7.5)
     ax.set_title("(a) 一名玩家的状态与评分（$K$=16）", loc="left", fontsize=9)
 
     ns = np.array([5, 10, 20, 50, 100, 200, 400])
@@ -69,7 +69,7 @@ def main():
     bx.set_xlabel("窗口长度 $n$（局）")
     bx.set_ylabel("窗口胜率方差 / 二项方差")
     bx.set_ylim(0, 7.2)
-    bx.legend(handles=handles, loc="upper left", fontsize=6.4, handlelength=2.6)
+    bx.legend(handles=handles, loc="upper left", fontsize=7.5, handlelength=2.6)
     bx.set_title("(b) 窗口胜率的离散程度", loc="left", fontsize=9)
     save(fig, "ch2", "ar1")
 

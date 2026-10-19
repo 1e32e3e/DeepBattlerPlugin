@@ -1,6 +1,6 @@
 """打印第三章正文和表格引用的全部数字（精确计算 + 读取缓存的模拟结果）。
 
-用法：python code/ch3/ch3_numbers.py > /tmp/ch3_numbers.txt
+用法：python code/ch3/ch3_numbers.py > ch3_numbers.txt
 需要先运行 population.py 与 experiments.py 生成缓存（否则会现跑）。
 """
 import numpy as np
@@ -93,7 +93,8 @@ for nm in ("elo10", "elo32"):
 
 sec("B 诚实 Elo 人群")
 for nm in ("elo10", "elo32", "elo32_s25", "elo32_s50", "elo32_s200", "elo32_s400", "t5_elo32", "t5_random",
-           "tilt30_elo32", "manip_sym", "manip_asym", "t5_loserq"):
+           "tilt30_elo32", "manip_sym", "manip_asym", "t5_loserq", "t5_snake", "t5_sum", "t5_balanced",
+           "t5_assort", "t5_balanced_tilt", "t5_assort_tilt", "ar09_elo32", "streakbonus_elo32"):
     d = load(nm)
     print(f"{nm}: W1..6 {np.round(100 * d['W'][:6], 2)} L1..6 {np.round(100 * d['L'][:6], 2)}")
     print(f"   oppR W3/W5 {d['oppR_W'][2]:+.1f}/{d['oppR_W'][4]:+.1f} L3/L5 {d['oppR_L'][2]:+.1f}/{d['oppR_L'][4]:+.1f}"
@@ -108,6 +109,10 @@ for nm in ("elo10", "elo32", "elo32_s25", "elo32_s50", "elo32_s200", "elo32_s400
         print(f"   mates W1/W3/W5 {d['mates_W'][0]:+.1f}/{d['mates_W'][2]:+.1f}/{d['mates_W'][4]:+.1f}"
               f" weakest_mate loss/win/all {d['weakest_mate_loss']:.3f}/{d['weakest_mate_win']:.3f}/{d['weakest_mate_all']:.3f}"
               f" weakest_me {d['weakest_me_loss']:.3f}/{d['weakest_me_win']:.3f} team_weaker|loss {d['team_weaker_loss']:.3f}")
+    if "form20" in d:
+        print(f"   recent form: corr20 {d['form20']:+.4f} (n* {d['nstar_form20']:.0f}) corr50 {d['form50']:+.4f} "
+              f"(n* {d['nstar_form50']:.0f}) ownR {d['ownR']:+.4f} (n* {d['nstar_ownR']:.0f}) "
+              f"after 14-6 {100 * d['form20_hi']:+.2f} after 6-14 {100 * d['form20_lo']:+.2f} (share {d['form20_hi_share']:.3f})")
     K = 10 if nm == "elo10" else 32
     n = 5 if nm.startswith("t5") else 1
     th = elo_streak_excess(np.arange(1, 7), K, kappa=float(d["slope_s_R"]), team_size=n)[0]
@@ -169,3 +174,28 @@ for d_ in (10, 20, 30, 40):
 E, sd, med, p95, ge = longest_run_distribution(100, 7 / 8, rmax=200)
 print("longest drought in 100: E", E, "median", med, "p95", p95, "GSW", schilling_mean(100, 7 / 8))
 print("P(no 1st in a given 10)", (7 / 8) ** 10, " bottom-4 run >=5 in 100:", prob_longest_ge(100, 0.5, 5))
+
+sec("E 第二轮补充：单人可察觉性、诚实 Elo 零分布下的检验力、爬分")
+from experiments import POWER_T, games_for_power, run_detect, run_power, run_power_elonull, run_power_resid
+det = run_detect()
+print("detect (single player, K=20):", {k: round(float(v), 4) for k, v in det.items()})
+print("   n*(lag1, shuffle-corrected) =", detect_games(det["rho1"] - det["rho1_shuf"]))
+pw, pe, pr = run_power(), run_power_elonull(), run_power_resid()
+from experiments import NATURAL_TEST
+for nm in ("ar1", "hmm", "tilt", "tilt_break", "fatigue"):
+    tn = NATURAL_TEST[nm]
+    print(f"{nm} [{tn}] 80%-games: K0 {games_for_power(POWER_T, pw[f'{nm}_K0_{tn}']):.0f} | K20 iid-null "
+          f"{games_for_power(POWER_T, pw[f'{nm}_K{K_ELO}_{tn}']):.0f} | K20 elo-null "
+          f"{games_for_power(POWER_T, pe[f'{nm}_K{K_ELO}_{tn}']):.0f} | resid {games_for_power(POWER_T, pr[f'{nm}_{tn}']):.0f}"
+          f" | power@4000 K0 {pw[f'{nm}_K0_{tn}'][-1]:.2f} iid {pw[f'{nm}_K{K_ELO}_{tn}'][-1]:.2f} "
+          f"elo {pe[f'{nm}_K{K_ELO}_{tn}'][-1]:.2f} resid {pr[f'{nm}_{tn}'][-1]:.2f}")
+print("ar1 lag1 @4000: iid-null", pw[f"ar1_K{K_ELO}_lag1"][-1], "elo-null", pe[f"ar1_K{K_ELO}_lag1"][-1])
+print("tilt slope @1000: iid-null", pw[f"tilt_K{K_ELO}_tilt"][3], "elo-null", pe[f"tilt_K{K_ELO}_tilt"][3])
+print("none K20 under iid null (lag1/block/tilt) @4000:", pw[f"none_K{K_ELO}_lag1"][-1], pw[f"none_K{K_ELO}_block"][-1],
+      pw[f"none_K{K_ELO}_tilt"][-1])
+for nm in ("climb_elo32", "climb_t5", "climb_t5sum"):
+    d = load(nm)
+    g = d["climb_gap"]
+    first = lambda f: int(np.flatnonzero(g >= g[0] * (1 - f))[0])
+    print(f"{nm}: gap0 {g[0]:.1f} half {first(0.5)} games, 90% {first(0.9)} games; gap@100 {g[100]:.1f}; "
+          f"slope {d['slope_R_s']:.2f} kappa {d['slope_s_R']:.3f}")

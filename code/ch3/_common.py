@@ -14,8 +14,8 @@ from figstyle import use as _use_base  # noqa: E402
 
 CH = "ch3"
 
-# 第三章的多数图在论文中按 0.7–0.84 倍版心宽排版，字号相应放大约 1.2 倍，排版后约 7–8 pt
-FONT_SCALE = 1.2
+# 第三章的图与其他章一样按整栏宽（\linewidth）排版，字号不再放大，排版后与第二、四章一致（约 8 pt）
+FONT_SCALE = 1.0
 
 
 def use():

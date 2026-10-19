@@ -35,7 +35,7 @@ def main():
     ax.set_xlabel("实力十分位（1 = 最弱，10 = 最强）")
     ax.set_ylabel("长期胜率（%）")
     ax.set_ylim(10, 90)
-    ax.legend(loc="upper left", fontsize=6.8)
+    ax.legend(loc="upper left", fontsize=7.5)
     ax.set_title("(a) 各十分位胜率（$K=16$）", loc="left", fontsize=9)
 
     z = m.PhiInv(np.linspace(0.9, 0.99999, 4001))
@@ -54,12 +54,12 @@ def main():
         bx.axvline(thr, color=SERIES[j], lw=0.8, ls=":")
     rand = m.by_decile(m.get("r_k16")["s"], m.get("r_k16")["W"])[9] * 100
     bx.axhline(rand, color=INK["secondary"], lw=0.9, ls="-.")
-    bx.text(398, rand - 1.2, "随机匹配 83%", ha="right", va="top", fontsize=7, color=INK["primary"])
-    bx.text(39, 87, "$\\sigma_q=\\sigma_e$", fontsize=7, color=INK["primary"], ha="left")
+    bx.text(398, rand - 1.2, "随机匹配 83%", ha="right", va="top", fontsize=7.5, color=INK["primary"])
+    bx.text(39, 87, "$\\sigma_q=\\sigma_e$", fontsize=7.5, color=INK["primary"], ha="left")
     bx.set_xlabel("匹配噪声 $\\sigma_q$（Elo）")
     bx.set_ylabel("最强 10% 的胜率（%）")
     bx.set_xlim(0, 400); bx.set_ylim(45, 90)
-    bx.legend(loc="center right", fontsize=6.8, bbox_to_anchor=(1.0, 0.42))
+    bx.legend(loc="center right", fontsize=7.5, bbox_to_anchor=(1.0, 0.42))
     bx.set_title("(b) 最强 10% 与窗口宽度", loc="left", fontsize=9)
     save(fig, "ch2", "sbmm_deciles")
 

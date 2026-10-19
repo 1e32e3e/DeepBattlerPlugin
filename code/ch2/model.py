@@ -233,6 +233,9 @@ class EloSim:
             if self.mm == "random":
                 A, B = g[:, :self.team_n], g[:, self.team_n:]
             else:
+                # 房间按带噪排队键组成；房间内按评分从高到低排序后再蛇形分队（ABBAABBAAB），
+                # 这样分队才按评分平衡（直接对排队键顺序蛇形相当于随机分队）
+                g = np.take_along_axis(g, np.argsort(-self.R[g], axis=1, kind="stable"), 1)
                 A, B = g[:, self.iA], g[:, self.iB]
             if self.team_model == "sum":
                 rt = math.sqrt(self.team_n)
@@ -582,8 +585,9 @@ def filtered_acov(k, alpha, phi, sigma_u):
 
 
 def absorbed_share(alpha, phi):
-    """评分（指数平滑）对当前状态 u_t 的回归系数 Cov(x_t, u_t)/σ_u² = α/(1-(1-α)φ)。"""
-    return alpha / (1 - (1 - alpha) * phi)
+    """赛前评分（指数平滑，只含第 t 局之前的状态）对当前状态 u_t 的回归系数
+    Cov(x_t, u_t)/σ_u² = αφ/(1-(1-α)φ)，x_t = Σ_{i≥1} α(1-α)^{i-1} u_{t-i}。"""
+    return alpha * phi / (1 - (1 - alpha) * phi)
 
 
 def _sample_var_factor(D, n, mwin):

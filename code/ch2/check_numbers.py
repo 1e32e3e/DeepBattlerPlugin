@@ -35,7 +35,7 @@ def main():
 
     for K in (10, 16, 20, 32, 40):
         print(f"3. K={K}: sigma_e={float(m.sigma_e(K)):.1f} (simple {float(m.sigma_e_simple(K)):.1f}), "
-              f"tau_ideal={m.tau_R_ideal(K):.1f}, half-life={m.tau_R_ideal(K) * np.log(2):.1f}, "
+              f"tau_ideal={m.tau_R_ideal(K):.1f}, half-life(discrete)={-np.log(2) / np.log(1 - K * m.C / 4):.1f}, "
               f"lambda*(100)={float(m.lambda_star(K, 100)):.3f}, lambda*(200)={float(m.lambda_star(K, 200)):.3f}")
 
     for name in ("s100_k16", "s20_k16", "s100_k32", "s20_k32"):

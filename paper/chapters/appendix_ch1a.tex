@@ -36,26 +36,26 @@ Elo 曲线\cref{eq:1a-elo-curve} 在分差 0 处的斜率为 $\Elogit'(0)=\cElo/
 
 \subsection{TrueSkill 两人更新式}\label{app:ch1a-ts}
 
-设胜方、负方实力的先验为 $s_{\mathrm w}\sim\Normal(\mu_{\mathrm w},\sigma_{\mathrm w}^2)$、$s_{\mathrm l}\sim\Normal(\mu_{\mathrm l},\sigma_{\mathrm l}^2)$，表现 $p=s+\Normal(0,\beta^2)$。表现差 $d=p_{\mathrm w}-p_{\mathrm l}\sim\Normal(m,c^2)$，其中 $m=\mu_{\mathrm w}-\mu_{\mathrm l}$，$c^2=\sigma_{\mathrm w}^2+\sigma_{\mathrm l}^2+2\beta^2$。观测到“胜方获胜且不是平局”即 $d>\varepsilon$。
+设胜方、负方实力的先验为 $s_{\mathrm w}\sim\Normal(\mu_{\mathrm w},\sigma_{\mathrm w}^2)$、$s_{\mathrm l}\sim\Normal(\mu_{\mathrm l},\sigma_{\mathrm l}^2)$，表现 $x=s+\Normal(0,\beta^2)$。表现差 $d=x_{\mathrm w}-x_{\mathrm l}\sim\Normal(m,\tilde c^2)$，其中 $m=\mu_{\mathrm w}-\mu_{\mathrm l}$，$\tilde c^2=\sigma_{\mathrm w}^2+\sigma_{\mathrm l}^2+2\beta^2$。观测到“胜方获胜且不是平局”即 $d>\varepsilon$。
 
-\paragraph{截断正态的矩。}记 $d=m+cZ$，$Z$ 为标准正态，$t=m/c$，$a=\varepsilon/c$，$u=t-a$，则 $d>\varepsilon\Leftrightarrow Z>-u$，且
+\paragraph{截断正态的矩。}记 $d=m+\tilde cZ$，$Z$ 为标准正态，$t=m/\tilde c$，$a=\varepsilon/\tilde c$，$u=t-a$，则 $d>\varepsilon\Leftrightarrow Z>-u$，且
 \begin{align*}
   \E[Z\mid Z>-u]&=\frac{\varphi(u)}{\Phi(u)}=:v(t,a),\\
   \Var[Z\mid Z>-u]&=1-v(t,a)\big(v(t,a)+u\big)=:1-w(t,a).
 \end{align*}
-\paragraph{传回实力。}$(s_{\mathrm w},d)$ 联合正态，$\Cov(s_{\mathrm w},d)=\sigma_{\mathrm w}^2$，故 $\E[s_{\mathrm w}\mid d]=\mu_{\mathrm w}+(\sigma_{\mathrm w}^2/c^2)(d-m)$，$\Var[s_{\mathrm w}\mid d]=\sigma_{\mathrm w}^2(1-\sigma_{\mathrm w}^2/c^2)$。对条件 $d>\varepsilon$ 用全期望与全方差公式：
+\paragraph{传回实力。}$(s_{\mathrm w},d)$ 联合正态，$\Cov(s_{\mathrm w},d)=\sigma_{\mathrm w}^2$，故 $\E[s_{\mathrm w}\mid d]=\mu_{\mathrm w}+(\sigma_{\mathrm w}^2/\tilde c^2)(d-m)$，$\Var[s_{\mathrm w}\mid d]=\sigma_{\mathrm w}^2(1-\sigma_{\mathrm w}^2/\tilde c^2)$。对条件 $d>\varepsilon$ 用全期望与全方差公式：
 \begin{align*}
-  \E[s_{\mathrm w}\mid d>\varepsilon]&=\mu_{\mathrm w}+\frac{\sigma_{\mathrm w}^2}{c}\,v(t,a),\\
-  \Var[s_{\mathrm w}\mid d>\varepsilon]&=\sigma_{\mathrm w}^2\Big(1-\frac{\sigma_{\mathrm w}^2}{c^2}\Big)+\frac{\sigma_{\mathrm w}^4}{c^4}\,c^2\big(1-w(t,a)\big)
-  =\sigma_{\mathrm w}^2\Big(1-\frac{\sigma_{\mathrm w}^2}{c^2}\,w(t,a)\Big).
+  \E[s_{\mathrm w}\mid d>\varepsilon]&=\mu_{\mathrm w}+\frac{\sigma_{\mathrm w}^2}{\tilde c}\,v(t,a),\\
+  \Var[s_{\mathrm w}\mid d>\varepsilon]&=\sigma_{\mathrm w}^2\Big(1-\frac{\sigma_{\mathrm w}^2}{\tilde c^2}\Big)+\frac{\sigma_{\mathrm w}^4}{\tilde c^4}\,\tilde c^2\big(1-w(t,a)\big)
+  =\sigma_{\mathrm w}^2\Big(1-\frac{\sigma_{\mathrm w}^2}{\tilde c^2}\,w(t,a)\Big).
 \end{align*}
 负方的 $\Cov(s_{\mathrm l},d)=-\sigma_{\mathrm l}^2$，均值更新取负号，方差更新形式相同。TrueSkill 把后验近似为具有这两个矩的高斯（期望传播中的矩匹配），即得\cref{eq:1a-ts-update}。若有动态方差 $\gamma^2$（TrueSkill 论文的记号），赛前先令 $\sigma^2\leftarrow\sigma^2+\gamma^2$。爆冷时 $t\ll0$，$v\approx a-t$ 很大，均值更新幅度近似与“爆冷程度”成正比；$t\gg0$（强者赢弱者）时 $v\to0$，几乎不更新\tagOwn。
 
 \subsection{TrueSkill 匹配质量即相对平局概率}\label{app:ch1a-quality}
 
-平局边际 $\varepsilon$ 很小时，$\Prob(|d|\le\varepsilon)\approx 2\varepsilon\cdot\frac{1}{c\sqrt{2\pi}}\exp\!\big(-\frac{m^2}{2c^2}\big)$。它的最大可能值出现在 $m=0$ 且双方实力完全确定（$\sigma_i=\sigma_j=0$，$c^2=2\beta^2$）时，为 $2\varepsilon/\big(\sqrt{2\beta^2}\sqrt{2\pi}\big)$。两者之比与 $\varepsilon$ 无关：
+平局边际 $\varepsilon$ 很小时，$\Prob(|d|\le\varepsilon)\approx 2\varepsilon\cdot\frac{1}{\tilde c\sqrt{2\pi}}\exp\!\big(-\frac{m^2}{2\tilde c^2}\big)$。它的最大可能值出现在 $m=0$ 且双方实力完全确定（$\sigma_i=\sigma_j=0$，$\tilde c^2=2\beta^2$）时，为 $2\varepsilon/\big(\sqrt{2\beta^2}\sqrt{2\pi}\big)$。两者之比与 $\varepsilon$ 无关：
 \[
-  q_{\text{draw}}=\sqrt{\frac{2\beta^2}{c^2}}\exp\!\Big(-\frac{m^2}{2c^2}\Big),\qquad c^2=2\beta^2+\sigma_i^2+\sigma_j^2 ,
+  q_{\text{draw}}=\sqrt{\frac{2\beta^2}{\tilde c^2}}\exp\!\Big(-\frac{m^2}{2\tilde c^2}\Big),\qquad \tilde c^2=2\beta^2+\sigma_i^2+\sigma_j^2 ,
 \]
 即\cref{eq:1a-ts-quality}。它同时惩罚均值差（指数项）和不确定性（根号项）：两个新号即使均值相同，质量也低于两个均值相同的老玩家\tagOwn。
 
@@ -88,4 +88,4 @@ $\kappa>0$ 防止方差变为非正。与 Elo 的\cref{eq:1a-elo-update} 相比�
 
 \subsection{Yuksel 目标胜率公式}\label{app:ch1a-yuksel}
 
-设玩家最近 $n$ 局赢了 $w$ 局，希望包含接下来 $n+1$ 局在内、长 $2n+1$ 的窗口的期望胜率为 $\lambda$。若接下来每局对手都使其胜率为 $p$，窗口期望胜局数为 $w+(n+1)p$，令其等于 $\lambda(2n+1)$ 即得\cref{eq:1a-yuksel}。两人游戏取 $\lambda=1/2$、论文实验取 $n=5$ 时，$w=0,1,\dots,5$ 对应的目标胜率依次为 $11/12,\,9/12,\,7/12,\,5/12,\,3/12,\,1/12$（约 92\%、75\%、58\%、42\%、25\%、8\%）\tagOwn。论文在评分 $f^{-1}(p\pm\Delta p)$ 范围内找对手，实验取 $\Delta p=1/(2n+2)=1/12$；作者指出取严格小于该值才能保证 $p\pm\Delta p$ 落在 $(0,1)$ 内\cite{yuksel2024skill}。换言之，这一匹配器对近期战绩的反应相当强：连赢 5 局后，下一局几乎一定会遇到明显更强的对手。
+设玩家最近 $n$ 局赢了 $w$ 局，希望包含接下来 $n+1$ 局在内、长 $2n+1$ 的窗口的期望胜率为 $w^*$。若接下来每局对手都使其胜率为 $p$，窗口期望胜局数为 $w+(n+1)p$，令其等于 $w^*(2n+1)$ 即得\cref{eq:1a-yuksel}。两人游戏取 $w^*=1/2$、论文实验取 $n=5$ 时，$w=0,1,\dots,5$ 对应的目标胜率依次为 $11/12,\,9/12,\,7/12,\,5/12,\,3/12,\,1/12$（约 92\%、75\%、58\%、42\%、25\%、8\%）\tagOwn。论文在评分 $f^{-1}(p\pm\Delta p)$ 范围内找对手，实验取 $\Delta p=1/(2n+2)=1/12$；作者指出取严格小于该值才能保证 $p\pm\Delta p$ 落在 $(0,1)$ 内\cite{yuksel2024skill}。换言之，这一匹配器对近期战绩的反应相当强：连赢 5 局后，下一局几乎一定会遇到明显更强的对手。
