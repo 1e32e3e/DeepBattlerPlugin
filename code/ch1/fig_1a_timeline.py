@@ -26,7 +26,7 @@ LANES = [
     ("Elo 的理论\n与非传递性", [
         (1992, "Stern"), (2011, "Regan–Haworth"), (2015, "Jabin–Junca"), (2017, "Aldous"), (2018, "mElo"),
         (2019, "Düring 等"), (2020, "陀螺结构"), (2023, "Bertrand 等"), (2024, "Olesker-Taylor"),
-        (2025, "Tang 等"), (2026, "Cortez 等"),
+        (2024.8, "Cortez 等"), (2025, "Tang 等"),
     ]),
     ("匹配机制", [
         (2004, "Hamlet"), (2012, "Delalleau 等"), (2016, "MPMD"), (2017, "EOMM"),

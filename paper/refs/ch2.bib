@@ -1,5 +1,31 @@
-% 第二章参考文献。键名：第一作者姓（小写）+ 年份 + 标题第一个实词；官方页面用公司名。
-% 已读全文/原页面的条目未加注；只核对了书目信息的条目在 note 中说明，并在正文加 \needcheck。
+% 第 ch2 部分的参考文献：refs.bib 的子集（供 single_ch2.tex 试编译用）。
+% 以 refs.bib 为准：修改条目时请同时修改 refs.bib 与本文件，保持两者一致。
+
+@article{thurstone1927law,
+  author  = {Thurstone, L. L.},
+  title   = {A Law of Comparative Judgment},
+  journal = {Psychological Review},
+  volume  = {34},
+  number  = {4},
+  pages   = {273--286},
+  date    = {1927},
+  doi     = {10.1037/h0070288},
+  note    = {仅核对书目信息（Crossref）；模型形式经 herbrich2006trueskill、weng2011bayesian 转述核对},
+  langid  = {english},
+}
+
+@article{bradley1952rank,
+  author  = {Bradley, Ralph Allan and Terry, Milton E.},
+  title   = {Rank Analysis of Incomplete Block Designs: {I}. The Method of Paired Comparisons},
+  journal = {Biometrika},
+  volume  = {39},
+  number  = {3/4},
+  pages   = {324--345},
+  date    = {1952},
+  doi     = {10.2307/2334029},
+  note    = {仅核对书目信息（Crossref）；模型形式经 herbrich2006trueskill、weng2011bayesian 转述核对},
+  langid  = {english},
+}
 
 @book{elo1978rating,
   author    = {Elo, Arpad E.},
@@ -9,7 +35,8 @@
   location  = {New York},
   date      = {1986},
   origdate  = {1978},
-  langid    = {english},
+  note      = {初版 1978 年；本文依据 1986 年第 2 版},
+  langid    = {english}
 }
 
 @inproceedings{herbrich2006trueskill,
@@ -17,10 +44,23 @@
   title     = {{TrueSkill}\texttrademark: A {Bayesian} Skill Rating System},
   booktitle = {Advances in Neural Information Processing Systems 19 ({NIPS} 2006)},
   publisher = {MIT Press},
-  date      = {2006},
+  pages     = {569--576},
+  year      = {2007},
   url       = {https://proceedings.neurips.cc/paper_files/paper/2006/hash/f44ee263952e65b3610b8ba51229d1f9-Abstract.html},
   urldate   = {2026-10-18},
-  langid    = {english},
+  langid    = {english}
+}
+
+@article{weng2011bayesian,
+  author  = {Weng, Ruby C. and Lin, Chih-Jen},
+  title   = {A {Bayesian} Approximation Method for Online Ranking},
+  journal = {Journal of Machine Learning Research},
+  volume  = {12},
+  pages   = {267--300},
+  date    = {2011},
+  url     = {https://www.jmlr.org/papers/v12/weng11a.html},
+  urldate = {2026-10-18},
+  langid  = {english},
 }
 
 @techreport{minka2018trueskill,
@@ -34,6 +74,18 @@
   langid      = {english},
 }
 
+@inproceedings{balduzzi2018reevaluating,
+  author     = {Balduzzi, David and Tuyls, Karl and P{\'e}rolat, Julien and Graepel, Thore},
+  title      = {Re-evaluating Evaluation},
+  booktitle  = {Advances in Neural Information Processing Systems 31 (NeurIPS 2018)},
+  pages      = {3268--3279},
+  year       = {2018},
+  eprint     = {1806.02643},
+  eprinttype = {arXiv},
+  url        = {https://arxiv.org/abs/1806.02643},
+  urldate    = {2026-10-18}
+}
+
 @article{aldous2017elo,
   author  = {Aldous, David},
   title   = {Elo Ratings and the Sports Model: A Neglected Topic in Applied Probability?},
@@ -44,30 +96,6 @@
   date    = {2017},
   doi     = {10.1214/17-STS628},
   langid  = {english},
-}
-
-@inproceedings{oleskertaylor2024analysis,
-  author    = {Olesker-Taylor, Sam and Zanetti, Luca},
-  title     = {An Analysis of {Elo} Rating Systems via {Markov} Chains},
-  booktitle = {Advances in Neural Information Processing Systems 37 ({NeurIPS} 2024)},
-  pages     = {138289--138323},
-  date      = {2024},
-  doi       = {10.52202/079017-4389},
-  eprint    = {2406.05869},
-  eprinttype = {arXiv},
-  langid    = {english},
-}
-
-@online{cortez2024convergence,
-  author     = {Cortez, Roberto and Tossounian, Hagop},
-  title      = {Convergence and Stationary Distribution of {Elo} Rating Systems},
-  date       = {2024},
-  eprint     = {2410.09180},
-  eprinttype = {arXiv},
-  note       = {本文依据 2026 年 1 月的 v2 版},
-  url        = {https://arxiv.org/abs/2410.09180},
-  urldate    = {2026-10-18},
-  langid     = {english},
 }
 
 @article{jabin2015continuous,
@@ -94,26 +122,69 @@
   langid  = {english},
 }
 
-@inproceedings{balduzzi2018reevaluating,
-  author     = {Balduzzi, David and Tuyls, Karl and P{\'e}rolat, Julien and Graepel, Thore},
-  title      = {Re-evaluating Evaluation},
-  booktitle  = {Advances in Neural Information Processing Systems 31 ({NeurIPS} 2018)},
-  date       = {2018},
-  eprint     = {1806.02643},
+@online{cortez2024convergence,
+  author     = {Cortez, Roberto and Tossounian, Hagop},
+  title      = {Convergence and Stationary Distribution of {Elo} Rating Systems},
+  date       = {2024},
+  eprint     = {2410.09180},
   eprinttype = {arXiv},
-  langid     = {english},
+  note       = {v1 2024 年 10 月；本文依据 2026 年 1 月的 v2 版},
+  url        = {https://arxiv.org/abs/2410.09180},
+  urldate    = {2026-10-18},
+  langid     = {english}
 }
 
-@article{weng2011bayesian,
-  author  = {Weng, Ruby C. and Lin, Chih-Jen},
-  title   = {A {Bayesian} Approximation Method for Online Ranking},
-  journal = {Journal of Machine Learning Research},
-  volume  = {12},
-  pages   = {267--300},
-  date    = {2011},
-  url     = {https://www.jmlr.org/papers/v12/weng11a.html},
-  urldate = {2026-10-18},
-  langid  = {english},
+@inproceedings{oleskertaylor2024analysis,
+  author     = {Olesker-Taylor, Sam and Zanetti, Luca},
+  title      = {An Analysis of {Elo} Rating Systems via {Markov} Chains},
+  booktitle  = {Advances in Neural Information Processing Systems 37 ({NeurIPS} 2024)},
+  pages      = {138289--138323},
+  year       = {2024},
+  doi        = {10.52202/079017-4389},
+  eprint     = {2406.05869},
+  eprinttype = {arXiv},
+  langid     = {english}
+}
+
+@online{blizzard2022overwatch,
+  author       = {{Blizzard Entertainment}},
+  title        = {Overwatch 2 Developer Blog: Matchmaker and Competitive Deep Dive, Part 1},
+  date         = {2022-12-20},
+  organization = {Overwatch 官方网站},
+  url          = {https://overwatch.blizzard.com/en-us/news/23896785/},
+  urldate      = {2026-10-18},
+  langid       = {english},
+}
+
+@online{blizzard2023overwatch,
+  author       = {{Blizzard Entertainment}},
+  title        = {Overwatch 2 Developer Blog: Explaining Matchmaker Goals and Plans, Part 2},
+  date         = {2023-01-30},
+  organization = {Overwatch 官方网站},
+  url          = {https://overwatch.blizzard.com/en-us/news/23910161/},
+  urldate      = {2026-10-18},
+  langid       = {english},
+}
+
+@online{blizzard2019developer,
+  author       = {{Blizzard Entertainment}},
+  title        = {Developer Insights: Personal Rating in {Hearthstone} Battlegrounds},
+  date         = {2019-11-27},
+  organization = {Hearthstone 官方网站},
+  url          = {https://hearthstone.blizzard.com/en-us/news/23239989},
+  urldate      = {2026-10-18},
+  note         = {作者 Tian（Senior Data Scientist）},
+  langid       = {english}
+}
+
+@online{blizzard2020developer,
+  author       = {{Blizzard Entertainment}},
+  title        = {Developer Insights: {Hearthstone} Battlegrounds Rating System Update},
+  date         = {2020-09-28},
+  organization = {Hearthstone 官方网站},
+  url          = {https://hearthstone.blizzard.com/en-us/news/23523064},
+  urldate      = {2026-10-18},
+  langid       = {english},
 }
 
 @article{bowling2009logistic,
@@ -125,32 +196,6 @@
   pages   = {114--127},
   date    = {2009},
   doi     = {10.3926/jiem.2009.v2n1.p114-127},
-  langid  = {english},
-}
-
-@article{bradley1952rank,
-  author  = {Bradley, Ralph Allan and Terry, Milton E.},
-  title   = {Rank Analysis of Incomplete Block Designs: {I}. The Method of Paired Comparisons},
-  journal = {Biometrika},
-  volume  = {39},
-  number  = {3/4},
-  pages   = {324--345},
-  date    = {1952},
-  doi     = {10.2307/2334029},
-  note    = {仅核对书目信息（Crossref）；模型形式经 herbrich2006trueskill、weng2011bayesian 转述核对},
-  langid  = {english},
-}
-
-@article{thurstone1927law,
-  author  = {Thurstone, L. L.},
-  title   = {A Law of Comparative Judgment},
-  journal = {Psychological Review},
-  volume  = {34},
-  number  = {4},
-  pages   = {273--286},
-  date    = {1927},
-  doi     = {10.1037/h0070288},
-  note    = {仅核对书目信息（Crossref）；模型形式经 herbrich2006trueskill、weng2011bayesian 转述核对},
   langid  = {english},
 }
 
@@ -180,42 +225,3 @@
   langid  = {english},
 }
 
-@online{blizzard2019developer,
-  author       = {{Blizzard Entertainment}},
-  title        = {Developer Insights: Personal Rating in {Hearthstone} Battlegrounds},
-  date         = {2019-11-27},
-  organization = {Hearthstone 官方网站},
-  url          = {https://hearthstone.blizzard.com/en-us/news/23239989},
-  urldate      = {2026-10-18},
-  langid       = {english},
-}
-
-@online{blizzard2020developer,
-  author       = {{Blizzard Entertainment}},
-  title        = {Developer Insights: {Hearthstone} Battlegrounds Rating System Update},
-  date         = {2020-09-28},
-  organization = {Hearthstone 官方网站},
-  url          = {https://hearthstone.blizzard.com/en-us/news/23523064},
-  urldate      = {2026-10-18},
-  langid       = {english},
-}
-
-@online{blizzard2022overwatch,
-  author       = {{Blizzard Entertainment}},
-  title        = {Overwatch 2 Developer Blog: Matchmaker and Competitive Deep Dive, Part 1},
-  date         = {2022-12-20},
-  organization = {Overwatch 官方网站},
-  url          = {https://overwatch.blizzard.com/en-us/news/23896785/},
-  urldate      = {2026-10-18},
-  langid       = {english},
-}
-
-@online{blizzard2023overwatch,
-  author       = {{Blizzard Entertainment}},
-  title        = {Overwatch 2 Developer Blog: Explaining Matchmaker Goals and Plans, Part 2},
-  date         = {2023-01-30},
-  organization = {Overwatch 官方网站},
-  url          = {https://overwatch.blizzard.com/en-us/news/23910161/},
-  urldate      = {2026-10-18},
-  langid       = {english},
-}

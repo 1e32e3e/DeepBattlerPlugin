@@ -1,17 +1,19 @@
-% 第一章 1a（学术研究）参考文献。键名：第一作者姓 + 年份 + 标题首个实词。
-% 每条都核对过元数据（DOI/出版信息来自 Crossref、arXiv、出版社页面或原文 PDF）。
+% 第 ch1a 部分的参考文献：refs.bib 的子集（供 single_ch1a.tex 试编译用）。
+% 以 refs.bib 为准：修改条目时请同时修改 refs.bib 与本文件，保持两者一致。
 
-% ---------- 成对比较与经典模型 ----------
 @article{thurstone1927law,
   author  = {Thurstone, L. L.},
   title   = {A Law of Comparative Judgment},
   journal = {Psychological Review},
-  year    = {1927},
   volume  = {34},
   number  = {4},
   pages   = {273--286},
-  doi     = {10.1037/h0070288}
+  date    = {1927},
+  doi     = {10.1037/h0070288},
+  note    = {仅核对书目信息（Crossref）；模型形式经 herbrich2006trueskill、weng2011bayesian 转述核对},
+  langid  = {english},
 }
+
 @article{zermelo1929berechnung,
   author  = {Zermelo, Ernst},
   title   = {Die Berechnung der Turnier-Ergebnisse als ein Maximumproblem der Wahrscheinlichkeitsrechnung},
@@ -22,6 +24,7 @@
   pages   = {436--460},
   doi     = {10.1007/BF01180541}
 }
+
 @article{mosteller1951remarks,
   author  = {Mosteller, Frederick},
   title   = {Remarks on the Method of Paired Comparisons: {I}. The Least Squares Solution Assuming Equal Standard Deviations and Equal Correlations},
@@ -32,16 +35,20 @@
   pages   = {3--9},
   doi     = {10.1007/BF02313422}
 }
+
 @article{bradley1952rank,
   author  = {Bradley, Ralph Allan and Terry, Milton E.},
   title   = {Rank Analysis of Incomplete Block Designs: {I}. The Method of Paired Comparisons},
   journal = {Biometrika},
-  year    = {1952},
   volume  = {39},
   number  = {3/4},
   pages   = {324--345},
-  doi     = {10.2307/2334029}
+  date    = {1952},
+  doi     = {10.2307/2334029},
+  note    = {仅核对书目信息（Crossref）；模型形式经 herbrich2006trueskill、weng2011bayesian 转述核对},
+  langid  = {english},
 }
+
 @book{luce1959individual,
   author    = {Luce, R. Duncan},
   title     = {Individual Choice Behavior: A Theoretical Analysis},
@@ -49,6 +56,7 @@
   address   = {New York},
   year      = {1959}
 }
+
 @article{plackett1975analysis,
   author  = {Plackett, R. L.},
   title   = {The Analysis of Permutations},
@@ -59,6 +67,7 @@
   pages   = {193--202},
   doi     = {10.2307/2346567}
 }
+
 @article{stern1992linear,
   author  = {Stern, Hal},
   title   = {Are All Linear Paired Comparison Models Empirically Equivalent?},
@@ -70,15 +79,18 @@
   doi     = {10.1016/0165-4896(92)90040-C}
 }
 
-% ---------- Elo 与国际象棋评分 ----------
 @book{elo1978rating,
   author    = {Elo, Arpad E.},
   title     = {The Rating of Chessplayers, Past and Present},
-  publisher = {Arco},
-  address   = {New York},
-  year      = {1978},
-  isbn      = {0-668-04721-6}
+  edition   = {2},
+  publisher = {Arco Publishing},
+  location  = {New York},
+  date      = {1986},
+  origdate  = {1978},
+  note      = {初版 1978 年；本文依据 1986 年第 2 版},
+  langid    = {english}
 }
+
 @article{glickman1995comprehensive,
   author  = {Glickman, Mark E.},
   title   = {A Comprehensive Guide to Chess Ratings},
@@ -89,6 +101,7 @@
   url     = {https://www.glicko.net/research/acjpaper.pdf},
   urldate = {2026-10-18}
 }
+
 @article{glickman1999parameter,
   author  = {Glickman, Mark E.},
   title   = {Parameter Estimation in Large Dynamic Paired Comparison Experiments},
@@ -99,6 +112,7 @@
   pages   = {377--394},
   doi     = {10.1111/1467-9876.00159}
 }
+
 @article{glickman2001dynamic,
   author  = {Glickman, Mark E.},
   title   = {Dynamic Paired Comparison Models with Stochastic Variances},
@@ -109,6 +123,7 @@
   pages   = {673--689},
   doi     = {10.1080/02664760120059219}
 }
+
 @online{glickman2016glicko,
   author  = {Glickman, Mark E.},
   title   = {The {Glicko} System},
@@ -117,6 +132,7 @@
   url     = {https://www.glicko.net/glicko/glicko.pdf},
   urldate = {2026-10-18}
 }
+
 @online{glickman2022example,
   author  = {Glickman, Mark E.},
   title   = {Example of the {Glicko-2} System},
@@ -125,6 +141,7 @@
   url     = {https://www.glicko.net/glicko/glicko2.pdf},
   urldate = {2026-10-18}
 }
+
 @online{fide2024rating,
   author       = {{International Chess Federation (FIDE)}},
   title        = {{FIDE} Rating Regulations Effective from 1 {March} 2024},
@@ -134,6 +151,7 @@
   url          = {https://handbook.fide.com/chapter/B022024},
   urldate      = {2026-10-18}
 }
+
 @online{fide2023seeks,
   author  = {{International Chess Federation (FIDE)}},
   title   = {{FIDE} Seeks Public Discussion about Proposed Rating Changes},
@@ -142,6 +160,7 @@
   url     = {https://www.fide.com/news/2538},
   urldate = {2026-10-18}
 }
+
 @inproceedings{regan2011intrinsic,
   author    = {Regan, Kenneth W. and Haworth, Guy McC.},
   title     = {Intrinsic Chess Ratings},
@@ -152,6 +171,7 @@
   year      = {2011},
   doi       = {10.1609/aaai.v25i1.7951}
 }
+
 @online{sismanis2010how,
   author  = {Sismanis, Yannis},
   title   = {How {I} Won the ``Chess Ratings -- {Elo} vs the Rest of the World'' Competition},
@@ -162,17 +182,18 @@
   urldate = {2026-10-18}
 }
 
-% ---------- 贝叶斯评分系统 ----------
 @inproceedings{herbrich2006trueskill,
   author    = {Herbrich, Ralf and Minka, Tom and Graepel, Thore},
   title     = {{TrueSkill}\texttrademark: A {Bayesian} Skill Rating System},
-  booktitle = {Advances in Neural Information Processing Systems 19 (NIPS 2006)},
+  booktitle = {Advances in Neural Information Processing Systems 19 ({NIPS} 2006)},
   publisher = {MIT Press},
-  year      = {2007},
   pages     = {569--576},
-  url       = {https://www.microsoft.com/en-us/research/wp-content/uploads/2007/01/NIPS2006_0688.pdf},
-  urldate   = {2026-10-18}
+  year      = {2007},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2006/hash/f44ee263952e65b3610b8ba51229d1f9-Abstract.html},
+  urldate   = {2026-10-18},
+  langid    = {english}
 }
+
 @inproceedings{dangauthier2007trueskill,
   author    = {Dangauthier, Pierre and Herbrich, Ralf and Minka, Tom and Graepel, Thore},
   title     = {{TrueSkill} Through Time: Revisiting the History of Chess},
@@ -182,6 +203,7 @@
   url       = {https://papers.nips.cc/paper_files/paper/2007/file/9f53d83ec0691550f7d2507d57f4f5a2-Paper.pdf},
   urldate   = {2026-10-18}
 }
+
 @inproceedings{coulom2008whole,
   author    = {Coulom, R{\'e}mi},
   title     = {Whole-History Rating: A {Bayesian} Rating System for Players of Time-Varying Strength},
@@ -193,16 +215,19 @@
   year      = {2008},
   doi       = {10.1007/978-3-540-87608-3_11}
 }
+
 @article{weng2011bayesian,
   author  = {Weng, Ruby C. and Lin, Chih-Jen},
   title   = {A {Bayesian} Approximation Method for Online Ranking},
   journal = {Journal of Machine Learning Research},
-  year    = {2011},
   volume  = {12},
   pages   = {267--300},
+  date    = {2011},
   url     = {https://www.jmlr.org/papers/v12/weng11a.html},
-  urldate = {2026-10-18}
+  urldate = {2026-10-18},
+  langid  = {english},
 }
+
 @article{joshy2024openskill,
   author  = {Joshy, Vivek},
   title   = {{OpenSkill}: A Faster Asymmetric Multi-Team, Multiplayer Rating System},
@@ -213,15 +238,18 @@
   pages   = {5901},
   doi     = {10.21105/joss.05901}
 }
+
 @techreport{minka2018trueskill,
   author      = {Minka, Tom and Cleven, Ryan and Zaykov, Yordan},
   title       = {{TrueSkill} 2: An Improved {Bayesian} Skill Rating System},
   institution = {Microsoft Research},
   number      = {MSR-TR-2018-8},
-  year        = {2018},
-  url         = {https://www.microsoft.com/en-us/research/uploads/prod/2018/03/trueskill2.pdf},
-  urldate     = {2026-10-18}
+  date        = {2018},
+  url         = {https://www.microsoft.com/en-us/research/wp-content/uploads/2018/03/trueskill2.pdf},
+  urldate     = {2026-10-18},
+  langid      = {english},
 }
+
 @inproceedings{ebtekar2021elo,
   author    = {Ebtekar, Aram and Liu, Paul},
   title     = {{Elo-MMR}: A Rating System for Massive Multiplayer Competitions},
@@ -231,6 +259,7 @@
   year      = {2021},
   doi       = {10.1145/3442381.3450091}
 }
+
 @article{landfried2025trueskill,
   author  = {Landfried, Gustavo and Mocskos, Esteban},
   title   = {{TrueSkill} Through Time: Reliable Initial Skill Estimates and Historical Comparability with {Julia}, {Python}, and {R}},
@@ -242,24 +271,29 @@
   doi     = {10.18637/jss.v112.i06}
 }
 
-% ---------- 非传递性 ----------
 @inproceedings{balduzzi2018reevaluating,
-  author    = {Balduzzi, David and Tuyls, Karl and P{\'e}rolat, Julien and Graepel, Thore},
-  title     = {Re-evaluating Evaluation},
-  booktitle = {Advances in Neural Information Processing Systems 31 (NeurIPS 2018)},
-  pages     = {3268--3279},
-  year      = {2018},
-  url       = {https://arxiv.org/abs/1806.02643},
-  urldate   = {2026-10-18}
+  author     = {Balduzzi, David and Tuyls, Karl and P{\'e}rolat, Julien and Graepel, Thore},
+  title      = {Re-evaluating Evaluation},
+  booktitle  = {Advances in Neural Information Processing Systems 31 (NeurIPS 2018)},
+  pages      = {3268--3279},
+  year       = {2018},
+  eprint     = {1806.02643},
+  eprinttype = {arXiv},
+  url        = {https://arxiv.org/abs/1806.02643},
+  urldate    = {2026-10-18}
 }
+
 @inproceedings{czarnecki2020real,
-  author    = {Czarnecki, Wojciech Marian and Gidel, Gauthier and Tracey, Brendan and Tuyls, Karl and Omidshafiei, Shayegan and Balduzzi, David and Jaderberg, Max},
-  title     = {Real World Games Look Like Spinning Tops},
-  booktitle = {Advances in Neural Information Processing Systems 33 (NeurIPS 2020)},
-  year      = {2020},
-  url       = {https://arxiv.org/abs/2004.09468},
-  urldate   = {2026-10-18}
+  author     = {Czarnecki, Wojciech Marian and Gidel, Gauthier and Tracey, Brendan and Tuyls, Karl and Omidshafiei, Shayegan and Balduzzi, David and Jaderberg, Max},
+  title      = {Real World Games Look Like Spinning Tops},
+  booktitle  = {Advances in Neural Information Processing Systems 33 (NeurIPS 2020)},
+  year       = {2020},
+  eprint     = {2004.09468},
+  eprinttype = {arXiv},
+  url        = {https://arxiv.org/abs/2004.09468},
+  urldate    = {2026-10-18}
 }
+
 @inproceedings{bertrand2023limitations,
   author    = {Bertrand, Quentin and Czarnecki, Wojciech Marian and Gidel, Gauthier},
   title     = {On the Limitations of the {Elo}, Real-World Games Are Transitive, Not Additive},
@@ -271,6 +305,7 @@
   url       = {https://proceedings.mlr.press/v206/bertrand23a.html},
   urldate   = {2026-10-18}
 }
+
 @online{tang2025elo,
   author  = {Tang, Shange and Wang, Yuanhao and Jin, Chi},
   title   = {Is {Elo} Rating Reliable? {A} Study Under Model Misspecification},
@@ -281,37 +316,42 @@
   urldate = {2026-10-18}
 }
 
-% ---------- Elo 的理论分析 ----------
 @article{aldous2017elo,
-  author  = {Aldous, David J.},
+  author  = {Aldous, David},
   title   = {Elo Ratings and the Sports Model: A Neglected Topic in Applied Probability?},
   journal = {Statistical Science},
-  year    = {2017},
   volume  = {32},
   number  = {4},
   pages   = {616--629},
-  doi     = {10.1214/17-STS628}
+  date    = {2017},
+  doi     = {10.1214/17-STS628},
+  langid  = {english},
 }
+
 @article{jabin2015continuous,
   author  = {Jabin, Pierre-Emmanuel and Junca, St{\'e}phane},
   title   = {A Continuous Model for Ratings},
   journal = {SIAM Journal on Applied Mathematics},
-  year    = {2015},
   volume  = {75},
   number  = {2},
   pages   = {420--442},
-  doi     = {10.1137/140969324}
+  date    = {2015},
+  doi     = {10.1137/140969324},
+  langid  = {english},
 }
+
 @article{during2019boltzmann,
   author  = {D{\"u}ring, Bertram and Torregrossa, Marco and Wolfram, Marie-Therese},
-  title   = {Boltzmann and {Fokker--Planck} Equations Modelling the {Elo} Rating System with Learning Effects},
+  title   = {{Boltzmann} and {Fokker--Planck} Equations Modelling the {Elo} Rating System with Learning Effects},
   journal = {Journal of Nonlinear Science},
-  year    = {2019},
   volume  = {29},
   number  = {3},
   pages   = {1095--1128},
-  doi     = {10.1007/s00332-018-9512-8}
+  date    = {2019},
+  doi     = {10.1007/s00332-018-9512-8},
+  langid  = {english},
 }
+
 @article{during2022elo,
   author  = {D{\"u}ring, Bertram and Fischer, Michael and Wolfram, Marie-Therese},
   title   = {An {Elo}-Type Rating Model for Players and Teams of Variable Strength},
@@ -322,24 +362,31 @@
   eid     = {20210155},
   doi     = {10.1098/rsta.2021.0155}
 }
-@online{cortez2026convergence,
-  author  = {Cortez, Roberto and Tossounian, Hagop},
-  title   = {Convergence and Stationary Distribution of {Elo} Rating Systems},
-  year    = {2026},
-  note    = {arXiv v2，2026 年 1 月；v1 发布于 2024 年 10 月},
-  eprinttype = {arxiv},
-  eprint  = {2410.09180},
-  url     = {https://arxiv.org/abs/2410.09180},
-  urldate = {2026-10-18}
+
+@online{cortez2024convergence,
+  author     = {Cortez, Roberto and Tossounian, Hagop},
+  title      = {Convergence and Stationary Distribution of {Elo} Rating Systems},
+  date       = {2024},
+  eprint     = {2410.09180},
+  eprinttype = {arXiv},
+  note       = {v1 2024 年 10 月；本文依据 2026 年 1 月的 v2 版},
+  url        = {https://arxiv.org/abs/2410.09180},
+  urldate    = {2026-10-18},
+  langid     = {english}
 }
+
 @inproceedings{oleskertaylor2024analysis,
-  author    = {Olesker-Taylor, Sam and Zanetti, Luca},
-  title     = {An Analysis of {Elo} Rating Systems via {Markov} Chains},
-  booktitle = {Advances in Neural Information Processing Systems 37 (NeurIPS 2024)},
-  year      = {2024},
-  url       = {https://arxiv.org/abs/2406.05869},
-  urldate   = {2026-10-18}
+  author     = {Olesker-Taylor, Sam and Zanetti, Luca},
+  title      = {An Analysis of {Elo} Rating Systems via {Markov} Chains},
+  booktitle  = {Advances in Neural Information Processing Systems 37 ({NeurIPS} 2024)},
+  pages      = {138289--138323},
+  year       = {2024},
+  doi        = {10.52202/079017-4389},
+  eprint     = {2406.05869},
+  eprinttype = {arXiv},
+  langid     = {english}
 }
+
 @online{szczecinski2019understanding,
   author  = {Szczecinski, Leszek and Djebbi, Aymen},
   title   = {Understanding and Pushing the Limits of the {Elo} Rating Algorithm},
@@ -350,6 +397,7 @@
   url     = {https://arxiv.org/abs/1910.06081},
   urldate = {2026-10-18}
 }
+
 @online{szczecinski2026new,
   author  = {Szczecinski, Leszek},
   title   = {New Insights into {Elo} Algorithm for Practitioners and Statisticians},
@@ -359,6 +407,7 @@
   url     = {https://arxiv.org/abs/2604.03840},
   urldate = {2026-10-18}
 }
+
 @online{zhou2026accelerating,
   author  = {Zhou, Tianyuan and Fu, Zhizheng and Yang, Tianming},
   title   = {Accelerating Skill Assessment in Chess: A Drift-Diffusion-Enhanced {Elo} Rating System},
@@ -370,7 +419,6 @@
   urldate = {2026-10-18}
 }
 
-% ---------- 匹配机制 ----------
 @inproceedings{emek2016online,
   author    = {Emek, Yuval and Kutten, Shay and Wattenhofer, Roger},
   title     = {Online Matching: Haste Makes Waste!},
@@ -380,6 +428,7 @@
   year      = {2016},
   doi       = {10.1145/2897518.2897557}
 }
+
 @online{liu2022online,
   author  = {Liu, Xingwu and Pan, Zhida and Wang, Yuyi and Wattenhofer, Roger},
   title   = {Online Matching with Convex Delay Costs},
@@ -389,6 +438,7 @@
   url     = {https://arxiv.org/abs/2203.03335},
   urldate = {2026-10-18}
 }
+
 @online{liu2026when,
   author  = {Liu, Jie and Zhang, Hailun and Zhang, Jiheng},
   title   = {When to Match: A Cost-Balancing Principle for Dynamic Markets},
@@ -398,6 +448,7 @@
   url     = {https://arxiv.org/abs/2601.21858},
   urldate = {2026-10-18}
 }
+
 @inproceedings{alman2017theoretical,
   author    = {Alman, Josh and McKay, Dylan},
   title     = {Theoretical Foundations of Team Matchmaking},
@@ -407,6 +458,7 @@
   url       = {https://www.ifaamas.org/Proceedings/aamas2017/pdfs/p1073.pdf},
   urldate   = {2026-10-18}
 }
+
 @article{delalleau2012beyond,
   author  = {Delalleau, Olivier and Contal, Emile and Thibodeau-Laufer, Eric and Chandias Ferrari, Raul and Bengio, Yoshua and Zhang, Frank},
   title   = {Beyond Skill Rating: Advanced Matchmaking in {Ghost Recon Online}},
@@ -417,6 +469,7 @@
   pages   = {167--177},
   doi     = {10.1109/TCIAIG.2012.2188833}
 }
+
 @inproceedings{chen2017eomm,
   author    = {Chen, Zhengxing and Xue, Su and Kolen, John and Aghdaie, Navid and Zaman, Kazi A. and Sun, Yizhou and Seif El-Nasr, Magy},
   title     = {{EOMM}: An Engagement Optimized Matchmaking Framework},
@@ -425,6 +478,7 @@
   year      = {2017},
   doi       = {10.1145/3038912.3052559}
 }
+
 @inproceedings{xue2017dynamic,
   author    = {Xue, Su and Wu, Meng and Kolen, John and Aghdaie, Navid and Zaman, Kazi A.},
   title     = {Dynamic Difficulty Adjustment for Maximized Engagement in Digital Games},
@@ -433,6 +487,7 @@
   year      = {2017},
   doi       = {10.1145/3041021.3054170}
 }
+
 @inproceedings{hunicke2004ai,
   author    = {Hunicke, Robin and Chapman, Vernell},
   title     = {{AI} for Dynamic Difficulty Adjustment in Games},
@@ -441,6 +496,7 @@
   pages     = {91--96},
   year      = {2004}
 }
+
 @inproceedings{hunicke2005case,
   author    = {Hunicke, Robin},
   title     = {The Case for Dynamic Difficulty Adjustment in Games},
@@ -449,6 +505,7 @@
   year      = {2005},
   doi       = {10.1145/1178477.1178573}
 }
+
 @inproceedings{gong2020optmatch,
   author    = {Gong, Linxia and Feng, Xiaochuan and Ye, Dezhi and Li, Hao and Wu, Runze and Tao, Jianrong and Fan, Changjie and Cui, Peng},
   title     = {{OptMatch}: Optimized Matchmaking via Modeling the High-Order Interactions on the Arena},
@@ -457,6 +514,7 @@
   year      = {2020},
   doi       = {10.1145/3394486.3403279}
 }
+
 @inproceedings{deng2021globally,
   author    = {Deng, Qilin and Li, Hao and Wang, Kai and Hu, Zhipeng and Wu, Runze and Gong, Linxia and Tao, Jianrong and Fan, Changjie and Cui, Peng},
   title     = {Globally Optimized Matchmaking in Online Games},
@@ -465,6 +523,7 @@
   year      = {2021},
   doi       = {10.1145/3447548.3467074}
 }
+
 @inproceedings{zhang2022quickskill,
   author    = {Zhang, Chaoyun and Wang, Kai and Chen, Hao and Fan, Ge and Li, Yingjie and Wu, Lifang and Zheng, Bingchao},
   title     = {{QuickSkill}: Novice Skill Estimation in Online Multiplayer Games},
@@ -473,6 +532,7 @@
   year      = {2022},
   doi       = {10.1145/3511808.3557070}
 }
+
 @article{fan2024cupid,
   author  = {Fan, Ge and Zhang, Chaoyun and Wang, Kai and Li, Yingjie and Chen, Junyang and Xu, Zenglin},
   title   = {{CUPID}: Improving Battle Fairness and Position Satisfaction in Online {MOBA} Games with a Re-matchmaking System},
@@ -483,6 +543,7 @@
   year    = {2024},
   doi     = {10.1145/3686978}
 }
+
 @inproceedings{wang2024enmatch,
   author    = {Wang, Kai and Liu, Haoyu and Hu, Zhipeng and Feng, Xiaochuan and Zhao, Minghao and Zhao, Shiwei and Wu, Runze and Shen, Xudong and Lv, Tangjie and Fan, Changjie},
   title     = {{EnMatch}: Matchmaking for Better Player Engagement via Neural Combinatorial Optimization},
@@ -493,6 +554,7 @@
   year      = {2024},
   doi       = {10.1609/aaai.v38i8.28760}
 }
+
 @article{chen2026matchmaking,
   author  = {Chen, Mingliu and Elmachtoub, Adam N. and Lei, Xiao},
   title   = {Matchmaking Strategies for Maximizing Player Engagement in Video Games},
@@ -503,6 +565,7 @@
   pages   = {8770--8788},
   doi     = {10.1287/mnsc.2023.02957}
 }
+
 @online{informs2026smarter,
   author  = {{INFORMS}},
   title   = {Smarter Matchmaking, Not Just Equal Skill, Could Keep Millions More Gamers Playing, Study Finds},
@@ -511,6 +574,7 @@
   url     = {https://www.informs.org/News-Room/INFORMS-Releases/News-Releases/Smarter-Matchmaking-Not-Just-Equal-Skill-Could-Keep-Millions-More-Gamers-Playing-Study-Finds},
   urldate = {2026-10-18}
 }
+
 @article{yuksel2024skill,
   author  = {Yuksel, Cem},
   title   = {Skill-Based Matchmaking for Competitive Two-Player Games},
@@ -521,7 +585,6 @@
   doi     = {10.1145/3651303}
 }
 
-% ---------- 连胜连败、流失与玩家体验 ----------
 @article{kang2024match,
   author  = {Kang, Hyunjae and Suh, Changwoo and Kim, Huy Kang},
   title   = {Match Experiences Affect Interest: Impacts of Matchmaking and Performance on Churn in a Competitive Game},
@@ -532,6 +595,7 @@
   pages   = {e24891},
   doi     = {10.1016/j.heliyon.2024.e24891}
 }
+
 @inproceedings{kou2018playing,
   author    = {Kou, Yubo and Li, Yao and Gui, Xinning and Suzuki-Gill, Eli},
   title     = {Playing with Streakiness in Online Games: How Players Perceive and React to Winning and Losing Streaks in {League of Legends}},
@@ -541,8 +605,9 @@
   year      = {2018},
   doi       = {10.1145/3173574.3174152}
 }
+
 @inproceedings{deng2024streaks,
-  author    = {Deng, Di-On and Trepanowski, Rados{\l}aw and Li, Ming-Rui and Zhang, Yin and Buji{\'c}, Mila and Hamari, Juho},
+  author    = {Deng, Dion and Trepanowski, Rados{\l}aw and Li, Mingrui and Zhang, Yin and Buji{\'c}, Mila and Hamari, Juho},
   title     = {Streaks and Coping: Decoding Player Performance in {League of Legends} Using Big Data from Top Players' Matches},
   booktitle = {Companion Proceedings of the 2024 Annual Symposium on Computer-Human Interaction in Play (CHI PLAY Companion '24)},
   publisher = {ACM},
@@ -550,6 +615,7 @@
   year      = {2024},
   doi       = {10.1145/3665463.3678787}
 }
+
 @article{sapienza2018individual,
   author  = {Sapienza, Anna and Zeng, Yilei and Bessi, Alessandro and Lerman, Kristina and Ferrara, Emilio},
   title   = {Individual Performance in Team-Based Online Games},
@@ -560,6 +626,7 @@
   pages   = {180329},
   doi     = {10.1098/rsos.180329}
 }
+
 @article{chowdhary2023quantifying,
   author  = {Chowdhary, Sandeep and Iacopini, Iacopo and Battiston, Federico},
   title   = {Quantifying Human Performance in Chess},
@@ -569,6 +636,7 @@
   pages   = {2113},
   doi     = {10.1038/s41598-023-27735-9}
 }
+
 @article{rosenthal2025investigation,
   author  = {Rosenthal, Jeffrey S.},
   title   = {An Investigation Into Probabilities of Streaks in Online Chess},
@@ -579,7 +647,6 @@
   doi     = {10.1162/99608f92.6939122d}
 }
 
-% ---------- 各游戏的专门研究 ----------
 @inproceedings{huang2013mastering,
   author    = {Huang, Jeff and Zimmermann, Thomas and Nagappan, Nachiappan and Harrison, Charles and Phillips, Bruce},
   title     = {Mastering the Art of War: How Patterns of Gameplay Influence Skill in {Halo}},
@@ -589,6 +656,7 @@
   year      = {2013},
   doi       = {10.1145/2470654.2470753}
 }
+
 @online{bober2024skill,
   author  = {Bober-Irizar, Mikel and Dua, Naunidh and McGuinness, Max},
   title   = {Skill Issues: An Analysis of {CS:GO} Skill Rating Systems},
@@ -598,6 +666,7 @@
   url     = {https://arxiv.org/abs/2410.02831},
   urldate = {2026-10-18}
 }
+
 @inproceedings{dehpanah2020evaluation,
   author    = {Dehpanah, Arman and Ghori, Muheeb Faizan and Gemmell, Jonathan and Mobasher, Bamshad},
   title     = {The Evaluation of Rating Systems in Online Free-for-All Games},
@@ -606,6 +675,7 @@
   url       = {https://arxiv.org/abs/2008.06787},
   urldate   = {2026-10-18}
 }
+
 @inproceedings{dehpanah2021evaluation,
   author    = {Dehpanah, Arman and Ghori, Muheeb Faizan and Gemmell, Jonathan and Mobasher, Bamshad},
   title     = {The Evaluation of Rating Systems in Team-Based Battle Royale Games},
@@ -614,6 +684,7 @@
   url       = {https://arxiv.org/abs/2105.14069},
   urldate   = {2026-10-18}
 }
+
 @inproceedings{dehpanah2021evaluating,
   author    = {Dehpanah, Arman and Ghori, Muheeb Faizan and Gemmell, Jonathan and Mobasher, Bamshad},
   title     = {Evaluating Team Skill Aggregation in Online Competitive Games},
@@ -622,6 +693,7 @@
   url       = {https://arxiv.org/abs/2106.11397},
   urldate   = {2026-10-18}
 }
+
 @inproceedings{dehpanah2021player,
   author    = {Dehpanah, Arman and Ghori, Muheeb Faizan and Gemmell, Jonathan and Mobasher, Bamshad},
   title     = {Player Modeling Using Behavioral Signals in Competitive Online Games},
@@ -630,6 +702,7 @@
   url       = {https://arxiv.org/abs/2112.04379},
   urldate   = {2026-10-18}
 }
+
 @inproceedings{do2021using,
   author    = {Do, Tiffany D. and Wang, Seong Ioi and Yu, Dylan S. and McMillian, Matthew G. and McMahan, Ryan P.},
   title     = {Using Machine Learning to Predict Game Outcomes Based on Player-Champion Experience in {League of Legends}},
@@ -638,6 +711,7 @@
   year      = {2021},
   doi       = {10.1145/3472538.3472579}
 }
+
 @inproceedings{veron2014matchmaking,
   author    = {V{\'e}ron, Maxime and Marin, Olivier and Monnet, S{\'e}bastien},
   title     = {Matchmaking in Multi-Player On-Line Games: Studying User Traces to Improve the User Experience},
@@ -647,6 +721,7 @@
   year      = {2014},
   doi       = {10.1145/2578260.2578265}
 }
+
 @online{debois2025pandaskill,
   author  = {De Bois, Maxime and Parmentier, Flora and Puget, Rapha{\"e}l and Tanti, Matthew and Peltier, Jordan},
   title   = {{PandaSkill} -- Player Performance and Skill Rating in Esports: Application to {League of Legends}},
@@ -656,6 +731,7 @@
   url     = {https://arxiv.org/abs/2501.10049},
   urldate = {2026-10-18}
 }
+
 @inproceedings{cheng2019makes,
   author    = {Cheng, Ziqiang and Yang, Yang and Tan, Chenhao and Cheng, Denny and Zhuang, Yueting and Cheng, Alex},
   title     = {What Makes a Good Team? {A} Large-Scale Study on the Effect of Team Composition in {Honor of Kings}},
@@ -664,15 +740,17 @@
   year      = {2019},
   doi       = {10.1145/3308558.3313530}
 }
-@online{yang2016real,
-  author  = {Yang, Yifan and Qin, Tian and Lei, Yu-Heng},
-  title   = {Real-time {eSports} Match Result Prediction},
-  year    = {2016},
-  eprinttype = {arxiv},
-  eprint  = {1701.03162},
-  url     = {https://arxiv.org/abs/1701.03162},
-  urldate = {2026-10-18}
+
+@online{yang2017realtime,
+  author     = {Yang, Yifan and Qin, Tian and Lei, Yu-Heng},
+  title      = {Real-time {eSports} Match Result Prediction},
+  date       = {2017},
+  eprint     = {1701.03162},
+  eprinttype = {arXiv},
+  url        = {https://arxiv.org/abs/1701.03162},
+  urldate    = {2026-10-18}
 }
+
 @inproceedings{semenov2017performance,
   author    = {Semenov, Aleksandr and Romov, Peter and Korolev, Sergey and Yashkov, Daniil and Neklyudov, Kirill},
   title     = {Performance of Machine Learning Algorithms in Predicting Game Outcome from Drafts in {Dota 2}},
@@ -684,6 +762,7 @@
   year      = {2017},
   doi       = {10.1007/978-3-319-52920-2_3}
 }
+
 @online{hodge2017win,
   author  = {Hodge, Victoria and Devlin, Sam and Sephton, Nick and Block, Florian and Drachen, Anders and Cowling, Peter},
   title   = {Win Prediction in Esports: Mixed-Rank Match Prediction in Multi-player Online Battle Arena Games},
@@ -693,6 +772,7 @@
   url     = {https://arxiv.org/abs/1711.06498},
   urldate = {2026-10-18}
 }
+
 @inproceedings{lee2022draftrec,
   author    = {Lee, Hojoon and Hwang, Dongyoon and Kim, Hyunseung and Lee, Byungkun and Choo, Jaegul},
   title     = {{DraftRec}: Personalized Draft Recommendation for Winning in Multi-Player Online Battle Arena Games},
@@ -700,6 +780,7 @@
   year      = {2022},
   doi       = {10.1145/3485447.3512278}
 }
+
 @inproceedings{caplar2013analysis,
   author    = {Caplar, Neven and Suznjevic, Mirko and Matijasevic, Maja},
   title     = {Analysis of Player's In-Game Performance vs Rating: Case Study of {Heroes of Newerth}},
@@ -708,6 +789,7 @@
   url       = {https://arxiv.org/abs/1305.5189},
   urldate   = {2026-10-18}
 }
+
 @article{thompson2013video,
   author  = {Thompson, Joseph J. and Blair, Mark R. and Chen, Lihan and Henrey, Andrew J.},
   title   = {Video Game Telemetry as a Critical Tool in the Study of Complex Skill Learning},
@@ -718,16 +800,19 @@
   pages   = {e75129},
   doi     = {10.1371/journal.pone.0075129}
 }
+
 @article{vinyals2019grandmaster,
-  author  = {Vinyals, Oriol and Babuschkin, Igor and Czarnecki, Wojciech M. and others},
+  author  = {Vinyals, Oriol and Babuschkin, Igor and Czarnecki, Wojciech M. and Mathieu, Micha{\"e}l and Dudzik, Andrew and Chung, Junyoung and Choi, David H. and Powell, Richard and Ewalds, Timo and Georgiev, Petko and others},
   title   = {Grandmaster Level in {StarCraft II} Using Multi-Agent Reinforcement Learning},
   journal = {Nature},
-  year    = {2019},
   volume  = {575},
   number  = {7782},
   pages   = {350--354},
-  doi     = {10.1038/s41586-019-1724-z}
+  year    = {2019},
+  doi     = {10.1038/s41586-019-1724-z},
+  note    = {本章引用的方法细节核对自 DeepMind 公开的未排版稿 \url{https://storage.googleapis.com/deepmind-media/research/alphastar/AlphaStar_unformatted.pdf}}
 }
+
 @online{dockhorn2019introducing,
   author  = {Dockhorn, Alexander and Mostaghim, Sanaz},
   title   = {Introducing the {Hearthstone-AI} Competition},
@@ -737,6 +822,7 @@
   url     = {https://arxiv.org/abs/1906.04238},
   urldate = {2026-10-18}
 }
+
 @inproceedings{zhang2022deep,
   author    = {Zhang, Yulun and Fontaine, Matthew C. and Hoover, Amy K. and Nikolaidis, Stefanos},
   title     = {Deep Surrogate Assisted {MAP-Elites} for Automated {Hearthstone} Deckbuilding},
@@ -746,7 +832,6 @@
   doi       = {10.1145/3512290.3528718}
 }
 
-% ---------- 中文学位论文（仅见题录/摘要，正文中标注待核对） ----------
 @thesis{wang2019jingji,
   author      = {王瑞},
   title       = {竞技游戏中的ELO算法与匹配算法研究},
@@ -756,6 +841,7 @@
   langid      = {chinese},
   note        = {导师吴建国}
 }
+
 @thesis{chen2012pinggu,
   author      = {陈韦成},
   title       = {评估玩家及团队影响力来平衡线上游戏的自动配对系统},
@@ -767,6 +853,7 @@
   url         = {https://ir.lib.nycu.edu.tw/handle/11536/71640},
   urldate     = {2026-10-18}
 }
+
 @thesis{huang2010tuanti,
   author      = {黄志宏},
   title       = {以团体评估探讨线上游戏团队对抗之配对平衡},
@@ -778,3 +865,4 @@
   url         = {https://ir.lib.nycu.edu.tw/handle/11536/48455},
   urldate     = {2026-10-18}
 }
+

@@ -1,13 +1,5 @@
-% 第四章参考文献。条目均已核对来源（DOI、arXiv 或官方页面）。
-
-@book{elo1978rating,
-  author    = {Elo, Arpad E.},
-  title     = {The Rating of Chessplayers, Past and Present},
-  publisher = {Arco},
-  address   = {New York},
-  year      = {1978},
-  isbn      = {0-668-04721-6}
-}
+% 第 ch4 部分的参考文献：refs.bib 的子集（供 single_ch4.tex 试编译用）。
+% 以 refs.bib 为准：修改条目时请同时修改 refs.bib 与本文件，保持两者一致。
 
 @article{bradley1952rank,
   author  = {Bradley, Ralph Allan and Terry, Milton E.},
@@ -16,49 +8,45 @@
   volume  = {39},
   number  = {3/4},
   pages   = {324--345},
-  year    = {1952},
-  doi     = {10.2307/2334029}
+  date    = {1952},
+  doi     = {10.2307/2334029},
+  note    = {仅核对书目信息（Crossref）；模型形式经 herbrich2006trueskill、weng2011bayesian 转述核对},
+  langid  = {english},
 }
 
 @article{plackett1975analysis,
   author  = {Plackett, R. L.},
   title   = {The Analysis of Permutations},
-  journal = {Applied Statistics},
+  journal = {Journal of the Royal Statistical Society: Series C (Applied Statistics)},
+  year    = {1975},
   volume  = {24},
   number  = {2},
   pages   = {193--202},
-  year    = {1975},
   doi     = {10.2307/2346567}
+}
+
+@book{elo1978rating,
+  author    = {Elo, Arpad E.},
+  title     = {The Rating of Chessplayers, Past and Present},
+  edition   = {2},
+  publisher = {Arco Publishing},
+  location  = {New York},
+  date      = {1986},
+  origdate  = {1978},
+  note      = {初版 1978 年；本文依据 1986 年第 2 版},
+  langid    = {english}
 }
 
 @inproceedings{herbrich2006trueskill,
   author    = {Herbrich, Ralf and Minka, Tom and Graepel, Thore},
-  title     = {{TrueSkill}{\texttrademark}: A {Bayesian} Skill Rating System},
-  booktitle = {Advances in Neural Information Processing Systems 19 (NIPS 2006)},
-  pages     = {569--576},
+  title     = {{TrueSkill}\texttrademark: A {Bayesian} Skill Rating System},
+  booktitle = {Advances in Neural Information Processing Systems 19 ({NIPS} 2006)},
   publisher = {MIT Press},
+  pages     = {569--576},
   year      = {2007},
-  url       = {https://www.microsoft.com/en-us/research/wp-content/uploads/2007/01/NIPS2006_0688.pdf},
-  urldate   = {2026-10-18}
-}
-
-@techreport{minka2018trueskill,
-  author      = {Minka, Tom and Cleven, Ryan and Zaykov, Yordan},
-  title       = {{TrueSkill} 2: An Improved {Bayesian} Skill Rating System},
-  institution = {Microsoft Research},
-  number      = {MSR-TR-2018-8},
-  year        = {2018},
-  url         = {https://www.microsoft.com/en-us/research/uploads/prod/2018/03/trueskill2.pdf},
-  urldate     = {2026-10-18}
-}
-
-@online{microsoft2005trueskill,
-  author  = {{Microsoft Research}},
-  title   = {{TrueSkill}{\texttrademark} Ranking System（项目页与 FAQ）},
-  year    = {2005},
-  url     = {https://www.microsoft.com/en-us/research/project/trueskill-ranking-system/},
-  urldate = {2026-10-18},
-  note    = {项目页标注 Established: November 18, 2005}
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2006/hash/f44ee263952e65b3610b8ba51229d1f9-Abstract.html},
+  urldate   = {2026-10-18},
+  langid    = {english}
 }
 
 @article{weng2011bayesian,
@@ -67,50 +55,21 @@
   journal = {Journal of Machine Learning Research},
   volume  = {12},
   pages   = {267--300},
-  year    = {2011},
-  url     = {https://jmlr.org/papers/v12/weng11a.html},
-  urldate = {2026-10-18}
+  date    = {2011},
+  url     = {https://www.jmlr.org/papers/v12/weng11a.html},
+  urldate = {2026-10-18},
+  langid  = {english},
 }
 
-@misc{szczecinski2019understanding,
-  author        = {Szczecinski, Leszek and Djebbi, Aymen},
-  title         = {Understanding and Pushing the Limits of the {Elo} Rating Algorithm},
-  year          = {2019},
-  eprint        = {1910.06081},
-  eprinttype    = {arXiv},
-  url           = {https://arxiv.org/abs/1910.06081},
-  urldate       = {2026-10-18}
-}
-
-@misc{szczecinski2026new,
-  author     = {Szczecinski, Leszek},
-  title      = {New Insights into {Elo} Algorithm for Practitioners and Statisticians},
-  year       = {2026},
-  eprint     = {2604.03840},
-  eprinttype = {arXiv},
-  url        = {https://arxiv.org/abs/2604.03840},
-  urldate    = {2026-10-18}
-}
-
-@misc{tang2025elo,
-  author     = {Tang, Shange and Wang, Yuanhao and Jin, Chi},
-  title      = {Is {Elo} Rating Reliable? {A} Study Under Model Misspecification},
-  year       = {2025},
-  eprint     = {2502.10985},
-  eprinttype = {arXiv},
-  url        = {https://arxiv.org/abs/2502.10985},
-  urldate    = {2026-10-18}
-}
-
-@inproceedings{oleskertaylor2024analysis,
-  author     = {Olesker-Taylor, Sam and Zanetti, Luca},
-  title      = {An Analysis of {Elo} Rating Systems via {Markov} Chains},
-  booktitle  = {Advances in Neural Information Processing Systems 37 (NeurIPS 2024)},
-  year       = {2024},
-  eprint     = {2406.05869},
-  eprinttype = {arXiv},
-  url        = {https://arxiv.org/abs/2406.05869},
-  urldate    = {2026-10-18}
+@techreport{minka2018trueskill,
+  author      = {Minka, Tom and Cleven, Ryan and Zaykov, Yordan},
+  title       = {{TrueSkill} 2: An Improved {Bayesian} Skill Rating System},
+  institution = {Microsoft Research},
+  number      = {MSR-TR-2018-8},
+  date        = {2018},
+  url         = {https://www.microsoft.com/en-us/research/wp-content/uploads/2018/03/trueskill2.pdf},
+  urldate     = {2026-10-18},
+  langid      = {english},
 }
 
 @inproceedings{balduzzi2018reevaluating,
@@ -123,6 +82,162 @@
   eprinttype = {arXiv},
   url        = {https://arxiv.org/abs/1806.02643},
   urldate    = {2026-10-18}
+}
+
+@inproceedings{czarnecki2020real,
+  author     = {Czarnecki, Wojciech Marian and Gidel, Gauthier and Tracey, Brendan and Tuyls, Karl and Omidshafiei, Shayegan and Balduzzi, David and Jaderberg, Max},
+  title      = {Real World Games Look Like Spinning Tops},
+  booktitle  = {Advances in Neural Information Processing Systems 33 (NeurIPS 2020)},
+  year       = {2020},
+  eprint     = {2004.09468},
+  eprinttype = {arXiv},
+  url        = {https://arxiv.org/abs/2004.09468},
+  urldate    = {2026-10-18}
+}
+
+@online{tang2025elo,
+  author  = {Tang, Shange and Wang, Yuanhao and Jin, Chi},
+  title   = {Is {Elo} Rating Reliable? {A} Study Under Model Misspecification},
+  year    = {2025},
+  eprinttype = {arxiv},
+  eprint  = {2502.10985},
+  url     = {https://arxiv.org/abs/2502.10985},
+  urldate = {2026-10-18}
+}
+
+@inproceedings{oleskertaylor2024analysis,
+  author     = {Olesker-Taylor, Sam and Zanetti, Luca},
+  title      = {An Analysis of {Elo} Rating Systems via {Markov} Chains},
+  booktitle  = {Advances in Neural Information Processing Systems 37 ({NeurIPS} 2024)},
+  pages      = {138289--138323},
+  year       = {2024},
+  doi        = {10.52202/079017-4389},
+  eprint     = {2406.05869},
+  eprinttype = {arXiv},
+  langid     = {english}
+}
+
+@online{szczecinski2019understanding,
+  author  = {Szczecinski, Leszek and Djebbi, Aymen},
+  title   = {Understanding and Pushing the Limits of the {Elo} Rating Algorithm},
+  year    = {2019},
+  note    = {期刊版：Understanding Draws in Elo Rating Algorithm, Journal of Quantitative Analysis in Sports, 2020, 16(3): 211--220},
+  eprinttype = {arxiv},
+  eprint  = {1910.06081},
+  url     = {https://arxiv.org/abs/1910.06081},
+  urldate = {2026-10-18}
+}
+
+@online{szczecinski2026new,
+  author  = {Szczecinski, Leszek},
+  title   = {New Insights into {Elo} Algorithm for Practitioners and Statisticians},
+  year    = {2026},
+  eprinttype = {arxiv},
+  eprint  = {2604.03840},
+  url     = {https://arxiv.org/abs/2604.03840},
+  urldate = {2026-10-18}
+}
+
+@inproceedings{chen2017eomm,
+  author    = {Chen, Zhengxing and Xue, Su and Kolen, John and Aghdaie, Navid and Zaman, Kazi A. and Sun, Yizhou and Seif El-Nasr, Magy},
+  title     = {{EOMM}: An Engagement Optimized Matchmaking Framework},
+  booktitle = {Proceedings of the 26th International Conference on World Wide Web (WWW '17)},
+  pages     = {1143--1150},
+  year      = {2017},
+  doi       = {10.1145/3038912.3052559}
+}
+
+@inproceedings{xue2017dynamic,
+  author    = {Xue, Su and Wu, Meng and Kolen, John and Aghdaie, Navid and Zaman, Kazi A.},
+  title     = {Dynamic Difficulty Adjustment for Maximized Engagement in Digital Games},
+  booktitle = {Proceedings of the 26th International Conference on World Wide Web Companion (WWW '17 Companion)},
+  pages     = {465--471},
+  year      = {2017},
+  doi       = {10.1145/3041021.3054170}
+}
+
+@inproceedings{do2021using,
+  author    = {Do, Tiffany D. and Wang, Seong Ioi and Yu, Dylan S. and McMillian, Matthew G. and McMahan, Ryan P.},
+  title     = {Using Machine Learning to Predict Game Outcomes Based on Player-Champion Experience in {League of Legends}},
+  booktitle = {Proceedings of the 16th International Conference on the Foundations of Digital Games (FDG '21)},
+  publisher = {ACM},
+  year      = {2021},
+  doi       = {10.1145/3472538.3472579}
+}
+
+@online{yang2017realtime,
+  author     = {Yang, Yifan and Qin, Tian and Lei, Yu-Heng},
+  title      = {Real-time {eSports} Match Result Prediction},
+  date       = {2017},
+  eprint     = {1701.03162},
+  eprinttype = {arXiv},
+  url        = {https://arxiv.org/abs/1701.03162},
+  urldate    = {2026-10-18}
+}
+
+@inproceedings{semenov2017performance,
+  author    = {Semenov, Aleksandr and Romov, Peter and Korolev, Sergey and Yashkov, Daniil and Neklyudov, Kirill},
+  title     = {Performance of Machine Learning Algorithms in Predicting Game Outcome from Drafts in {Dota 2}},
+  booktitle = {Analysis of Images, Social Networks and Texts (AIST 2016)},
+  series    = {Communications in Computer and Information Science},
+  volume    = {661},
+  pages     = {26--37},
+  publisher = {Springer},
+  year      = {2017},
+  doi       = {10.1007/978-3-319-52920-2_3}
+}
+
+@article{vinyals2019grandmaster,
+  author  = {Vinyals, Oriol and Babuschkin, Igor and Czarnecki, Wojciech M. and Mathieu, Micha{\"e}l and Dudzik, Andrew and Chung, Junyoung and Choi, David H. and Powell, Richard and Ewalds, Timo and Georgiev, Petko and others},
+  title   = {Grandmaster Level in {StarCraft II} Using Multi-Agent Reinforcement Learning},
+  journal = {Nature},
+  volume  = {575},
+  number  = {7782},
+  pages   = {350--354},
+  year    = {2019},
+  doi     = {10.1038/s41586-019-1724-z},
+  note    = {本章引用的方法细节核对自 DeepMind 公开的未排版稿 \url{https://storage.googleapis.com/deepmind-media/research/alphastar/AlphaStar_unformatted.pdf}}
+}
+
+@online{blizzard2019developer,
+  author       = {{Blizzard Entertainment}},
+  title        = {Developer Insights: Personal Rating in {Hearthstone} Battlegrounds},
+  date         = {2019-11-27},
+  organization = {Hearthstone 官方网站},
+  url          = {https://hearthstone.blizzard.com/en-us/news/23239989},
+  urldate      = {2026-10-18},
+  note         = {作者 Tian（Senior Data Scientist）},
+  langid       = {english}
+}
+
+@online{blizzard2020developer,
+  author       = {{Blizzard Entertainment}},
+  title        = {Developer Insights: {Hearthstone} Battlegrounds Rating System Update},
+  date         = {2020-09-28},
+  organization = {Hearthstone 官方网站},
+  url          = {https://hearthstone.blizzard.com/en-us/news/23523064},
+  urldate      = {2026-10-18},
+  langid       = {english},
+}
+
+@online{microsoft2005trueskill,
+  author  = {{Microsoft Research}},
+  title   = {{TrueSkill}\texttrademark{} Ranking System},
+  year    = {2005},
+  url     = {https://www.microsoft.com/en-us/research/project/trueskill-ranking-system/},
+  urldate = {2026-10-18},
+  note    = {项目页，含 Detailed Description 与 FAQ；页面标注 Established: November 18, 2005}
+}
+
+@article{miller2018surprised,
+  author  = {Miller, Joshua B. and Sanjurjo, Adam},
+  title   = {Surprised by the Hot Hand Fallacy? {A} Truth in the Law of Small Numbers},
+  journal = {Econometrica},
+  year    = {2018},
+  volume  = {86},
+  number  = {6},
+  pages   = {2019--2047},
+  doi     = {10.3982/ECTA14943}
 }
 
 @inproceedings{balduzzi2019openended,
@@ -139,17 +254,6 @@
   urldate    = {2026-10-18}
 }
 
-@inproceedings{czarnecki2020real,
-  author     = {Czarnecki, Wojciech Marian and Gidel, Gauthier and Tracey, Brendan and Tuyls, Karl and Omidshafiei, Shayegan and Balduzzi, David and Jaderberg, Max},
-  title      = {Real World Games Look Like Spinning Tops},
-  booktitle  = {Advances in Neural Information Processing Systems 33 (NeurIPS 2020)},
-  year       = {2020},
-  eprint     = {2004.09468},
-  eprinttype = {arXiv},
-  url        = {https://arxiv.org/abs/2004.09468},
-  urldate    = {2026-10-18}
-}
-
 @article{silver2017mastering,
   author  = {Silver, David and Schrittwieser, Julian and Simonyan, Karen and Antonoglou, Ioannis and Huang, Aja and Guez, Arthur and Hubert, Thomas and Baker, Lucas and Lai, Matthew and Bolton, Adrian and Chen, Yutian and Lillicrap, Timothy and Hui, Fan and Sifre, Laurent and van den Driessche, George and Graepel, Thore and Hassabis, Demis},
   title   = {Mastering the Game of {Go} without Human Knowledge},
@@ -162,7 +266,7 @@
   note    = {本章引用的数字核对自作者接受稿 \url{https://discovery.ucl.ac.uk/id/eprint/10045895/}}
 }
 
-@misc{silver2017masteringchess,
+@online{silver2017masteringchess,
   author     = {Silver, David and Hubert, Thomas and Schrittwieser, Julian and Antonoglou, Ioannis and Lai, Matthew and Guez, Arthur and Lanctot, Marc and Sifre, Laurent and Kumaran, Dharshan and Graepel, Thore and Lillicrap, Timothy and Simonyan, Karen and Hassabis, Demis},
   title      = {Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm},
   year       = {2017},
@@ -172,7 +276,7 @@
   urldate    = {2026-10-18}
 }
 
-@misc{berner2019dota,
+@online{berner2019dota,
   author     = {Berner, Christopher and Brockman, Greg and Chan, Brooke and Cheung, Vicki and D{\k{e}}biak, Przemys{\l}aw and Dennison, Christy and Farhi, David and Fischer, Quirin and Hashme, Shariq and Hesse, Chris and J{\'o}zefowicz, Rafal and Gray, Scott and Olsson, Catherine and Pachocki, Jakub and Petrov, Michael and Pinto, Henrique P. d. O. and Raiman, Jonathan and Salimans, Tim and Schlatter, Jeremy and Schneider, Jonas and Sidor, Szymon and Sutskever, Ilya and Tang, Jie and Wolski, Filip and Zhang, Susan},
   title      = {{Dota 2} with Large Scale Deep Reinforcement Learning},
   year       = {2019},
@@ -180,18 +284,6 @@
   eprinttype = {arXiv},
   url        = {https://arxiv.org/abs/1912.06680},
   urldate    = {2026-10-18}
-}
-
-@article{vinyals2019grandmaster,
-  author  = {Vinyals, Oriol and Babuschkin, Igor and Czarnecki, Wojciech M. and Mathieu, Micha{\"e}l and Dudzik, Andrew and Chung, Junyoung and Choi, David H. and Powell, Richard and Ewalds, Timo and Georgiev, Petko and others},
-  title   = {Grandmaster Level in {StarCraft II} Using Multi-Agent Reinforcement Learning},
-  journal = {Nature},
-  volume  = {575},
-  number  = {7782},
-  pages   = {350--354},
-  year    = {2019},
-  doi     = {10.1038/s41586-019-1724-z},
-  note    = {本章引用的方法细节核对自 DeepMind 公开的未排版稿 \url{https://storage.googleapis.com/deepmind-media/research/alphastar/AlphaStar_unformatted.pdf}}
 }
 
 @online{lczero2019faq,
@@ -267,55 +359,7 @@
   urldate    = {2026-10-18}
 }
 
-@inproceedings{chen2017eomm,
-  author    = {Chen, Zhengxing and Xue, Su and Kolen, John and Aghdaie, Navid and Zaman, Kazi A. and Sun, Yizhou and Seif El-Nasr, Magy},
-  title     = {{EOMM}: An Engagement Optimized Matchmaking Framework},
-  booktitle = {Proceedings of the 26th International Conference on World Wide Web (WWW)},
-  pages     = {1143--1150},
-  year      = {2017},
-  doi       = {10.1145/3038912.3052559}
-}
-
-@inproceedings{xue2017dynamic,
-  author    = {Xue, Su and Wu, Meng and Kolen, John and Aghdaie, Navid and Zaman, Kazi A.},
-  title     = {Dynamic Difficulty Adjustment for Maximized Engagement in Digital Games},
-  booktitle = {Proceedings of the 26th International Conference on World Wide Web Companion (WWW '17 Companion)},
-  pages     = {465--471},
-  year      = {2017},
-  doi       = {10.1145/3041021.3054170}
-}
-
-@inproceedings{do2021using,
-  author    = {Do, Tiffany D. and Wang, Seong Ioi and Yu, Dylan S. and McMillian, Matthew G. and McMahan, Ryan P.},
-  title     = {Using Machine Learning to Predict Game Outcomes Based on Player-Champion Experience in {League of Legends}},
-  booktitle = {Proceedings of the 16th International Conference on the Foundations of Digital Games (FDG 2021)},
-  year      = {2021},
-  doi       = {10.1145/3472538.3472579}
-}
-
-@misc{yang2017realtime,
-  author     = {Yang, Yifan and Qin, Tian and Lei, Yu-Heng},
-  title      = {Real-time {eSports} Match Result Prediction},
-  year       = {2017},
-  eprint     = {1701.03162},
-  eprinttype = {arXiv},
-  url        = {https://arxiv.org/abs/1701.03162},
-  urldate    = {2026-10-18}
-}
-
-@inproceedings{semenov2017performance,
-  author    = {Semenov, Aleksandr and Romov, Peter and Korolev, Sergey and Yashkov, Daniil and Neklyudov, Kirill},
-  title     = {Performance of Machine Learning Algorithms in Predicting Game Outcome from Drafts in {Dota 2}},
-  booktitle = {Analysis of Images, Social Networks and Texts (AIST 2016)},
-  series    = {Communications in Computer and Information Science},
-  volume    = {661},
-  pages     = {26--37},
-  publisher = {Springer},
-  year      = {2017},
-  doi       = {10.1007/978-3-319-52920-2_3}
-}
-
-@misc{yashkov2016applications,
+@online{yashkov2016applications,
   author       = {Yashkov, Daniil and Romov, Peter and Neklyudov, Kirill and Semenov, Aleksander and Kireev, Daniil},
   title        = {Applications of Machine Learning in {DOTA2}: Literature Review and Practical Knowledge Sharing},
   howpublished = {报告幻灯片，MLSA16 研讨会},
@@ -324,29 +368,3 @@
   urldate      = {2026-10-18}
 }
 
-@online{blizzard2019personal,
-  author  = {{Blizzard Entertainment}},
-  title   = {Developer Insights: Personal Rating in {Hearthstone} Battlegrounds},
-  date    = {2019-11-27},
-  url     = {https://hearthstone.blizzard.com/en-us/news/23239989},
-  urldate = {2026-10-18}
-}
-
-@online{blizzard2020rating,
-  author  = {{Blizzard Entertainment}},
-  title   = {Developer Insights: {Hearthstone} Battlegrounds Rating System Update},
-  date    = {2020-09-28},
-  url     = {https://hearthstone.blizzard.com/en-us/news/23523064},
-  urldate = {2026-10-18}
-}
-
-@article{miller2018surprised,
-  author  = {Miller, Joshua B. and Sanjurjo, Adam},
-  title   = {Surprised by the Hot Hand Fallacy? {A} Truth in the Law of Small Numbers},
-  journal = {Econometrica},
-  volume  = {86},
-  number  = {6},
-  pages   = {2019--2047},
-  year    = {2018},
-  doi     = {10.3982/ECTA14943}
-}

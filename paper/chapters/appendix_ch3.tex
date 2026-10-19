@@ -2,7 +2,7 @@
 \section{第三章的推导与模拟参数}
 \label{app:ch3}
 
-本节给出\cref{ch:streaks}中较长的推导和全部模拟参数。代码在 \texttt{code/ch3/}：\texttt{model.py}（精确计算、单人模拟、统计量），\texttt{population.py}（人群模拟），\texttt{experiments.py}（单人实验与检验力），\texttt{ch3\_numbers.py}（打印正文引用的全部数字），\texttt{fig\_*.py}（各图）。
+本节给出研究三（\cref{ch:streaks}）中较长的推导和全部模拟参数。代码在 \texttt{code/ch3/}：\texttt{model.py}（精确计算、单人模拟、统计量），\texttt{population.py}（人群模拟），\texttt{experiments.py}（单人实验与检验力），\texttt{ch3\_numbers.py}（打印正文引用的全部数字），\texttt{fig\_*.py}（各图）。
 
 \subsection{游程的精确计算}
 \label{app:ch3-runs}
@@ -20,7 +20,7 @@
 
 估计量 $\hat P_k=\#\{t:\ y_{t-k}=\dots=y_{t-1}=1,\ y_t=1\}/\#\{t:\ y_{t-k}=\dots=y_{t-1}=1\}$，只在分母大于 0 时有定义。前向动态规划的状态为 $(s,c,w)$：$s=\min(\text{当前连胜},k)$，$c$ 为至今合格局数（前面已有 $k$ 连胜的局），$w$ 为其中的胜局数。每一步：若 $s<k$，本局不是合格局，赢则 $s\to\min(s+1,k)$、输则 $s\to0$；若 $s=k$，本局是合格局，$c\to c+1$，赢则 $w\to w+1$、$s$ 保持为 $k$，输则 $s\to0$。$n$ 步后，$\E[\hat P_k\mid c>0]=\sum_{c>0,w}\Prob(c,w)\,(w/c)/\Prob(c>0)$。一次前向计算可以在每个中间步读出对应 $n$ 的结果。$n=20$ 时与 $2^{20}$ 种序列的穷举一致；$k=1$ 时与引理 1 的闭式（对 $n_1$ 加权的 $(n_1-1)/(n-1)$）一致到机器精度。
 
-“最近 100 局”若是更长职业生涯的一个窗口，窗口开头的连胜可能始于窗口之外；把前 $k$ 局的状态也计入时，3 连胜后的期望为 46.2\%，与 46.0\% 几乎相同（第一轮核查的 Monte Carlo）。
+“最近 100 局”若是更长职业生涯的一个窗口，窗口开头的连胜可能始于窗口之外；把前 $k$ 局的状态也计入时，3 连胜后的期望为 46.2\%，与 46.0\% 几乎相同（计算见 \texttt{research\_notes/} 中的 \texttt{verify\_streaks.md}）。
 
 \subsection{诚实 Elo 均值回归的线性高斯推导}
 \label{app:ch3-elo}

@@ -17,19 +17,33 @@
 \setlist{nosep,leftmargin=2em}
 \sisetup{group-separator={,},group-minimum-digits=4}
 \captionsetup{font=small,labelfont=bf}
+\setlength{\emergencystretch}{1.5em}  % 中西文混排时偶有找不到合适断行点，允许略松的行而不是溢出
 
 % ---- cleveref 中文名称 ----
+% ctexrep 的章标签本身就是中文数字（如“二”），直接写成“第二章”
 \crefname{chapter}{第}{第}
-\creflabelformat{chapter}{#2\chinese{chapter}#3章}
+\crefformat{chapter}{#2第#1章#3}
+\Crefformat{chapter}{#2第#1章#3}
+\crefmultiformat{chapter}{#2第#1章#3}{与#2第#1章#3}{、#2第#1章#3}{与#2第#1章#3}
+\Crefmultiformat{chapter}{#2第#1章#3}{与#2第#1章#3}{、#2第#1章#3}{与#2第#1章#3}
+\crefrangeformat{chapter}{#3第#1章#4至#5第#2章#6}
 \crefname{section}{第}{第}
-\creflabelformat{section}{#2#1#3节}
+\creflabelformat{section}{#2#1#3~节}
 \crefname{subsection}{第}{第}
-\creflabelformat{subsection}{#2#1#3节}
+\creflabelformat{subsection}{#2#1#3~节}
 \crefname{figure}{图}{图}
 \crefname{table}{表}{表}
 \crefname{equation}{式}{式}
 \creflabelformat{equation}{（#2#1#3）}
 \crefname{appendix}{附录}{附录}
+% 多个引用之间的连接词（默认是英文 and / to）
+\newcommand{\crefpairconjunction}{与~}
+\newcommand{\crefmiddleconjunction}{、}
+\newcommand{\creflastconjunction}{与~}
+\newcommand{\crefpairgroupconjunction}{与}
+\newcommand{\crefmiddlegroupconjunction}{、}
+\newcommand{\creflastgroupconjunction}{与}
+\newcommand{\crefrangeconjunction}{至}
 
 % ---- 配色（与 code/figstyle.py 一致）----
 \definecolor{cBlue}{HTML}{2A78D6}
@@ -76,5 +90,8 @@
 \newcommand{\sk}{s}                            % 真实实力（潜变量）
 \newcommand{\rt}{R}                            % 评分（系统估计）
 \newcommand{\iid}{i.i.d.}
+% ---- 文本宏 ----
+\newcommand{\en}[1]{“\textit{#1}”}            % 英文原文短引
+\newcommand{\patno}[1]{US\,#1}                  % 美国专利号
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}

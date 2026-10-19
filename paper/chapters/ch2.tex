@@ -37,7 +37,7 @@
 \end{equation}
 $\mathcal G$ 由群体和匹配规则共同决定。同一个 $s$ 换一个对手池，胜率就变：\cref{fig:ch2-three}(a) 中实力固定为 1756 的玩家，在随机匹配下的胜率随群体离散度从 80.0\%（$\tau=100$）降到 73.2\%（$\tau=300$）；单局随机性变大时降到 73.1\%；换成按分匹配，胜率随匹配窗口收窄从 64.5\% 一路降到 50.9\%\tagOwn。胜率因此不是实力本身，而是“实力相对你实际遇到的对手”。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/three_quantities.pdf}
   \caption{同一实力在不同环境下的长期胜率不同；评分只是实力的带噪声、带刻度的估计。(a) 实力 $s=1756$（$\tau=200$ 群体的第 90 百分位，取实力在 $\pm15$ 分内的玩家平均）在不同对手池和匹配规则下的胜率；(b) 按分匹配（$\sigma_q=100$）第 3000 轮的评分与实力（随机抽 2,500 人作图）。参数：10,000 人，$s\sim\Normal(1500,\tau^2)$，$K=16$，3000 轮，统计第 1001–3000 局。\tagOwn}
@@ -68,7 +68,7 @@ TrueSkill~2 的定义很清楚：评分是“根据以往对局结果，对玩�
 
 \subsection{匹配器拉平的是估计实力，等价于预测胜率 50\%}
 
-匹配器看得到的只有评分。由于 $E=F(R_A-R_B)$ 是评分差的严格单调函数，“双方评分相等”与“系统预测胜率为 50\%”是同一件事；团队游戏里，“两队评分之和（或均值）相等”等价于“团队预测胜率为 50\%”。TrueSkill 用“平局概率”定义匹配质量，并指出“对局质量由结果的不可预测性决定”\cite{herbrich2006trueskill}\tagLit。暴雪说明《守望先锋 2》组局时只看当前 MMR，并称匹配器不会强制任何人 50\% 胜率\cite{blizzard2023overwatch}\tagOff；同一系列的第一篇把“公平对局”直接对应到 50\% 胜率\cite{blizzard2022overwatch}\tagOff。所以“五五开”是关于\emph{系统所掌握的信息}的陈述：在它知道的一切下，分不出谁更强。
+匹配器看得到的只有评分。由于 $E=F(R_A-R_B)$ 是评分差的严格单调函数，“双方评分相等”与“系统预测胜率为 50\%”是同一件事；团队游戏里，“两队评分之和（或均值）相等”等价于“团队预测胜率为 50\%”。TrueSkill 用“平局概率”定义匹配质量，并指出“对局质量由结果的不可预测性决定”\cite{herbrich2006trueskill}\tagLit。暴雪说明《守望先锋 2》组局时只看当前 MMR，并称匹配器不会强制任何人 50\% 胜率\cite{blizzard2023overwatch}\tagOff；同一系列的第一篇把“公平对局”直接对应到 50\% 胜率\cite{blizzard2022overwatch}\tagOff。所以“五五开”是关于\emph{系统所掌握的信息}的陈述：在它知道的一切下，分不出谁更强。各厂商原话的逐条对照与“实力五五开、预测胜率五五开、长期胜率五五开”三种读法的辨析见\cref{sec:ch1b-fifty}；本节给出这一读法的数学后果。
 
 \subsection{真实胜率围绕 50\% 分布，宽度由评分误差决定}
 
@@ -81,7 +81,7 @@ TrueSkill~2 的定义很清楚：评分是“根据以往对局结果，对玩�
 \end{equation}
 其中 $\sigma_\Delta$ 是实力差的标准差（推导见\cref{app:ch2-fair}）。\textbf{数值}：$K=16$ 时 $\sigma_e=37.7$，$\sigma_\Delta=52.4$，90\% 的“五五开”对局真实胜率在 37.8\%–62.2\% 之间，$|p-\tfrac12|$ 平均 6.0 个百分点；$K=32$ 时 $\sigma_\Delta=73.7$，区间放宽到 33.2\%–66.8\%，平均偏离 8.3 个百分点\tagOwn。从模拟的稳态评分表中把评分相邻的两人配对，得到的区间是 38.3\%–62.1\% 和 33.7\%–66.0\%（\cref{fig:ch2-fair}(a)）\tagOwn。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/fair_game.pdf}
   \caption{“五五开”的一局，真实胜率并不是 50\%。(a) 1v1：把稳态评分表中评分相邻的两人配成一局，直方图为真实胜率 $p=F(s_A-s_B)$，曲线为\cref{eq:ch2-fair}；(b) 5v5（加和模型，$K=16$）：按 $R+\Normal(0,100^2)$ 排序每 10 人一局，在 126 种分队中选评分和最接近的一种，比较团队真实胜率与随机分配位置后的“对位单挑”真实胜率。评分表取自随机匹配模拟第 3000 轮（10,000 人，$\tau=200$）；(b) 重复组局 10 次，共 10,000 局。\tagOwn}
@@ -118,7 +118,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 
 \Cref{tab:ch2-tau} 给出不同群体离散度下的数值。注意“前 10\% 平均”要对组内每个人的胜率求平均，不能把组内平均 $z$ 代入公式，后者因为 $\Phi$ 的凹性会偏高（$\tau=200$ 时 83.7\% 对 83.1\%）。
 
-\begin{table}[t]
+\begin{table}[htbp]
   \centering\small
   \caption{随机匹配 1v1 的长期胜率与群体实力离散度 $\tau$（$\sigma_d=295.7$）。百分位列用\cref{eq:ch2-percentile}；组平均列对组内每人的精确逻辑斯蒂胜率求平均。\tagOwn}
   \label{tab:ch2-tau}
@@ -143,7 +143,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 \item \textbf{单局随机性 $\sigma_x$}：$\sigma_x=150$ 时 $\sigma_d'=364$，曲线斜率变为原来的 0.81 倍，最强 10\% 从 82.9\% 降到 79.4\%（模拟）\tagOwn。Elo 会把预测胜率校准到观测胜率，所以评分差也按同一比例压缩：模拟中评分对实力的斜率为 0.811（理论 0.813）\tagOwn。评分度量的是“以胜率为单位的实力”。
 \end{itemize}
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/random_1v1.pdf}
   \caption{随机匹配 1v1 的长期胜率随实力百分位变化。曲线为\cref{eq:ch2-percentile}，点为模拟（每 5\% 百分位一组的平均胜率）。(a) 群体离散度 $\tau=100/200/300$；(b) 单局独立噪声 $\sigma_x=0/150/300$（$\tau=200$；$\sigma_x=300$ 只画公式）。参数：10,000 人，$K=16$，随机配对，3000 轮，统计第 1001–3000 局。\tagOwn}
@@ -182,7 +182,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 \end{equation}
 误差的理想时间常数为 $4/(Kc)=1600/(K\ln10)\approx695/K$ 局（推导见\cref{app:ch2-linear}）。\Cref{tab:ch2-sigmae} 给出常用 $K$ 的数值。
 
-\begin{table}[t]
+\begin{table}[htbp]
   \centering\small
   \caption{Elo 评分误差的线性化数值（$\lambda=1$）。“修正”列含对手误差项；“实测”为模拟中误差自相关降到 $1/e$ 的局数。\tagOwn}
   \label{tab:ch2-sigmae}
@@ -205,7 +205,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 
 但 695/K 只是下限。它要求 $\lambda=1$ 且每局 $P(1-P)=\tfrac14$，这两条从不同时成立：随机匹配下对手常常差得远，$P(1-P)<\tfrac14$；按分匹配下配到的对手评分会向均值回归，而且 $\lambda>1$ 会削弱回复力。把这两项写进系数 $\kappa=4\E[P(1-P)]\cdot(\lambda\tau^2+\sigma_q^2)/(\sigma_R^2+\sigma_q^2)$，时间常数为 $4/(Kc\kappa)$：$K=16$ 时按分匹配为 56–58 局，随机匹配（各人恢复速度不同的混合）为 65 局，实测为 55、59、66 局；$K=32$ 时公式 30–34 局，实测 30–34 局（\cref{fig:ch2-error}(b)）\tagOwn。所以现实的匹配条件下，$K=16$ 的评分误差约 55–65 局才衰减到 $1/e$，$K=32$ 约 30–34 局。这与 Aldous 的看法一致：Elo 在“滞后”和“噪声”之间取舍，$K$ 小则噪声小、滞后大\cite{aldous2017elo}\tagLit。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/rating_error.pdf}
   \caption{评分误差的大小与衰减。(a) 稳态误差（相对评分–实力回归线的残差标准差）随 $K$ 的变化，曲线为\cref{eq:ch2-sigmae}（按分匹配取平稳刻度 $\lambda^*$），点为模拟（4,000 人，2,500 轮，预热 1,000 轮后每 50 轮取一次残差并平均）；(b) 评分误差的自相关：实线为模拟（10,000 人中前 2,000 人第 1001–1400 轮的逐轮评分），虚线为修正后的时间常数，灰色点线为理想值 $695/K$。\tagOwn}
@@ -231,7 +231,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 
 用\cref{eq:ch2-identity}分解：$\sigma_q=100$ 时偏离 50\% 的部分几乎全在 $\bar E$ 一项，评分项只有 $\pm0.05$ 个百分点；$\sigma_q=20$ 时 $\bar E$ 只在 49.7\%–50.3\%，剩下的 $\pm0.9$ 个百分点来自评分项，即下文的刻度拉伸，它随时间减小\tagOwn。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/sbmm_deciles.pdf}
   \caption{按分匹配把各实力十分位的胜率压向 50\%，压到什么程度由匹配窗口决定。(a) $K=16$ 时各十分位的长期胜率；(b) 最强 10\% 的胜率随匹配噪声 $\sigma_q$ 的变化，曲线为\cref{eq:ch2-edge}（只在 $\sigma_q>\sigma_e$、存在平稳刻度时画出），点为模拟（左右略错开以免重叠），点线标出 $\sigma_q=\sigma_e$。参数：10,000 人，$\tau=200$，按 $R+\Normal(0,\sigma_q^2)$ 排序相邻配对，3000 轮，统计第 1001–3000 局。\tagOwn}
@@ -245,7 +245,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 
 两点说明。第一，若把目标线固定在重置前一刻，追回 90\% 看起来要 304 局（$K=16$）和 257 局（$K=32$）：在零和评分池里，把 500 人的评分从约 1920 拉到 1500 会让整个评分池下沉约 20 分，固定目标忽略了这一点\tagOwn。第二，大差距时单局胜率接近饱和，每局最多涨 $K/2$，所以前期比线性理论慢。TrueSkill 在 Xbox Live 上观察到，新玩家若前几局持续输球，整体实力分布会落到先验以下；一次实力重置之后，在更严格的匹配下这一现象消失\cite{herbrich2006trueskill}\tagLit；《守望先锋 2》则通过降低新号初始 MMR 并加快初期调整来处理新玩家胜率偏低的问题\cite{blizzard2022overwatch}\tagOff。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/reset.pdf}
   \caption{强玩家评分被重置为 1500 后的追分过程。(a) 评分落后于实力的程度（实力分），括号内为追回 50\% / 90\% 差距所需局数；(b) 这批玩家的胜率（10 局滑动平均），点线为按分匹配平稳时前 10\% 玩家的胜率。参数：10,000 人，$\tau=200$，系统运行 1000 轮后从实力前 10\% 中随机重置 500 人，按分匹配 $\sigma_q=100$ 或随机匹配，$K=16/32$。\tagOwn}
@@ -269,7 +269,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 
 \textbf{含义}：刻度被拉伸时排序依然准确（相关系数 0.99），但评分差夸大了实力差，用评分差预测的胜率会过于自信；本章 $\sigma_q=20$ 下各十分位的残余偏离（$\pm0.9$ 个百分点）就是 $\lambda$ 仍在增长带来的评分项。部署中的系统有很多这一模型没有的“锚”：新玩家以默认分进入、赛季软重置、长期不玩后的调整\cite{blizzard2022overwatch}\tagOff、段位保底\cite{blizzard2020developer}\tagOff、排队时间带来的窗口放宽，它们都可能限制拉伸。我们的判断是：无界的 $\sqrt t$ 增长在真实系统中不太可能出现，有界的轻度放大（$\lambda^*$ 在 1.05–1.5 之间）是可能的，但未见实证。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/stretch.pdf}
   \caption{严格按分匹配下评分刻度的拉伸（理想模型的性质，不是真实数据中的观测）。(a) 评分对实力的回归斜率 $\lambda(t)$：实线为模拟，同色虚线为\cref{eq:ch2-stretch}的平均场方程，灰色点线为配对评分完全相等时的上包络；(b) 平稳斜率 $\lambda^*$ 与匹配噪声 $\sigma_q$，点线为 $\sigma_q=\sigma_e$。参数：(a) 2,000 人，$\tau=200$，$K=16$，初始评分 $=$ 实力，10,000 轮；(b) 圆点取自 (a) 第 10,000 轮，方块取自 10,000 人、初始评分全为 1500、$K=32$ 的模拟第 3,000 轮。\tagOwn}
@@ -279,7 +279,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 \subsection{可见段位与隐藏分}
 \label{sec:ch2-rank}
 
-主流做法是用隐藏分（MMR）匹配，用可见段位提供进度感。暴雪说明《守望先锋 2》组局“从不使用”玩家看到的段位，只看 MMR\cite{blizzard2022overwatch}\tagOff。《炉石传说》酒馆战棋 2020 年起采用“双评分”：内部评分用于匹配，系统尽量选内部评分最接近的 8 人，外显评分“在匹配中不起任何作用”；外显评分每 500 分设一道保底，6500 分以下每局另给一点正向加分\cite{blizzard2020developer}\tagOff。对本章的公式而言，这意味着：
+主流做法是用隐藏分（MMR）匹配，用可见段位提供进度感。暴雪说明《守望先锋 2》组局“从不使用”玩家看到的段位，只看 MMR\cite{blizzard2022overwatch}\tagOff。《炉石传说》酒馆战棋 2020 年起也采用“双评分”：匹配只用内部评分，外显评分叠加保底和进度分\cite{blizzard2020developer}\tagOff（各厂商的做法见\cref{sec:ch1b-blizzard}与\cref{tab:ch1b-disclosure}）。对本章的公式而言，这意味着：
 \begin{itemize}
 \item 匹配时“段位或分数”影响胜率，只是通过隐藏分决定对手分布 $\mathcal G$；\cref{eq:ch2-identity}适用于隐藏分（若其步长固定）。
 \item 可见段位叠加了保底和加分，它的变化不再满足 $K(y-E)$，赛季内会系统性上漂，不宜直接用来估计实力或胜率。
@@ -306,7 +306,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 \end{equation}
 稀释有两层：个人优势在团队差中只占 $1/\sqrt n$ 或 $1/n$；队友和对手的实力离散 $(2n-1)\tau^2$ 又加了一层噪声。$n$ 较大时，加和模型在 $d=0$ 处的斜率约为 $\phi(0)/\bigl(\sqrt n\sqrt{\sigma_d^2+2\tau^2}\bigr)\propto1/\sqrt n$，均值模型约为 $\phi(0)/(n\sigma_d)\propto1/n$。$n=5$ 时斜率分别是 1v1 的 0.40 和 0.23 倍（$1/\sqrt5=0.45$，$1/5=0.20$）\tagOwn。
 
-\begin{table}[t]
+\begin{table}[htbp]
   \centering\small
   \caption{随机队友、随机对手时团队人数对个人胜率的稀释（$\tau=200$，精确数值积分）。提升量按 $d=0$ 附近的斜率计算；末列为队友与对手都和群体平均同水平时的加和模型。\tagOwn}
   \label{tab:ch2-team}
@@ -329,7 +329,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 
 \textbf{模拟}（\cref{fig:ch2-team}）：随机分队的 5v5，加和模型十分位胜率为 34.8\%–65.2\%，前 1\% 为 72.8\%，个人长期胜率的标准差 8.8 个百分点（1v1 为 19.6）；均值模型为 41.0\%–59.0\%\tagOwn。哪种模型更接近真实取决于随机性在哪里：TrueSkill 在 Halo 2 的 4v4 夺旗模式中没能胜过 Elo，作者认为可能是因为加和假设不成立\cite{herbrich2006trueskill}\tagLit；TrueSkill~2 发现组队玩家的胜率高于“队员实力之和”所预测的值，于是加入组队偏移\cite{minka2018trueskill}\tagLit。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/team.pdf}
   \caption{团队游戏稀释个人实力优势。焦点玩家比群体平均高 $d$ 分，队友和对手随机。曲线为\cref{eq:ch2-team}对应的精确数值积分；蓝点为 1v1 随机匹配模拟，绿点为 5v5 随机分队模拟（按实力每 50 分一组的平均胜率）。参数：$\tau=200$，10,000 人，$K=16$，3000 轮，统计第 1001–3000 局。\tagOwn}
@@ -349,7 +349,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 \end{equation}
 后一式是“前 $k$ 次抽取都没有抽中焦点玩家”的补概率。
 
-\begin{table}[t]
+\begin{table}[htbp]
   \centering\small
   \caption{8 人自由混战（Plackett–Luce）中，对其余 7 名同水平对手的实力优势 $d$ 与名次指标。\tagOwn}
   \label{tab:ch2-ffa}
@@ -366,7 +366,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
   \end{tabular}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/ffa.pdf}
   \caption{8 人自由混战中实力优势如何换成名次。(a) 对其余 7 名同水平对手的优势为 $d$ 时进前 4 名和拿第 1 名的概率（曲线为\cref{eq:ch2-pl}，点为 Gumbel 表现的蒙特卡洛，每点 20 万局），蓝线为 1v1 胜率作对照；(b) $d=0/{+}100/{+}200/{+}400$ 时的名次分布。\tagOwn}
@@ -375,7 +375,7 @@ $\rho^2$ 是“两人表现差”的方差中由实力差解释的份额。单�
 
 \textbf{“胜”的定义决定基准率}。按分匹配把同一局 8 人的估计实力拉平，于是均衡时第一名率趋于 $1/N=12.5\%$，前四率趋于 50\%，平均名次趋于 $(N+1)/2=4.5$。模拟（10,000 人，$K=16$，两两 Elo 更新每对步长 $K/7$）：随机组局时最强 10\% 的第一名率 39.8\%、前四率 93.1\%、平均名次 2.20，最弱 10\% 为 1.4\%、10.7\%、6.81；按分匹配（$\sigma_q=100$）时最强 10\% 为 17.0\%、61.3\%、3.90，最弱 10\% 为 8.9\%、39.2\%、5.10\tagOwn。对酒馆战棋这类“前四加分”的游戏，按分匹配下前四率约 50\% 并不说明水平一般；按“第一名”统计，基准是 12.5\%。
 
-\textbf{多人局的评分误差更小}。每局给出 $N-1$ 组两两比较，每组步长 $K/(N-1)$。同水平时名次均匀，单局评分变化的方差为 $K^2(N+1)/\bigl(12(N-1)\bigr)$，而 1v1 为 $K^2/4$；回复力相同，于是 $\sigma_{e,\text{FFA}}=\sigma_e\sqrt{(N+1)/(3(N-1))}$，$N=8$、$K=16$ 时为 24.7 分，模拟为 24.7（按分匹配）和 22.6（随机组局），1v1 为 37.8\tagOwn。暴雪介绍酒馆战棋评分时说明，每局要计算 8 人两两之间共 56 个预测胜率，评分更新取决于自身评分、对手评分、名次和预测胜率等\cite{blizzard2019developer}\tagOff；具体公式没有公开，本节的两两 Elo 只是常见近似。
+\textbf{多人局的评分误差更小}。每局给出 $N-1$ 组两两比较，每组步长 $K/(N-1)$。同水平时名次均匀，单局评分变化的方差为 $K^2(N+1)/\bigl(12(N-1)\bigr)$，而 1v1 为 $K^2/4$；回复力相同，于是 $\sigma_{e,\text{FFA}}=\sigma_e\sqrt{(N+1)/(3(N-1))}$，$N=8$、$K=16$ 时为 24.7 分，模拟为 24.7（按分匹配）和 22.6（随机组局），1v1 为 37.8\tagOwn。酒馆战棋的评分更新同样基于 8 人两两之间的 56 个预测胜率\cite{blizzard2019developer}\tagOff（\cref{sec:ch1b-blizzard}），但具体公式没有公开，本节的两两 Elo 只是常见近似。
 
 % ======================================================================
 \section{实力有波动时，期望胜率仍可计算，误差更大}
@@ -409,7 +409,7 @@ $u_t$ 每局独立、标准差 $\sigma_x$ 时，$P=\E\,F(\Delta s+x_i-x_j)\appro
 \end{equation}
 其中 $\Gamma(k)=\lambda^2\gamma_{\hat s}(k)+\sigma_e^2(1-\alpha)^k$，$\gamma_{\hat s}$ 是指数平滑后状态的自协方差。100 局窗口的方差比（模拟/公式）为：随机匹配加状态 3.60/3.80，按分匹配加状态 1.61/1.64（$K=16$）和 1.07/1.01（$K=32$），按分匹配且实力固定 0.56/0.56（\cref{fig:ch2-ar1}）\tagOwn。最后一项小于 1 值得注意：实力固定时按分匹配让胜率比独立抽样\emph{更}稳定，因为评分上涨会立刻带来更强的对手；$n\gg\tau_R$ 时 $\mathrm{sd}(W_n)\approx\sqrt2\sigma_e/(Kn)$，按 $1/n$ 而不是 $1/\sqrt n$ 衰减。换成“百局胜率不低于 60\% 的窗口占比”：二项分布 2.8\%，按分匹配实力固定 5.4\%，加状态 10.4\%，严格按分匹配（$\sigma_q=20$）0.7\%，随机匹配 33.9\%（主要反映人与人的实力差）\tagOwn。Aldous 在三种实力随时间变化的模型中模拟后认为，在他认为合理的参数下，Elo 预测胜率的典型误差不会明显低于 10\%\cite{aldous2017elo}\tagLit；与此一致，状态起伏让“当前胜率”在相当长的窗口里都偏离长期值。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/ar1.pdf}
   \caption{自相关的状态起伏：评分只能部分追上，窗口胜率比二项分布更分散。(a) 按分匹配（$\sigma_q=100$，$K=16$）中一名实力接近中位数的玩家：当局实力 $s+u_t$ 与评分折算的实力；(b) $n$ 局窗口胜率的人内方差除以二项方差 $\hat p(1-\hat p)/n$，点为模拟（每人 2,000 局切成 $2000/n$ 个窗口），曲线为\cref{eq:ch2-varratio}及随机匹配下的对应公式。参数：10,000 人，$\tau=200$，$\sigma_u=100$，$\phi=0.99$，3000 轮，统计第 1001–3000 局。\tagOwn}
@@ -428,7 +428,7 @@ $u_t$ 每局独立、标准差 $\sigma_x$ 时，$P=\E\,F(\Delta s+x_i-x_j)\appro
 
 真实数据里有对应的痕迹：TrueSkill~2 在 Halo~5 数据中发现，新玩家前 10 局的实际胜率（45\%–47\%）低于经典 TrueSkill 的预测（48\%–49\%），作者把它解释为实力随经验上升、而模型假设实力只做无偏随机游走，并据此加入经验偏移\cite{minka2018trueskill}\tagLit。这正是\cref{eq:ch2-identity}的另一面：胜率与预测胜率的差，衡量的是评分没跟上实力变化的部分。Düring 等人用动理学方程研究了带学习效应的 Elo 模型\cite{during2019boltzmann}\tagLit。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/improve.pdf}
   \caption{长期进步：评分滞后，胜率高出期望得分。(a) 每局进步 $0.5$ 分的玩家：真实实力增量与评分折算的实力增量；(b) 斜坡第 101 局至结束的 $W-\bar E$，点为模拟，实线为\cref{eq:ch2-improve}（$\lambda^*$ 取 $\sigma_q=100$ 的平稳值），点线为 $v/K$。参数：10,000 人，$\tau=200$，按分匹配 $\sigma_q=100$，系统运行 1000 轮后随机抽 200 人每局进步 $v$、共 $+300$ 分，之后再观察 200 局。\tagOwn}
@@ -443,7 +443,7 @@ $u_t$ 每局独立、标准差 $\sigma_x$ 时，$P=\E\,F(\Delta s+x_i-x_j)\appro
 
 真实胜率为 $p$ 时，$n$ 局胜率的标准误为 $\sqrt{p(1-p)/n}$：$p=0.5$ 时 20 局 $\pm11.18$、100 局 $\pm5.00$、500 局 $\pm2.24$ 个百分点（一倍标准误）\tagOwn。小样本的区间应使用 Wilson 区间而不是 Wald 区间\cite{wilson1927probable,brown2001interval}\needcheck[（Wilson 1927 与 Brown–Cai–DasGupta 2001 只核对了书目信息）]\tagLit。
 
-\begin{table}[t]
+\begin{table}[htbp]
   \centering\small
   \caption{观测胜率的不确定性（各局独立）。Wald 半宽按 $p=0.5$ 计算；末列为观测胜率恰为 52\% 时的 Wilson 95\% 区间。\tagOwn}
   \label{tab:ch2-ci}
@@ -474,7 +474,7 @@ $u_t$ 每局独立、标准差 $\sigma_x$ 时，$P=\E\,F(\Delta s+x_i-x_j)\appro
 
 \textbf{8 人局}（\cref{fig:ch2-ci}(b)）：前四率是 $p_0=0.5$ 的二项比例，区分 52\% 与 50\% 同样要 4,903 局；第一名率要对 12.5\% 检验，在 Plackett–Luce 下同等实力优势（前四率 52\% 对应 $d\approx11$ 分）的第一名率只有 13.2\%，需要约 17,700 局；平均名次在同水平时的标准差为 $\sqrt{(N^2-1)/12}=2.29$，检测平均名次移动 0.10（4.5→4.4）需要约 4,100 局，而前四率 52\% 的玩家平均名次为 4.39，用平均名次检验只需约 3,400 局\tagOwn。名次本身比“是否进前四”包含更多信息，估计 8 人局实力时应优先用完整名次。
 
-\begin{figure}[t]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{ch2/ci.pdf}
   \caption{胜率的统计不确定性。(a) 真实胜率 50\% 时 $n$ 局观测胜率的 95\% 区间半宽：二项分布（三个点为 20、100、500 局），以及按\cref{eq:ch2-varratio}修正后的按分匹配（实力固定，$\sigma_q=100$，$K=16$）和随机匹配加 AR(1) 状态（$\sigma_u=100$，$\phi=0.99$）；(b) 双侧 $\alpha=0.05$、功效 80\% 时区分“五五开”所需局数，8 人局的第一名率与平均名次按 Plackett–Luce 换算到相同的实力优势。\tagOwn}
@@ -487,7 +487,7 @@ $u_t$ 每局独立、标准差 $\sigma_x$ 时，$P=\E\,F(\Delta s+x_i-x_j)\appro
 
 \Cref{tab:ch2-summary} 汇总本章结论。总的回答是：在“只有输赢、匹配不被操纵”的前提下，胜率可以算，但要先说清三件事——对手从哪里来（随机还是按分）、“胜”指什么（1v1、团队还是名次）、实力是固定还是在变。
 
-\begin{table}[t]
+\begin{table}[htbp]
   \centering\small
   \caption{影响长期胜率的因素：方向与量级（模型参数见各节，$\tau=200$，$K=16$ 除非另注）。\tagOwn}
   \label{tab:ch2-summary}

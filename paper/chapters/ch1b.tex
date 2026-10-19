@@ -1,7 +1,4 @@
-% 研究一（1b）：厂商披露、专利、诉讼与监管
-% 本部分自定义宏（只在缺失时定义，不覆盖导言区）
-\providecommand{\en}[1]{“\textit{#1}”}   % 英文原文短引
-\providecommand{\patno}[1]{US\,#1}         % 美国专利号
+% 研究一（1b）：厂商披露、专利、诉讼与监管（宏 \en、\patno 定义在 preamble.tex）
 
 \section{厂商披露：逐家阅读原文}
 \label{sec:ch1b-disclosure}
@@ -14,7 +11,7 @@
 \label{sec:ch1b-riot}
 
 \paragraph{英雄联盟 2018 年的匹配说明。}
-2018 年 2 月，Riot 在《/dev: Matchmaking Real Talk》中回答玩家的质疑\cite{riot2018matchmaking}。文章把“一边倒”的对局归因于滚雪球式的局内优势、匹配本身的不确定性和玩家的感知偏差；在系统内部，“大多数队伍的预期胜率在 50\%±1\% 以内”（\en{most teams have an expected win rate of 50 +/-1\%}）\tagOff。对“连胜时是不是会被塞差队友”，设计师 Gortok 回答“这基本是都市传说，基本上”（\en{This is pretty much an urban myth. Mostly.}），并说“我们预期你打的每一局，你方摧毁水晶的机会都是 50\%±1\%”\tagOff。文章同时承认模型看不见的东西：用不熟悉的位置或英雄、组排内部 MMR 差距大、小号尚未被准确定分，以及“睡眠不足”之类的个人状态\tagOff——正是\cref{ch:winrate}中“估计误差”和“实力波动”两类偏差的来源。同系列的第三篇把匹配目标概括为公平对局、首选位置和短排队三者兼顾\cite{riot2018making}\tagOff。
+2018 年 2 月，Riot 在《/dev: Matchmaking Real Talk》中回答玩家的质疑\cite{riot2018matchmaking}。文章把“一边倒”的对局归因于滚雪球式的局内优势、匹配本身的不确定性和玩家的感知偏差；在系统内部，“大多数队伍的预期胜率在 50\%±1\% 以内”（\en{most teams have an expected win rate of 50 +/-1\%}）\tagOff。对“连胜时是不是会被塞差队友”，设计师 Gortok 回答“这基本是都市传说，基本上”（\en{This is pretty much an urban myth. Mostly.}），并说“我们预期你打的每一局，你方摧毁水晶的机会都是 50\%±1\%”\tagOff。文章同时承认模型看不见的东西：用不熟悉的位置或英雄、组排内部 MMR 差距大、小号尚未被准确定分，以及“睡眠不足”之类的个人状态\tagOff——正是第二章中“估计误差”和“实力波动”两类偏差的来源（\cref{sec:ch2-fair,sec:ch2-fluct}）。同系列的第三篇把匹配目标概括为公平对局、首选位置和短排队三者兼顾\cite{riot2018making}\tagOff。
 
 \paragraph{《英雄联盟手游》2021 年的算法流程。}
 首席设计师 Josh Menke 2021 年 10 月的文章写出了匹配器的循环\cite{riot2021wildrift}：每秒取出等待最久的玩家或队伍，检查其平均 MMR 的“合法范围”内是否有足够玩家；若有，在平衡两队 MMR 总量与位置偏好的前提下组队，“每队的 MMR 被平衡到双方赢的机会相同（接近 50\%）”（\en{MMR per team is balanced to give each team the same chance at winning the match (close to 50\%)}），最后检查两队 MMR 差是否在限值内\tagOff。合法范围每秒扩大，2 分钟后扩到最大并维持 18 分钟\tagOff。对“输家队列”，他的回答是没有，“匹配器根本不知道你处在什么样的连胜或连败中”，也不使用胜率；但他承认旧版 MMR 系统“可能让玩家的 MMR 被短暂高估，从而多输几局”\tagOff——这是少见的厂商自认的连败成因，它属于评分层而不是匹配器的安排。文中“完全公平时 100 局里出现 10 连败的概率接近 10\%”一说，按独立公平局计算对应的是 10 连胜或 10 连败任一种（约 8.7\%），单看 10 连败约为 4.4\%（\cref{app:ch1b-streak}）\tagOwn。他对两层分数的概括值得记住：“MMR 是我们对将会发生什么的最好估计，段位是对实际发生了什么的奖励”\tagOff。
@@ -23,7 +20,7 @@
 首席玩法设计师 Matt “Phroxzon” Leung-Harrison 2024 年 2 月 11 日发推：“我们不会故意把差的玩家放进你的队伍让你多输。（即使假设有这种前提，难道我们不该给你好队友让你别再输吗？）排位只按你的评分匹配，仅此而已。”\cite{ahn2024losers}\tagOff。2025 年 7 月前后，他在 15.14 版本预告中列举了匹配器\emph{不}使用的因素：荣誉等级、标记次数、符文、是否处于连败\cite{ggscore2025riot}\tagOff\needcheck[；只读到媒体转述，未读到 X 原帖]。官方开发日志披露了几项实际改动：2024 年 11 月称 6 个月以上未玩的回流玩家“回来后胜率在 30\% 多到 40\% 出头”，因此加大段位衰减，之后“前钻石在翡翠局平均胜率 48\%、前大师在钻石局平均胜率 49\%”\cite{riot2024ranked}\tagOff——Riot 在这里把胜率是否接近 50\% 当作\emph{段位是否放对了位置}的诊断指标，而不是匹配器要强制的目标。2025 年 12 月的《/dev: Ranked 2026》写明一条非 MMR 规则：补位玩家先尽量与对方同位置的补位玩家对位，否则让两队补位人数相等，“最坏情况下，补位人数多的一方会分到 MMR 稍高的队友”\cite{riot2025ranked}\tagOff。这说明匹配器平衡的不是 MMR 本身，而是\emph{计入补位劣势之后的预测胜率}（\cref{sec:ch1b-fifty}）。
 
 \paragraph{VALORANT：隐藏 MMR、收敛与“方差”。}
-2021 年 3 月的《Ask VALORANT – Rank Rating Edition》写道：“你永远看不到你的 MMR，它是我们用来创造公平对局的”；新赛季或新账号被放在系统估计区间的\emph{低端}，再通过“赢得多、输得少”的排位分（RR）让可见段位“收敛”到 MMR\cite{riot2021valorantrr}\tagOff。文章特别写道：“当你处在你的 MMR 上时，我们最常看到的是 50\% 的胜率”（\en{When you are at your MMR, we've most often seen you with a 50\% win rate}）；段位高于 MMR 时会“赢得少、输得多”\tagOff。这里的 50\% 是对\emph{收敛后长期胜率}的观察。2022 年 7 月，竞技设计师 Jon “EvrMoar” Walker 在回应主播 Shroud 时写道：“VALORANT 没有输家队列……我们不操纵队列”，并称“研究表明，留住玩家的是公平的匹配，而不是被操纵的匹配”\cite{oneesports2022valorant}\tagOff。他还解释了评分不确定度：表现符合预期时“方差”收缩、MMR 难动，超出预期时方差打开、MMR 快速移动，“这就是为什么连胜……真的能帮你上分”\cite{oneesports2024valorant}\tagOff。
+2021 年 3 月的《Ask VALORANT – Rank Rating Edition》写道：“你永远看不到你的 MMR，它是我们用来创造公平对局的”；新赛季或新账号被放在系统估计区间的\emph{低端}，再通过“赢得多、输得少”的排位分（RR）让可见段位“收敛”到 MMR\cite{riot2021valorantrr}\tagOff。文章特别写道：“当你处在你的 MMR 上时，我们最常看到的是 50\% 的胜率”（\en{When you are at your MMR, we've most often seen you with a 50\% win rate}）；段位高于 MMR 时会“赢得少、输得多”\tagOff。这里的 50\% 是对\emph{收敛后长期胜率}的观察。2022 年 7 月，竞技设计师 Jon “EvrMoar” Walker 在回应主播 Shroud 时写道：“VALORANT 没有输家队列……我们不操纵队列”，并称“研究表明，留住玩家的是公平的匹配，而不是被操纵的匹配”\cite{koh2022valorant}\tagOff。他还解释了评分不确定度：表现符合预期时“方差”收缩、MMR 难动，超出预期时方差打开、MMR 快速移动，“这就是为什么连胜……真的能帮你上分”\cite{oneesports2024valorant}\tagOff。
 
 Riot 三款游戏的口径因此一致：连胜/连败影响的是\emph{评分更新速度}（方差、收敛乘数），匹配器不读取连胜状态；唯一明确承认的“非 MMR 补偿”是补位。
 
@@ -40,12 +37,12 @@ Valve 从未正式公布 CS:GO 段位算法。常被引用的说法来自 2015 �
 \label{sec:ch1b-blizzard}
 
 \paragraph{《守望先锋 2》2022—2023 年的两篇深度说明。}
-第一篇（2022 年 12 月 20 日）明确：每个玩家都有内部 MMR，它是相对于全体玩家的数，“包括竞技模式在内的所有模式在组局时只看 MMR，我们从不用你对外显示的段位组局”\cite{blizzard2022ow2part1}\tagOff。这篇文章披露了两项针对新手的改动，恰好是“系统确实会改变某些玩家胜率”的官方实例：Blizzard 发现新手输得比应有的多，胜率分布不是以 50\% 为中心的正态，于是先把新手初始 MMR 从略低于平均（约白银低段）下调到相当于青铜 5，并称“胜率低于 40\% 的新手立刻大幅改善”；随后又加入一个“连胜修正器”（streak modifier），跟踪玩家胜率的移动平均，“胜率高于 50\% 时让 MMR 涨得更快”，直到玩家进入胜率 50\% 的公平对局为止\tagOff。所以官方承认“胜率”会进入系统，但它进入的是\emph{评分更新速度}，目的是让 MMR 更快追上实力，而不是在匹配时对连胜者施加惩罚。第二篇（2023 年 1 月 30 日）的问答部分是全行业最明确的否认之一：“守望先锋没有赢家队列或输家队列。你当前的 MMR 是匹配器组局时唯一考虑的东西。匹配器不会对任何人强制 50\% 胜率，也不偏袒任何玩家”\cite{blizzard2023ow2part2}\tagOff。对长连胜/连败，它的解释是“往往说明内部评分没有校准好”，但“也有时候只是运气”\tagOff；它还承认两队评分“从不完全相同”，总有一方略被看好\tagOff。
+第一篇（2022 年 12 月 20 日）明确：每个玩家都有内部 MMR，它是相对于全体玩家的数，“包括竞技模式在内的所有模式在组局时只看 MMR，我们从不用你对外显示的段位组局”\cite{blizzard2022overwatch}\tagOff。这篇文章披露了两项针对新手的改动，恰好是“系统确实会改变某些玩家胜率”的官方实例：Blizzard 发现新手输得比应有的多，胜率分布不是以 50\% 为中心的正态，于是先把新手初始 MMR 从略低于平均（约白银低段）下调到相当于青铜 5，并称“胜率低于 40\% 的新手立刻大幅改善”；随后又加入一个“连胜修正器”（streak modifier），跟踪玩家胜率的移动平均，“胜率高于 50\% 时让 MMR 涨得更快”，直到玩家进入胜率 50\% 的公平对局为止\tagOff。所以官方承认“胜率”会进入系统，但它进入的是\emph{评分更新速度}，目的是让 MMR 更快追上实力，而不是在匹配时对连胜者施加惩罚。第二篇（2023 年 1 月 30 日）的问答部分是全行业最明确的否认之一：“守望先锋没有赢家队列或输家队列。你当前的 MMR 是匹配器组局时唯一考虑的东西。匹配器不会对任何人强制 50\% 胜率，也不偏袒任何玩家”\cite{blizzard2023overwatch}\tagOff。对长连胜/连败，它的解释是“往往说明内部评分没有校准好”，但“也有时候只是运气”\tagOff；它还承认两队评分“从不完全相同”，总有一方略被看好\tagOff。
 
 \paragraph{酒馆战棋：八人对局的评分。}
-对本项目最直接相关的是《炉石传说》酒馆战棋（Battlegrounds）的两篇数据科学家署名文章。2019 年 11 月 27 日，高级数据科学家 Tian 解释：评分既代表实力，也用于“为你匹配七位实力相近的玩家”；系统希望评分分布呈正态；每个玩家还有一个不显示的“方差”，新手大、随场次下降，但出现意外结果时会回升\cite{blizzard2019bgrating}\tagOff。每局赛后，系统要算出每位玩家对其余七人的胜率，“一共 56 次”；评分变化取决于自身评分、对手评分、名次、预测胜率、方差等\tagOff。文章说 Elo 和 Glicko“主要为两人对局设计”，模拟显示自研算法运行最快、精度最高\tagOff。它给出一组数字：假设对手与你同分，旧系统首局第一名约 $+240$、第 150 局以后约 $+24$；11 月 19 日改动后分别约为 $+195$ 与 $+98$\tagOff。它还加入了一个“很小的进度加成”：评分低于 6500 时，每局无论胜负都会加一点正分\tagOff。2020 年 9 月 28 日的 18.4 版本把评分拆成两套\cite{blizzard2020bgrating}：\emph{外显评分}每赛季清零，2000 以下不掉分，2000—6000 每 500 一道保底，低于 6500 时每局有正向进度分（文中例子：本应 $\pm50$，实得 $+53/-47$），内部评分高于外显评分时胜场加分乘以一个与差距成比例的“追赶倍率”；\emph{内部评分}永不重置、没有保底和加成，必要时做“重新归一化”使其保持钟形分布\tagOff。匹配“只按内部评分，尽量选出内部评分最接近的八个人”，外显评分“在匹配中不起任何作用”\tagOff。
+对本项目最直接相关的是《炉石传说》酒馆战棋（Battlegrounds）的两篇数据科学家署名文章。2019 年 11 月 27 日，高级数据科学家 Tian 解释：评分既代表实力，也用于“为你匹配七位实力相近的玩家”；系统希望评分分布呈正态；每个玩家还有一个不显示的“方差”，新手大、随场次下降，但出现意外结果时会回升\cite{blizzard2019developer}\tagOff。每局赛后，系统要算出每位玩家对其余七人的胜率，“一共 56 次”；评分变化取决于自身评分、对手评分、名次、预测胜率、方差等\tagOff。文章说 Elo 和 Glicko“主要为两人对局设计”，模拟显示自研算法运行最快、精度最高\tagOff。它给出一组数字：假设对手与你同分，旧系统首局第一名约 $+240$、第 150 局以后约 $+24$；11 月 19 日改动后分别约为 $+195$ 与 $+98$\tagOff。它还加入了一个“很小的进度加成”：评分低于 6500 时，每局无论胜负都会加一点正分\tagOff。2020 年 9 月 28 日的 18.4 版本把评分拆成两套\cite{blizzard2020developer}：\emph{外显评分}每赛季清零，2000 以下不掉分，2000—6000 每 500 一道保底，单局最多加 300 分，低于 6500 时每局有正向进度分（文中例子：本应 $\pm50$，实得 $+53/-47$），内部评分高于外显评分时胜场加分乘以一个与差距成比例的“追赶倍率”；\emph{内部评分}永不重置、没有保底和加成，必要时做“重新归一化”使其保持钟形分布\tagOff。匹配“只按内部评分，尽量选出内部评分最接近的八个人”，外显评分“在匹配中不起任何作用”\tagOff。
 
-这两篇文章对用天梯分评估 DeepBattler 一类 AI 有两点直接含义。其一，外显分包含保底、进度分和追赶倍率，系统性地高于“纯实力”轨迹，跨赛季比较外显分会有偏；更可靠的是同一赛季、足够多局的平均名次或前四率。其二，八人对局里的“公平”指八人内部评分相近，此时每人的预期名次约为 4.5、进前四的概率约为一半，而不是“胜率 50\%”（\cref{sec:ch1b-fifty}）。
+可见，外显分包含保底、进度分和追赶倍率，系统性地高于“纯实力”轨迹；八人对局里的“公平”指八人内部评分相近，对应的是预期名次 4.5、前四率约一半，而不是“胜率 50\%”（\cref{sec:ch1b-fifty}）。这两点对用天梯分评估酒馆战棋 AI 的具体含义见\cref{sec:ch4-bg}。
 
 \paragraph{炉石传说构筑模式与《星际争霸 II》。}
 炉石构筑天梯有保底和月初星级加成，社区维基称其匹配依据不随赛季重置的 MMR\cite{hswiki2026ranked}\tagCom\needcheck[；未找到 Blizzard 关于构筑匹配算法的官方说明]。《星际争霸 II》曾对长期不活跃的玩家下调隐藏分（“MMR 衰减”），2015 年 4 月因副作用移除\cite{blizzard2015sc2ladder}\tagOff。
@@ -68,7 +65,7 @@ Activision 是唯一一家公开了匹配 A/B 实验结果的大厂，因此这�
 
 白皮书最后写出了实现细节：匹配目标随搜索时间按“退避”（backoff）模式放宽，技能约束放宽得比延迟差更快；组局用技能百分位，分队用近似正态的“原始技能”；组局阶段限制各组排平均技能之差和大厅内的强弱差距，分队阶段在 12v12 以内穷举所有分法、选两队技能总和差最小者；对实力悬殊的组排“取中间”匹配\tagOff。
 
-对“Activision 是否以留存为目标匹配”这个问题，原文支持的精确表述是：Activision \emph{用留存和退出率来评估匹配配置}（多大的技能约束），并通过 A/B 测试选择配置；延迟白皮书明说这些指标不是匹配选择算法的直接输入\tagOff。这与 EOMM 一类“每次组局时预测流失并据此选人”的方案（\cref{sec:ch1b-patents}）是两回事：前者是对一条全局规则的离线调参，后者是逐局的目标函数。
+对“Activision 是否以留存为目标匹配”这个问题，原文支持的精确表述是：Activision \emph{用留存和退出率来评估匹配配置}（多大的技能约束），并通过 A/B 测试选择配置；延迟白皮书明说这些指标不是匹配选择算法的直接输入\tagOff。这与 EOMM 一类“每次组局时预测流失并据此选人”的方案（\cref{sec:1a-mm-engage,sec:ch1b-patents}）是两回事：前者是对一条全局规则的离线调参，后者是逐局的目标函数。
 
 \paragraph{白皮书三：排位模式（2024-12-23）。}
 排位白皮书把可见的技能分（SR）与内部“原始技能”分开，并说明原始技能“在业内俗称 MMR”\cite{activision2024ranked}\tagOff。每个玩家有一个由技能百分位换算的“目标 SR”和一个显示的“当前 SR”；所有人从青铜起步，胜场按与目标 SR 的距离和本局表现加分，“在超过目标 SR 之前，一场胜利的价值几乎总是大于一场失败”\tagOff。顶尖玩家胜率常超过 80\%，为防 SR 通胀，当前 SR 远超目标 SR 时胜场加分递减、败场扣分加大\tagOff。排位匹配先尝试单一段位大厅，等待到点后最多放宽三次段位跨度，并限制组排的段位跨度\tagOff。这份文件是“双轨制”（隐藏分负责公平、可见分负责成长感）的一个完整公开样本，与酒馆战棋 2020 年的设计同构。
@@ -91,7 +88,7 @@ Activision 是唯一一家公开了匹配 A/B 实验结果的大厂，因此这�
 \subsection{公开了模型的系统：微软 TrueSkill、《光环：无限》与国际象棋平台}
 \label{sec:ch1b-trueskill}
 
-微软研究院的 TrueSkill 项目页说明，TrueSkill 用于 Xbox Live 上从《光环 3》到《极限竞速 7》的许多游戏，TrueSkill 2 随《战争机器 4》上线，后用于《光环 5》《战争机器 5》《光环：无限》和《极限竞速》\cite{microsoft2026trueskill}\tagOff。项目页对“匹配质量”的定义很特别：用两名玩家（假想的）\emph{打平概率}衡量，“如果你很可能和另一名玩家打平，那他就是你的好对手”；这一量在 0 到 1 之间，并且“即使两人 $\mu$ 相同，只要任一方 $\sigma$ 很大，匹配质量也明显小于 1”\tagOff。项目页还举了一个例子：匹配时显示的是保守估计 $\mu-3\sigma$，所以新玩家对已定级的 25 级玩家显示差 23 级、匹配质量却有 57.6\%，新玩家对已定级的弱玩家显示只差 1 级、匹配质量却只有 5.7\%\tagOff——可见段位与匹配变量不一致导致的“看起来不公平”，在早期的 Xbox Live 上就已存在。TrueSkill 与 TrueSkill 2 的技术细节见\cite{herbrich2006trueskill,minka2018trueskill}。
+微软研究院的 TrueSkill 项目页说明，TrueSkill 用于 Xbox Live 上从《光环 3》到《极限竞速 7》的许多游戏，TrueSkill 2 随《战争机器 4》上线，后用于《光环 5》《战争机器 5》《光环：无限》和《极限竞速》\cite{microsoft2005trueskill}\tagOff。项目页对“匹配质量”的定义很特别：用两名玩家（假想的）\emph{打平概率}衡量，“如果你很可能和另一名玩家打平，那他就是你的好对手”；这一量在 0 到 1 之间，并且“即使两人 $\mu$ 相同，只要任一方 $\sigma$ 很大，匹配质量也明显小于 1”\tagOff。项目页还举了一个例子：匹配时显示的是保守估计 $\mu-3\sigma$，所以新玩家对已定级的 25 级玩家显示差 23 级、匹配质量却有 57.6\%，新玩家对已定级的弱玩家显示只差 1 级、匹配质量却只有 5.7\%\tagOff——可见段位与匹配变量不一致导致的“看起来不公平”，在早期的 Xbox Live 上就已存在。TrueSkill 与 TrueSkill 2 的技术细节见\cite{herbrich2006trueskill,minka2018trueskill}。
 
 343 Industries 2022 年 3 月的《光环：无限》排位说明把这套关系写得最清楚\cite{343industries2022ranked}：MMR 由 TrueSkill 2 按播放列表计算，用于匹配；可见的竞技技能段位（CSR）“与 MMR 紧密相关，但不直接用于匹配”\tagOff。CSR 赢了不降、输了不升，长期总是趋向 MMR，偏离大时每局变化达上限 $\pm15$；定级赛的 CSR 有意略低于预期\tagOff。文章随后给出全行业最精确的一句定义：“这里的‘公平对局’是指两队因实力均衡而各有 50/50 的获胜机会。持续把玩家放进这样的对局，我们预期会看到平均 50\% 的胜率。注意那是我们预期看到的\emph{副作用}，而不是目标——我们不会为了强制 50\% 胜率而给你不公平的对局。”\tagOff（原文见\cref{tab:ch1b-fifty}）
 
@@ -104,12 +101,12 @@ Activision 是唯一一家公开了匹配 A/B 实验结果的大厂，因此这�
 
 此后八年，腾讯的公开说明主要出现在诉讼答辩（\cref{sec:ch1b-legal}）和两次匹配改版中。2025 年 11 月起，官方对随机选取的高星玩家灰度测试新匹配算法\cite{ithome2026hok}；12 月 30 日称新算法下“90\% 以上的对局双方段位差控制在 2 星及以内”；2026 年 1 月 8 日上线的 S42 赛季宣布“以段位为主要依据进行匹配”，组队和加载界面显示队伍的平均加权段位，并新增“挑战强敌”机制——匹配时间过长时适当扩大段位范围，低段位赢下高段位可获额外积分\cite{ithome2026s42}\tagOff。一些自媒体给出“旧机制 70\% 看隐藏分、新机制 60\% 看段位 40\% 看近期表现”等比例\cite{web17173_2025gray}\tagCom，本文未找到这些数字的官方出处。2026 年 8 月，官方“对局环境优化专栏”首期称收集了 7000 多条反馈，排位匹配新增“负面信誉”判断维度，使信誉正常的玩家“不会连续被分配到负面信誉玩家所在队伍”，并邀请职业教练复盘大量连败对局；文中回顾此前的匹配优化把段位差 5 星以内的对局占比从 66.8\% 提高到 99.6\%，2 星以内从 36.1\% 提高到 90.7\%\cite{kuaikeji2026hok}\tagOff\needcheck[；依据快科技转述，未读到官方专栏原文]。
 
-这两次改动有两层含义。第一，官方公布的质量指标从此变成了“\emph{可见段位}差”，而不是预测胜率；可见段位通常比隐藏分更滞后于实力，按段位配平会让单局真实胜率离 50\% 更远（\cref{ch:winrate}）。第二，“负面信誉”是官方承认的、依赖近期分队历史的非实力规则（“不再连续”同队），它的条件是违规行为而不是胜负，但它确实让分队与玩家最近几局的经历相关。
+这两次改动有两层含义。第一，官方公布的质量指标从此变成了“\emph{可见段位}差”，而不是预测胜率；可见段位通常比隐藏分更滞后于实力，按段位配平会让单局真实胜率离 50\% 更远（\cref{sec:ch2-rank}）。第二，“负面信誉”是官方承认的、依赖近期分队历史的非实力规则（“不再连续”同队），它的条件是违规行为而不是胜负，但它确实让分队与玩家最近几局的经历相关。
 
 \subsection{网易及其他厂商}
 \label{sec:ch1b-netease}
 
-2025 年 8 月，在玩家普遍怀疑《漫威争锋》（Marvel Rivals）使用“参与度优化匹配”（engagement optimized matchmaking, EOMM）时，官方账号发布声明：“我们想重申，《漫威争锋》不使用 EOMM”，并预告一周内发布匹配与排位说明视频\cite{insidergaming2025rivals}\tagOff。随后的视频由首席战斗设计师 Zhiyong 讲解，称系统按竞技分和阵容构成分配队伍，例外来自离群值和高水平玩家遇到新玩家等情况\cite{sportskeeda2025rivals}\tagCom\needcheck[；未观看原视频，依据媒体转述]。值得并列的是，网易伏羲实验室 2024 年在 AAAI 发表的 EnMatch 明确批评“只在同一段位层内匹配”的公平匹配“并不总是对玩家参与度有利”，并报告了“在两款游戏中的线上部署”（未点名游戏）\cite{wang2024enmatch}\tagLit。两者并不矛盾——一款游戏否认、另有两款未具名游戏部署——但它说明网易内部确实存在以参与度为目标的匹配实践。主要在腾讯完成的 CUPID（2024）则报告了部署于“一款热门手机 MOBA”（未点名）的“重匹配”系统，其目标是对局公平性和位置满意度\cite{fan2024cupid}\tagLit。这些公司论文的方法与结果见本章前半部分的学术文献综述，这里只记录它们作为“厂商实践”证据的意义。
+2025 年 8 月，在玩家普遍怀疑《漫威争锋》（Marvel Rivals）使用“参与度优化匹配”（engagement optimized matchmaking, EOMM）时，官方账号发布声明：“我们想重申，《漫威争锋》不使用 EOMM”，并预告一周内发布匹配与排位说明视频\cite{insidergaming2025rivals}\tagOff。随后的视频由首席战斗设计师 Zhiyong 讲解，称系统按竞技分和阵容构成分配队伍，例外来自离群值和高水平玩家遇到新玩家等情况\cite{sportskeeda2025rivals}\tagCom\needcheck[；未观看原视频，依据媒体转述]。值得并列的是，网易伏羲实验室 2024 年在 AAAI 发表的 EnMatch 明确批评“只在同一段位层内匹配”的公平匹配“并不总是对玩家参与度有利”，并报告了“在两款游戏中的线上部署”（未点名游戏）\cite{wang2024enmatch}\tagLit。两者并不矛盾——一款游戏否认、另有两款未具名游戏部署——但它说明网易内部确实存在以参与度为目标的匹配实践。主要在腾讯完成的 CUPID（2024）则报告了部署于“一款热门手机 MOBA”（未点名）的“重匹配”系统，其目标是对局公平性和位置满意度\cite{fan2024cupid}\tagLit。这些公司论文的方法与结果见\cref{sec:1a-mm-team,sec:1a-mm-engage}，这里只记录它们作为“厂商实践”证据的意义。
 
 《永劫无间》《第五人格》（网易）、Supercell 旗下游戏和《火箭联盟》（Psyonix），本文都没有找到说明匹配算法的官方文档；社区流传的说法（如“火箭联盟用类 TrueSkill 算法”）没有官方出处。
 
@@ -173,13 +170,13 @@ Riot，LoL 2025\cite{riot2025ranked} & \en{In the worst case, the team with more
 Riot，VALORANT 2021\cite{riot2021valorantrr} & \en{When you are at your MMR, we've most often seen you with a 50\% win rate.} & 观察到的收敛后长期胜率（不是匹配目标） \\
 Valve，Dota 2 2013\cite{pcgamesn2013dota} & \en{The teams are balanced. (Each team has a 50\% chance to win.)} & 两队预测胜率，与其他多项质量分加权 \\
 Valve，Dota 2 2017\cite{valve2017matchmaking} & \en{Simply having an even chance to win over the long run does not necessarily correlate to having competitive matches.} & 区分“长期均等”与“单局有悬念” \\
-Blizzard，OW2 2023\cite{blizzard2023ow2part2} & \en{\ldots make each match as fair as possible, meaning your team has an equal chance of winning or losing each individual match.}；\en{two teams never have identical ratings} & 单局预测胜率；承认总有一方略被看好 \\
-Blizzard，OW2 2023\cite{blizzard2023ow2part2} & \en{The matchmaker doesn't force a 50\% win rate on anyone.} & 否认长期胜率是约束 \\
+Blizzard，OW2 2023\cite{blizzard2023overwatch} & \en{\ldots make each match as fair as possible, meaning your team has an equal chance of winning or losing each individual match.}；\en{two teams never have identical ratings} & 单局预测胜率；承认总有一方略被看好 \\
+Blizzard，OW2 2023\cite{blizzard2023overwatch} & \en{The matchmaker doesn't force a 50\% win rate on anyone.} & 否认长期胜率是约束 \\
 343，光环 2022\cite{343industries2022ranked} & \en{a ``fair match'' is one where each team has a 50/50 chance at winning because the teams are evenly balanced \ldots\ we expect to see an average 50\% win rate. Note that that's a side effect we expect to see and not a goal} & 单局预测胜率；长期 50\% 是副作用 \\
-微软，TrueSkill\cite{microsoft2026trueskill} & \en{If you are likely to draw with another player then that player is a good match for you!} & 模型下的打平概率（同时惩罚 $\mu$ 差和不确定度 $\sigma$） \\
+微软，TrueSkill\cite{microsoft2005trueskill} & \en{If you are likely to draw with another player then that player is a good match for you!} & 模型下的打平概率（同时惩罚 $\mu$ 差和不确定度 $\sigma$） \\
 Activision，CoD 2024\cite{activision2024skill} & \en{The goal is to make the outcome of a match as unpredictable as possible.} & 两队技能总和差最小（在延迟与等待约束之下） \\
 Respawn，Apex 2023\cite{respawn2023matchmaking} & \en{We try to put you into matches where you'll have a fair chance of winning}；排位中 \en{we value having teammates of equal skill \ldots\ over a perfectly fair match} & 普通模式：两队平均技能；排位：队友相近优先 \\
-Blizzard，酒馆战棋 2020\cite{blizzard2020bgrating} & \en{we will try to select eight players with the closest internal rating} & 八人内部评分相近（等价于预期名次相近） \\
+Blizzard，酒馆战棋 2020\cite{blizzard2020developer} & \en{we will try to select eight players with the closest internal rating} & 八人内部评分相近（等价于预期名次相近） \\
 腾讯，王者荣耀 2018\cite{zhang2025hok} & “尽可能将水平尽量相当的召唤师放入同一局比赛”“创造双方势均力敌的竞技环境” & 系统评估的“综合能力”；未给数字 \\
 腾讯，王者荣耀 2026\cite{ithome2026s42} & “以段位为主要依据进行匹配”；“90\% 以上的对局双方段位差控制在 2 星及以内” & 可见段位差（与预测胜率不同的量） \\
 \end{longtable}
@@ -188,19 +185,14 @@ Blizzard，酒馆战棋 2020\cite{blizzard2020bgrating} & \en{we will try to sel
 \paragraph{三种读法。}
 “五五开”至少有三种读法：（a）双方\emph{真实实力}相等；（b）系统\emph{预测的单局胜率}为 50\%；（c）每个玩家的\emph{长期胜率}为 50\%。表中没有一家声称（a）——厂商只看得到估计值，Riot 2018 年的原话就是“从我们所有的数据看，我们认为这是一场公平的对局”，紧接着列举了数据看不到的东西。（b）是所有厂商的实际口径：Riot 的“50\%±1\%”、手游的“接近 50\%”、Dota 2 的“每队 50\% 的机会”、光环的“50/50”，说的都是模型给出的预测值。（c）在两家的原文中被明确降级为结果而非目标：光环说它是“副作用”，守望先锋说匹配器“不对任何人强制 50\% 胜率”；VALORANT 的“在你的 MMR 上时最常看到 50\% 胜率”则是对收敛状态的观察。
 
-\begin{derivbox}[预测胜率 50\% 不等于真实胜率 50\%]
-设玩家 $i$ 的真实实力为 $s_i$，系统估计为 $R_i=s_i+e_i$，估计误差 $e_i$ 的稳态标准差为 $\sigma_e$。1v1 中匹配器使 $R_A\approx R_B$，于是系统预测胜率 $E=\Elogit(R_A-R_B)\approx 1/2$。但真实单局胜率是
-\[
-  p=\Elogit(s_A-s_B)=\Elogit\bigl((R_A-R_B)-(e_A-e_B)\bigr)\approx \Elogit(e_B-e_A).
-\]
-若 $e_A,e_B$ 独立且均值为零，则 $e_B-e_A$ 的标准差为 $\sqrt2\,\sigma_e$：对\emph{全体}对局平均，$p$ 以 $1/2$ 为中心；对\emph{某一局}，$p$ 偏离 $1/2$ 的典型幅度约为 $\Elogit'(0)\sqrt2\,\sigma_e=\cElo\sqrt2\,\sigma_e/4$。例如 $\sigma_e=50$ 时约为 $\pm10$ 个百分点（$\Elogit(\sqrt2\times50)\approx0.60$）\tagOwn。对\emph{某一个}玩家，如果他的估计系统性偏低（$e_A<0$，例如水平刚提高，或用新账号重新定级），那么他的多局 $p$ 都高于 $1/2$，长期胜率会高于 50\%，直到 $R_A$ 追上 $s_A$。团队对局中 $e$ 要按队伍聚合，并要加上组排、位置、状态等模型外因素。定量推导见\cref{ch:winrate}。
-\end{derivbox}
+\paragraph{预测胜率 50\% 不等于真实胜率 50\%。}
+匹配器拉平的是估计值 $R_i=s_i+e_i$，所以一局的真实胜率 $p=\Elogit\big((R_A-R_B)-(e_A-e_B)\big)$ 围绕 50\% 分布，宽度由评分误差 $\sigma_e$ 决定：对\emph{全体}对局平均，$p$ 以 1/2 为中心；对\emph{某一局}，它可以明显偏离 1/2。\Cref{sec:ch2-fair} 给出完整推导与数值：固定 $\Kf=16$ 的 Elo 稳态下 $\sigma_e\approx38$ 分，90\% 的“五五开”对局真实胜率落在 38\%–62\% 之间；5v5 中两队评分和相等时，随机“对位”的单挑胜率可以悬殊得多\tagOwn。对\emph{某一个}玩家，若他的估计系统性偏低（水平刚提高，或用新账号重新定级），他的多局 $p$ 都高于 1/2，长期胜率会高于 50\%，直到评分追上实力（\cref{sec:ch2-reset,sec:ch2-improve}）。团队对局中还要加上组排、位置、状态等模型外因素。
 
 \paragraph{几条原话的细节。}
-有三处细节支持上面的读法。第一，Riot 2025 年的补位规则说，补位人数多的一方会拿到 MMR \emph{稍高}的队友\cite{riot2025ranked}——如果匹配器的目标是“MMR 相等”，这条规则就无从解释；它只有在目标是“考虑补位劣势后的预测胜率相等”时才说得通。第二，TrueSkill 把匹配质量定义为打平概率，这个量同时随均值差 $|\mu_A-\mu_B|$ 和不确定度 $\sigma$ 下降\cite{microsoft2026trueskill}；也就是说，即便两人的估计均值完全相同，系统也承认“它不确定这是不是五五开”。第三，守望先锋承认“两队评分从不完全相同”，用“被看好一方的获胜比例”（可预测性）衡量对局，并发现低分段可预测性更低、因而校准评分的信息更少\cite{blizzard2023ow2part2}。Dota 2 2017 年那句“长期均等不等于有竞争性”则把（b）和（c）的区别说得最透\cite{valve2017matchmaking}。
+有三处细节支持上面的读法。第一，Riot 2025 年的补位规则说，补位人数多的一方会拿到 MMR \emph{稍高}的队友\cite{riot2025ranked}——如果匹配器的目标是“MMR 相等”，这条规则就无从解释；它只有在目标是“考虑补位劣势后的预测胜率相等”时才说得通。第二，TrueSkill 把匹配质量定义为打平概率，这个量同时随均值差 $|\mu_A-\mu_B|$ 和不确定度 $\sigma$ 下降\cite{microsoft2005trueskill}；也就是说，即便两人的估计均值完全相同，系统也承认“它不确定这是不是五五开”。第三，守望先锋承认“两队评分从不完全相同”，用“被看好一方的获胜比例”（可预测性）衡量对局，并发现低分段可预测性更低、因而校准评分的信息更少\cite{blizzard2023overwatch}。Dota 2 2017 年那句“长期均等不等于有竞争性”则把（b）和（c）的区别说得最透\cite{valve2017matchmaking}。
 
 \paragraph{腾讯的口径与八人对局。}
-腾讯 2018 年的“水平尽量相当”“势均力敌”属于读法（b），但没有给出数字；2026 年 S42 改版后公布的指标是“段位差在 2 星以内的对局占比”，这衡量的是\emph{可见段位}是否接近，是第四种量。在隐藏分与可见段位分离的系统里，段位接近并不意味着预测胜率接近，反之亦然（TrueSkill 的 57.6\% 与 5.7\% 例子就是反例）。对酒馆战棋这样的八人自由混战，“公平”的含义是八人内部评分相近；在这种对局里，若八人实力完全相同，每人的预期名次为 4.5、进前四的概率为 1/2、拿第一的概率为 1/8\tagOwn，所以“五五开”在八人游戏里没有直接对应物，比较时应看前四率或平均名次。
+腾讯 2018 年的“水平尽量相当”“势均力敌”属于读法（b），但没有给出数字；2026 年 S42 改版后公布的指标是“段位差在 2 星以内的对局占比”，这衡量的是\emph{可见段位}是否接近，是第四种量。在隐藏分与可见段位分离的系统里，段位接近并不意味着预测胜率接近，反之亦然（TrueSkill 的 57.6\% 与 5.7\% 例子就是反例）。对酒馆战棋这样的八人自由混战，“公平”的含义是八人内部评分相近；在这种对局里，若八人实力完全相同，每人的预期名次为 4.5、进前四的概率为 1/2、拿第一的概率为 1/8\tagOwn，所以“五五开”在八人游戏里没有直接对应物，比较时应看前四率或平均名次（\cref{sec:ch2-ffa}）。
 
 \section{专利：权利要求实际保护了什么}
 \label{sec:ch1b-patents}
@@ -232,7 +224,7 @@ EA 名下至少有四个与匹配或难度相关的专利家族，发明人与 E
 
 \subsection{微软：TrueSkill 与“按等待时间调阈值”}
 
-\patno{7,050,868}《贝叶斯评分》（2005-01-24 提交，2006-05-23 授权，发明人 Graepel、Herbrich）是 TrueSkill 的原始专利\cite{graepel2006bayesian}\tagPat：独立权利要求包括按胜、负、平更新每名队员的均值和方差，以及由队员的均值、方差得到队伍的分布、按两队分数之差的期望来配对\tagPat。续案 \patno{7,376,474}（2008-05-20）把打平结果和“距上次游戏的时间”引起的实力变化写进权利要求，并规定配对阈值“取决于可供匹配的玩家数”\cite{graepel2008bayesian}\tagPat。\patno{8,538,910}（2013-09-17）在因子图上用完赛名次和部分参与时长更新实力\cite{minka2013determining}\tagPat。\patno{8,672,764}《游戏的自适应匹配》（2007-03-29 提交，2014-03-18 授权）把实力和连接质量合成一个数值，与匹配阈值比较；系统观察玩家实际等待时间，与“目标等待时间”相差超过一定幅度时，带阻尼地调整阈值\cite{graepel2014adaptive}\tagPat。这是“排队时间换匹配精度”最早的一手专利文献之一。与其他公司不同，TrueSkill 的部署有公开证据：微软研究院项目页列出了使用它的游戏\cite{microsoft2026trueskill}\tagOff。Activision 的 \patno{9,789,406} 首页引用文献中也列有这两件 TrueSkill 专利\tagPat。
+\patno{7,050,868}《贝叶斯评分》（2005-01-24 提交，2006-05-23 授权，发明人 Graepel、Herbrich）是 TrueSkill 的原始专利\cite{graepel2006bayesian}\tagPat：独立权利要求包括按胜、负、平更新每名队员的均值和方差，以及由队员的均值、方差得到队伍的分布、按两队分数之差的期望来配对\tagPat。续案 \patno{7,376,474}（2008-05-20）把打平结果和“距上次游戏的时间”引起的实力变化写进权利要求，并规定配对阈值“取决于可供匹配的玩家数”\cite{graepel2008bayesian}\tagPat。\patno{8,538,910}（2013-09-17）在因子图上用完赛名次和部分参与时长更新实力\cite{minka2013determining}\tagPat。\patno{8,672,764}《游戏的自适应匹配》（2007-03-29 提交，2014-03-18 授权）把实力和连接质量合成一个数值，与匹配阈值比较；系统观察玩家实际等待时间，与“目标等待时间”相差超过一定幅度时，带阻尼地调整阈值\cite{graepel2014adaptive}\tagPat。这是“排队时间换匹配精度”最早的一手专利文献之一。与其他公司不同，TrueSkill 的部署有公开证据：微软研究院项目页列出了使用它的游戏\cite{microsoft2005trueskill}\tagOff。Activision 的 \patno{9,789,406} 首页引用文献中也列有这两件 TrueSkill 专利\tagPat。
 
 \subsection{Riot：按行为数据和游戏时段组队}
 
@@ -303,7 +295,7 @@ EA 名下至少有四个与匹配或难度相关的专利家族，发明人与 E
 \paragraph{起诉与庭审。}
 青岛执业律师孙千和于 2024 年 6 月向深圳市南山区人民法院提交起诉状，被告为深圳市腾讯计算机系统有限公司和腾讯科技（成都）有限公司；法院于 2025 年 2 月 18 日立案\cite{zhang2026hokfeb}\tagOff。起诉状称，连胜几局后会匹配到“很菜的队友和很强的对手”，从而连输，“输输赢赢如此反复，直到胜率趋近于 50\%”；诉讼请求是公开影响匹配队友和对手的具体因素，以及各因素在排位赛、巅峰赛、匹配赛、娱乐模式中的占比和权重\cite{fan2025hok}\tagOff。2025 年 8 月 12 日开庭，庭审从下午两点半持续到晚上七点二十分左右，未当庭宣判\cite{fan2025hok}\tagOff。腾讯提交了近 1000 页证据，主张匹配机制属于技术秘密；称“匹配机制并不完全等于游戏算法”，对局胜负受团队配合、阵容、战术和玩家状态影响，“匹配机制无法决定游戏对局胜负”；并举例说某款游戏的玩家曾通过连续故意投降压低隐藏分、换取更弱的对手，以说明公开细节会被滥用\cite{zhang2025hok}\tagOff。腾讯还展示了随机抽取的玩家胜率：玩家 A 全部 752 场胜率 76.1\%，玩家 B 全部 2398 场胜率 71\%，玩家 C 当前赛年 472 场胜率 81.6\%\cite{fan2025hok,zhang2025hok}\tagOff。
 
-这组样本只能反驳“\emph{每个}玩家都被控制在 50\%”这一强命题，不能证明不存在任何短期调节：样本是被告挑选的，“全部比赛”还可能混合了不同模式的 MMR 池。反过来看，在只按隐藏分匹配、隐藏分能追上实力的系统里，长期胜率应向 50\% 收敛（\cref{ch:winrate}）；2398 场 71\% 提示至少在部分模式或分段，强玩家并没有被迅速推到势均力敌的对手面前（例如受高分段人数或匹配范围上限约束）\tagOwn。
+这组样本只能反驳“\emph{每个}玩家都被控制在 50\%”这一强命题，不能证明不存在任何短期调节：样本是被告挑选的，“全部比赛”还可能混合了不同模式的 MMR 池。反过来看，在只按隐藏分匹配、隐藏分能追上实力的系统里，长期胜率应向 50\% 收敛（\cref{sec:ch2-identity}）；2398 场 71\% 提示至少在部分模式或分段，强玩家并没有被迅速推到势均力敌的对手面前（例如受高分段人数或匹配范围上限约束）\tagOwn。
 
 \paragraph{案由变更与一审判决。}
 2026 年 1 月 22 日，法院依据当年 1 月 1 日施行的最高人民法院新增案由，把案由从“网络服务合同纠纷”变更为“数据纠纷”\cite{zhang2026hokfeb}\tagOff。2026 年 4 月 7 日，原告在自媒体账号公开了一审判决\cite{ithome2026hok}\tagOff。判决书作出的确切日期未见报道。据报道，法院围绕四个争议焦点裁判\cite{zhang2026hok}\tagOff：
@@ -340,7 +332,7 @@ EA 名下至少有四个与匹配或难度相关的专利家族，发明人与 E
 （1）任何一款主流竞技游戏的\emph{排位模式}是否在逐局组局时使用流失或参与度预测。公司论文说的是“两款游戏”“一款热门手机 MOBA”，没有点名，也没有说是否用于排位；专利不说明部署。（2）未公开的 A/B 测试在某一时段把哪些玩家放进了哪种配置。（3）《王者荣耀》等未公开评分模型的游戏，其隐藏分与段位如何组合、“表现分”权重多大；法院没有就是否操纵作出认定。（4）没有任何厂商发布过可由第三方复核的匹配日志或独立审计结果。
 
 \paragraph{什么证据能够定论。}
-要区分“诚实的按分匹配”和“以留存为目标的匹配”，需要的不是更多的官方表态，而是可检验的数据：（1）\emph{逐局的双方隐藏分和系统预测胜率}：在诚实的按分匹配中，控制了玩家自身评分之后，他近期的连胜或连败不应再能预测队友和对手的评分；如果能，就说明匹配器读取了战绩（检验思路见\cref{ch:streaks}）；（2）\emph{独立审计或向监管部门备案的算法自评估报告}，《算法推荐管理规定》第二十四条已为“有舆论属性”的服务提供了备案框架，可以借鉴到游戏；（3）\emph{像 Dota Plus 那样随局公开的匹配质量信息}，让玩家自己积累样本；（4）\emph{诉讼中的证据开示}，如果未来有案件进入实体审理。在这些数据出现之前，本研究其余各章做的是另一件事：证明即使匹配器完全诚实，玩家也会看到连败、“连胜后连败”和长期 50\% 胜率（\cref{ch:winrate}和\cref{ch:streaks}）——这说明那些体感\emph{不需要}操纵就能出现，但正如上文所说，它不等于证明了没有操纵。
+要区分“诚实的按分匹配”和“以留存为目标的匹配”，需要的不是更多的官方表态，而是可检验的数据：（1）\emph{逐局的双方隐藏分和系统预测胜率}：在诚实的按分匹配中，控制了玩家自身评分之后，他近期的连胜或连败不应再能预测队友和对手的评分；如果能，就说明匹配器读取了战绩（检验思路见\cref{sec:ch3-manip,sec:ch4-null}）；（2）\emph{独立审计或向监管部门备案的算法自评估报告}，《算法推荐管理规定》第二十四条已为“有舆论属性”的服务提供了备案框架，可以借鉴到游戏；（3）\emph{像 Dota Plus 那样随局公开的匹配质量信息}，让玩家自己积累样本；（4）\emph{诉讼中的证据开示}，如果未来有案件进入实体审理。在这些数据出现之前，本研究其余各章做的是另一件事：证明即使匹配器完全诚实，玩家也会看到连败、“连胜后连败”和长期 50\% 胜率（\cref{ch:winrate}和\cref{ch:streaks}）——这说明那些体感\emph{不需要}操纵就能出现，但正如上文所说，它不等于证明了没有操纵。
 
 {\footnotesize
 \setlength{\tabcolsep}{3pt}

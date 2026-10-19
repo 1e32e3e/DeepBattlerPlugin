@@ -1,5 +1,41 @@
 \chapter{研究一：评分与匹配机制的文献、厂商披露与专利}
 \label{ch:lit}
-% 本章由两部分组成：ch1a（学术研究）与 ch1b（厂商披露、专利、诉讼）。章首“直接回答”与章末小结在整合阶段撰写。
+
+\begin{answerbox}
+\textbf{通用的 Elo 或匹配机制有人研究吗？}有，而且相当成熟。评分一侧从 Thurstone、Bradley–Terry 的成对比较一路发展到 Elo、Glicko、TrueSkill 与 TrueSkill 2，近十年还有对 Elo 收敛性和误差的严格结果：Elo 是对数似然上的在线随机梯度，固定 $\Kf$ 只能在“追得快”与“抖得小”之间取舍（\cref{sec:1a-models}）。匹配一侧研究公平与信息量、等待时间、分队，以及以留存为目标的匹配（\cref{sec:1a-mm}）。
+
+\textbf{各游戏专门的研究呢？}有，但很不均衡。只有《光环》《战争机器》等微软系游戏由设计者完整公开了评分模型；腾讯、网易、EA 的论文只透露部分做法；外部研究者只能用公开数据研究玩家行为，看不到匹配器本身；酒馆战棋没有任何评分或匹配研究（\cref{sec:1a-games}）。
+
+\textbf{游戏公司有披露吗？}有。Riot、Valve、Blizzard、Activision、Respawn、343、腾讯、网易等都发布过开发者文章或白皮书，共同结构是“隐藏分负责匹配、可见段位负责成长感”。官方承认的非实力因素是一组固定类别（延迟与排队时间、新手与回流、组排聚合、补位、行为分、休闲模式机器人）；被明确否认的是“读取连胜连败安排队友”“强制 50\% 胜率”“按消费匹配”（\cref{sec:ch1b-disclosure}）。各家所说的“每局五五开”指系统\emph{预测}的胜率，不是真实实力相等（\cref{sec:ch1b-fifty}）。
+
+\textbf{有公司的专利或论文吗？}有。EA 两个专利家族的权利要求写明按“流失风险”“预测留存时长”组局，Activision 有按“诱导购买”匹配的专利；EOMM、EnMatch 等公司论文公开了以参与度为目标的匹配算法，报告的效应都不大（\cref{sec:ch1b-patents,sec:1a-mm-engage}）。专利不证明部署，论文中的部署游戏不具名；没有任何厂商公开过可供第三方复核的匹配日志，王者荣耀案的法院也只裁判了“能否要求公开”（\cref{sec:ch1b-legal}）。
+\end{answerbox}
+
+本章分两部分。前半部分（\cref{sec:1a-frame}至\cref{sec:1a-summary}）综述学术研究：先区分“评分”与“匹配”，再依次讨论评分模型的谱系、匹配机制本身的研究、各游戏的专门研究和中文文献。后半部分（\cref{sec:ch1b-disclosure}至\cref{sec:ch1b-evidence}）逐家阅读厂商的一手材料：开发者博客与白皮书、厂商对“五五开”的原话、美国授权专利的权利要求、诉讼与监管，最后按证据强度把说法分成“已证实、被否认、未知”。两部分各有小结（\cref{sec:1a-summary,sec:ch1b-evidence}）；本章末（\cref{sec:ch1-summary}）把两条线索合起来，说明后三章为什么转向“诚实的系统会产生什么”。
+
 \input{chapters/ch1a}
 \input{chapters/ch1b}
+
+\section{本章小结：两条线索合起来看}
+\label{sec:ch1-summary}
+
+学术文献和厂商材料描述的是同一套系统的不同侧面。把它们按“评分模型—匹配器—可见段位”三层对齐（\cref{tab:ch1-layers}），可以看清哪里已经透明、哪里仍是黑箱。
+
+\begin{table}[htbp]
+  \centering\footnotesize
+  \caption{三层结构上的学术证据、厂商披露与未知之处（详见\cref{sec:1a-summary,sec:ch1b-evidence}）。}
+  \label{tab:ch1-layers}
+  \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{3.0cm}}
+    \toprule
+    层 & 学术研究说明了什么 & 厂商披露了什么 & 仍然未知 \\
+    \midrule
+    评分模型（隐藏分 $R_i$） & 统计性质清楚：稳态误差、滞后、用估计值预测会过度自信、封闭分池会通缩；“队伍实力 = 成员之和”在车队中失效 & 普遍使用隐藏 MMR；微软、国际象棋平台公开了模型，酒馆战棋公开了输入；多家承认按不确定度或近期胜率调节评分\emph{速度} & 王者荣耀、CS2 等的模型与“表现分”权重 \\
+    匹配器 & 公平的对局信息量最大；等待与质量需要权衡；以留存为目标的匹配可行、报告的效应小、无独立复现 & 延迟优先，窗口随等待放宽，组排聚合、补位、行为分；否认读取连胜；Activision 用 A/B 测试以留存评估技能约束 & 主流排位是否逐局使用流失预测；未公开测试的时段与配置 \\
+    可见段位 & 很少研究 & 保底、进度分、追赶倍率、目标 SR，与匹配分分离 & 各游戏的具体参数 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+两条线索在一个地方交汇。支持“匹配不只看实力”的最强证据来自公司自己：EA 的专利权利要求和 EOMM、EnMatch 论文说明这类方案被认真研究过，并在未具名的游戏中部署过；反对的最强证据也来自公司自己：多家厂商明确否认按连胜连败安排对局，但都没有可供复核的日志。外部研究者拿不到隐藏分和匹配记录，内部研究者发表的论文又不涉及排位匹配器这一环，所以这个问题无法仅靠文献和官方表态来判定。
+
+因此后三章从另一端入手：假设匹配器完全诚实，推导它在数学上会产生怎样的胜率（\cref{ch:winrate}）、怎样的连败和“连胜后连败”（\cref{ch:streaks}），以及胜负数据里还剩多少关于实力的信息（\cref{ch:ml}）。这样得到的是“无需操纵即可解释”的基准；能把诚实系统和操纵区分开的检验，即“控制自身评分后，近期连胜连败能否预测对手和队友的评分”，在\cref{sec:ch3-manip,sec:ch4-null}给出。
