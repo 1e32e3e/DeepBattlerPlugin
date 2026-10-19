@@ -1,1 +1,110 @@
-% 第4章附录：如无需要可留空
+\section{第四章的推导}
+\label{app:ch4}
+
+本节的解析数字都可以用 \texttt{python code/ch4/derivations\_check.py} 独立复算；图的参数见\cref{app:ch4-sims}。
+
+\subsection{Elo 更新与随机梯度下降}
+\label{app:ch4-sgd}
+
+正文\cref{eq:ch4-elo-sgd}对 $y\in\{0,\tfrac12,1\}$ 都成立：平局时标签取 $\tfrac12$，交叉熵 $-[y\ln p+(1-y)\ln(1-p)]$ 仍有梯度 $-c(y-p)$，所以 Elo 对平局的处理等价于“软标签”。若队伍强度取成员评分之和，$p=\sigma\bigl(c(\sum_{i\in A}R_i-\sum_{j\in B}R_j)\bigr)$，则每名成员的梯度都是 $-c(y-p)$，一步 SGD 给全队每人相同的 $K(y-p)$；TrueSkill 论文里 Elo 对团队局与多人局用的“对决启发式”则是对每名玩家与其余每人逐一比较后取平均更新\cite{herbrich2006trueskill}。批量版本（对全部历史对局一次性最大化似然）就是 Bradley–Terry 极大似然\cite{bradley1952rank}，即 Chatbot Arena 现在的做法。
+
+\subsection{固定 K 的稳态误差与最优 K}
+\label{app:ch4-steady}
+
+设第 $t$ 局对手评分为 $R^{\mathrm{opp}}_t$ 且准确，系统预测 $E_t=\Elogit(R_t-R^{\mathrm{opp}}_t)$，真实胜率 $p_t=\Elogit(s_t-R^{\mathrm{opp}}_t)$，误差 $e_t=R_t-s_t$。则
+\[
+y_t-E_t=(y_t-p_t)+(p_t-E_t)\approx\xi_t-c\,p_t(1-p_t)\,e_t,\qquad \xi_t=y_t-p_t,\ \Var(\xi_t)=p_t(1-p_t).
+\]
+实力每局随机游走 $s_{t+1}=s_t+w_t$，$w_t\sim\Normal(0,\sigma_w^2)$，于是 $e_{t+1}=(1-a)e_t+K\xi_t-w_t$，$a=Kc\,p(1-p)$。三项互相独立，稳态方差满足 $V=(1-a)^2V+K^2p(1-p)+\sigma_w^2$，即正文\cref{eq:ch4-steady}。取 $p(1-p)=\tfrac14$：
+\[
+V(K)\approx\frac{K}{2c}+\frac{2\sigma_w^2}{Kc},\qquad V'(K)=0\Rightarrow K^*=2\sigma_w,\qquad V(K^*)=\frac{2\sigma_w}{c}.
+\]
+数值最优（保留 $a^2$ 项）与近似几乎一致：$\sigma_w=2,4,10$ 时 $K^*=3.99,7.95,19.7$，最小均方根误差 26.4、37.4、59.4 Elo。误差的确定性部分按 $(1-a)^t$ 衰减，时间常数 $1/a=4/(Kc)$，$K=8,16,32$ 时分别约 87、43、22 局。按分匹配有噪声 $\sigma_q$ 时 $\E[p(1-p)]$ 略小于 $\tfrac14$（$\sigma_q=50$ 时约 0.248），结论不变。
+
+\subsection{TrueSkill 两人更新、学习率与稳态}
+\label{app:ch4-trueskill}
+
+两人无平局时，表现 $\pi_A\sim\Normal(s_A,\beta^2)$、$\pi_B\sim\Normal(s_B,\beta^2)$，$A$ 胜当且仅当 $d=\pi_A-\pi_B>0$。在信念 $s_A\sim\Normal(m_A,\varsigma_A^2)$、$s_B\sim\Normal(m_B,\varsigma_B^2)$ 下，$d\sim\Normal(m_A-m_B,\tilde c^2)$，$\tilde c^2=2\beta^2+\varsigma_A^2+\varsigma_B^2$，$\Prob(A\text{ 胜})=\Phi(t)$，$t=(m_A-m_B)/\tilde c$。截断高斯的矩为 $\E[d\mid d>0]=(m_A-m_B)+\tilde c\,v(t)$、$\Var(d\mid d>0)=\tilde c^2[1-w(t)]$，其中 $v=\phi/\Phi$，$w=v(v+t)$。$s_A$ 与 $d$ 联合高斯、协方差为 $\varsigma_A^2$，故
+\begin{align*}
+\E[s_A\mid d>0]&=m_A+\frac{\varsigma_A^2}{\tilde c}v(t),\\
+\Var(s_A\mid d>0)&=\varsigma_A^2-\frac{\varsigma_A^4}{\tilde c^2}+\frac{\varsigma_A^4}{\tilde c^4}\Var(d\mid d>0)=\varsigma_A^2\Bigl[1-\frac{\varsigma_A^2}{\tilde c^2}w(t)\Bigr].
+\end{align*}
+把后验按矩匹配近似为高斯，就是正文\cref{eq:ch4-ts}；败者把 $+v$ 换成 $-v$。用数值积分对新玩家情形做矩匹配，均值增量与闭式一致到小数点后四位\tagOwn。
+
+\textbf{学习率解释。}把 $\tilde c$ 视为常数，有
+\[
+\frac{\partial\log\Phi(t)}{\partial m_A}=\frac{v(t)}{\tilde c},\qquad \Delta m_A=\varsigma_A^2\cdot\frac{\partial\log\Phi(t)}{\partial m_A},
+\]
+即均值更新是学习率为 $\varsigma_A^2$ 的一步梯度上升。精度的变化为 $1/\varsigma_A'^2\approx1/\varsigma_A^2+w(t)/\tilde c^2$，而 $w(t)=-\partial^2\log\Phi(t)/\partial t^2$ 正是 probit 似然的观测信息，所以 $n$ 局后 $\varsigma_A^2\approx1/(1/\varsigma_0^2+\sum w/\tilde c^2)$，学习率约按 $1/n$ 递减。
+
+\textbf{稳态。}TrueSkill 在每局前给方差加上 $\sigma_w^2$（Xbox Live 取 $\sigma_w=\varsigma_0/100$）\cite{herbrich2006trueskill}。设赛前方差为 $S^2=\varsigma^2+\sigma_w^2$，对手处于同样的稳态、对局势均力敌（$t=0$），不动点条件为
+\[
+S^2-\sigma_w^2=S^2\Bigl[1-\frac{S^2w(0)}{2\beta^2+2S^2}\Bigr]\iff \sigma_w^2=\frac{S^4\,w(0)}{2\beta^2+2S^2},\qquad w(0)=2/\pi.
+\]
+取 $\varsigma_0=25/3$、$\beta=\varsigma_0/2$、$\sigma_w=\varsigma_0/100$，解得 $S\approx0.791$，势均力敌赢一局 $\Delta m=S^2v(0)/\tilde c\approx0.0833$ 单位。刻度换算：令 probit 胜率 $\Phi\bigl(\Delta/(\sqrt2\beta)\bigr)$ 与 Elo 曲线在 0 处斜率相等，$\beta$ 对应 $4\phi(0)/(\sqrt2c)\approx196$ Elo，1 单位约 47.0 Elo。于是稳态等效 $K=2\Delta m\approx7.8$ Elo，而 $\sigma_w\approx3.92$ Elo/局，$K^*=2\sigma_w\approx7.8$：在线性高斯近似下，卡尔曼滤波的稳态增益就是均方误差最小的固定增益。新玩家第一局（双方 $\varsigma_0$）势均力敌地赢，$\Delta m\approx4.21$ 单位，约 198 Elo。
+
+\subsection{评分噪声为什么让预测过于自信}
+\label{app:ch4-overconf}
+
+设真实实力差 $d\sim\Normal(0,2\tau^2)$，评分差 $\hat d=d+\varepsilon$，$\varepsilon\sim\Normal(0,2\sigma_e^2)$ 与 $d$ 独立。则 $d\mid\hat d\sim\Normal(\lambda\hat d,\,2\sigma_e^2\lambda)$，$\lambda=\tau^2/(\tau^2+\sigma_e^2)$。用 logistic 的 probit 近似 $\E[\sigma(X)]\approx\sigma\bigl(\E X/\sqrt{1+\pi\Var X/8}\bigr)$：
+\[
+\Prob(y=1\mid\hat d)=\E[\sigma(cd)\mid\hat d]\approx\sigma\!\left(\frac{c\lambda\hat d}{\sqrt{1+\pi c^2\sigma_e^2\lambda/4}}\right)
+\ \Rightarrow\ \hat\gamma\approx\frac{\lambda}{\sqrt{1+\pi c^2\sigma_e^2\lambda/4}}.
+\]
+两个因子分别是“向均值收缩”（评分差偏大的配对，有一部分是评分误差）和“模糊”（同一评分差对应一个实力差的分布）。代入\cref{fig:ch4-calibration}模拟中测得的评分误差（$K=16,32,64$ 时 37.9、54.3、80.8 Elo），得 $\hat\gamma\approx0.95,0.90,0.80$，模拟拟合值为 0.95、0.87、0.77；差距来自近似忽略了评分误差与实力、与对手之间的相关。Szczecinski 给出了考虑这两项的更一般的刻度修正\cite{szczecinski2026new}。
+
+\subsection{零假设下的残差检验与游程检验}
+\label{app:ch4-tests}
+
+记 $\mathcal F_{t-1}$ 为第 $t$ 局开始前的全部信息（含对手评分），零假设 $H_0$：$\Prob(y_t=1\mid\mathcal F_{t-1})=\hat p_t$。则 $r_t=y_t-\hat p_t$ 满足 $\E[r_t\mid\mathcal F_{t-1}]=0$、$\Var(r_t\mid\mathcal F_{t-1})=\hat p_t(1-\hat p_t)$。对任何由 $\mathcal F_{t-1}$ 决定的 $g_t$，$M_n=\sum_{t\le n}g_tr_t$ 是有界增量鞅，其可预测二次变差为 $\sum g_t\hat p_t(1-\hat p_t)$，由鞅中心极限定理得正文\cref{eq:ch4-zres}。关键在于“可预测”：分组只能用赛前信息，不能用本局结果。
+
+\textbf{差异检验。}对两组 $k\in\{0,1\}$，$\theta_k=\sum_{g_t=k}r_t/B_k$，$B_k=\sum_{g_t=k}\hat p_t(1-\hat p_t)$，$z=(\theta_1-\theta_0)/\sqrt{1/B_1+1/B_0}$。若冻结模型的 $\hat S$ 偏了 $\epsilon$，则 $r_t$ 约平移 $-c\hat p_t(1-\hat p_t)\epsilon$，两组的 $\theta_k$ 都平移 $-c\epsilon$，在差中抵消。
+
+\textbf{朴素游程检验为什么失效。}记 $I_t=\mathbb 1(y_t\ne y_{t-1})$，游程数为 $1+\sum_{t\ge2}I_t$。若把 $\hat p_t$ 当作与过去结果无关的常数，$\E I_t=\hat p_t(1-\hat p_{t-1})+\hat p_{t-1}(1-\hat p_t)$，方差还要加上相邻项的协方差 $\E[I_tI_{t+1}]-\E I_t\,\E I_{t+1}$，其中 $\E[I_tI_{t+1}]=\hat p_{t-1}(1-\hat p_t)\hat p_{t+1}+(1-\hat p_{t-1})\hat p_t(1-\hat p_{t+1})$。但按分匹配下 $\hat p_t$ 依赖 $y_{t-1}$：输一局后评分下降、下一局对手变弱、$\hat p_t$ 变大，胜负更容易交替，游程数系统性偏多。\Cref{fig:ch4-tests}c 中这一检验在诚实 Elo 下一万局的误报率约 62\%。
+
+\textbf{鞅修正。}用条件期望 $\E[I_t\mid\mathcal F_{t-1}]=y_{t-1}(1-\hat p_t)+(1-y_{t-1})\hat p_t$。分 $y_{t-1}=0$ 与 $y_{t-1}=1$ 两种情况验证可得
+\[
+I_t-\E[I_t\mid\mathcal F_{t-1}]=(1-2y_{t-1})\,(y_t-\hat p_t),\qquad
+z_{\mathrm{runs}}=\frac{\sum_t(1-2y_{t-1})\,r_t}{\sqrt{\sum_t\hat p_t(1-\hat p_t)}},
+\]
+即“输后残差之和减赢后残差之和”，与差异检验等价。
+
+\textbf{与 Miller–Sanjurjo 偏差的关系。}在一条有限的独立序列里，先算“连胜（败）之后的成功比例”再在序列间平均，期望会偏离真实概率\cite{miller2018surprised}；这里把所有触发局的残差\textbf{汇总}后再标准化，$\E[\sum g_tr_t]=0$ 精确成立，不受此偏差影响。
+
+\textbf{对手评分差检验。}$G_t=R^{\mathrm{opp}}_t-R_t$，比较触发组与其余对局的均值（合并方差的两样本 $t$ 检验）。它不需要任何胜率模型，只需要对手评分。
+
+\subsection{Plackett–Luce 的梯度、Fisher 信息与样本量}
+\label{app:ch4-pl}
+
+对\cref{eq:ch4-pl}取对数，$\log\Prob(\pi)=\sum_{i=1}^{N}\bigl[\theta_{\pi(i)}-\log\sum_{j\ge i}e^{\theta_{\pi(j)}}\bigr]$。$\theta_k$ 只在 $\pi(i)=k$ 的那一项出现一次（贡献 1），并在 $k$ 仍在场的每一步 $i\le r_k$ 的归一化项中出现（贡献 $-P_i(k)$），于是梯度为 $1-\sum_{i\le r_k}P_i(k)$。把“第 $i$ 步是否选中 $k$”看作伯努利增量，$\sum_{i\le r_k}[\mathbb 1(\pi(i)=k)-P_i(k)]$ 是一个鞅在停时 $r_k$ 处的值，故期望为 0、方差为 $\E\sum_{i\le r_k}P_i(k)[1-P_i(k)]$，即 Fisher 信息。等强时第 $i$ 步还剩 $m=N-i+1$ 人，$P_i(k)=1/m$，$k$ 仍在场的概率为 $m/N$：
+\[
+I_N=\sum_{m=1}^{N}\frac{m}{N}\cdot\frac1m\Bigl(1-\frac1m\Bigr)=1-\frac{H_N}{N},\qquad I_2=0.25,\quad I_8=1-\frac{2.718}{8}\approx0.660.
+\]
+蒙特卡洛（20000 局）得梯度方差 0.656。$N=2$ 时回到 Bradley–Terry 的 $\tfrac14$。
+
+\textbf{样本量。}对已知基准做 5\% 双侧检验、80\% 检验力，$n=\bigl[(z_{0.975}+z_{0.8})\,\sigma/\delta\bigr]^2$。前四率 $\sigma=0.5$、$\delta=0.02$ 得 4,906 局；平均名次在等强时 $\sigma=\sqrt{(N^2-1)/12}=2.291$，$\delta=0.1$ 得 4,121 局，$\delta=0.25$ 得 659 局。两个版本互比时差值的方差加倍，每个版本需 $2n$（9,811 局与 8,241 局）。若参照池强于或弱于被测版本，名次分布不再均匀，$\sigma$ 略小，所需局数略少。
+
+\textbf{AlphaGo Zero 的评估门槛。}400 局中胜率需超过 55\%，即至少 221 胜。真实胜率为 50\%、52\%、55\%、60\% 时，通过概率分别为 0.020、0.105、0.481、0.976（二项分布精确值）。
+
+\subsection{模拟参数与脚本}
+\label{app:ch4-sims}
+
+\begin{table}[H]
+\centering
+\caption{第四章各图的脚本与参数（脚本均可在仓库根目录用 \texttt{python code/ch4/}加脚本名独立运行，固定随机种子）}
+\label{tab:ch4-sims}
+\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{4.4cm}X}
+\toprule
+图与脚本 & 模型与参数 \\
+\midrule
+\cref{fig:ch4-k}\newline\texttt{fig\_k\_tradeoff.py} & 一名玩家按分匹配，对手评分 $=R_t$ 且准确；(a) 600 局，第 200 局实力 $+200$；(b) $K\in\{2,\dots,64\}$，$\sigma_w\in\{0,3,10\}$，200 次重复 $\times$ 24000 局，丢弃前 4000 局；缓存 \texttt{cache/k\_tradeoff.npz} \\
+\cref{fig:ch4-calibration}\newline\texttt{fig\_calibration.py} & 2000 人，实力 $\Normal(0,200^2)$，评分初值 0，每轮每人一局；(a) 随机匹配，$K=16,32,64$，前 300 轮收敛、后 300 轮评估，预测按 0.05 分箱（每箱至少 200 局）；(b) $K=16$，随机匹配与按分匹配（$\sigma_q=25$，按评分加噪声排序后相邻配对），前 500 轮收敛、后 1000 轮统计 \\
+\cref{fig:ch4-coinflip}\newline\texttt{fig\_coinflip.py}\newline\cref{fig:ch4-fisher}\newline\texttt{fig\_fisher.py} & 解析式 \\
+\cref{fig:ch4-tests}\newline\texttt{fig\_residual\_tests.py} & $K=16$，对手评分 $=R_t+m_t+\Normal(0,50^2)$ 且准确；先 2000 局收敛，冻结 $\hat S$ 为最后 1000 局平均评分；检验用随后 $N\in\{100,\dots,10^4\}$ 局；上头 $\delta\in\{0,25,50,100\}$（上一局输则本局实力 $-\delta$）；连败保护：前两局皆输则 $m_t=-100$；每场景 2000 次重复 \\
+\cref{fig:ch4-pfsp}\newline\texttt{fig\_pfsp.py} & 解析式 \\
+\cref{fig:ch4-selfplay}\newline\texttt{fig\_selfplay\_\allowbreak inflation.py} & $\Prob(i\text{ 胜 }j)=\sigma\bigl(1.5\sin(\theta_i-\theta_j)+(h_i-h_j)\bigr)$，每代 $\Delta\theta=0.35$，$\Delta h\in\{0,0.05\}$，60 代，每代对上一代 400 局；参照池为 16 个 $\theta$ 均匀分布、$h=0$ 的智能体 \\
+\cref{fig:ch4-bg}\newline\texttt{fig\_bg\_placement.py} & Plackett–Luce，log 强度 $=c\cdot s$，一名玩家强 $\Delta\in\{0,100,200\}$，其余 7 人等强；样本量公式见上 \\
+\bottomrule
+\end{tabularx}
+\end{table}
